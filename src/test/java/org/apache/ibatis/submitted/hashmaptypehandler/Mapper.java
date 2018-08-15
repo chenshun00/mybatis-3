@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,14 +22,14 @@ import org.apache.ibatis.annotations.Select;
 
 public interface Mapper {
 
-  @Select("select * from users where id = #{id} and name = #{name}")
-  User getUser(@Param("id") Integer id, @Param("name") String name);
+    @Select("select * from users where id = #{id} and name = #{name}")
+    User getUser(@Param("id") Integer id, @Param("name") String name);
 
-  User getUserXml(@Param("id") Integer id, @Param("name") String name);
+    User getUserXml(@Param("id") Integer id, @Param("name") String name);
 
-  @Select("select * from users where name = #{map}")
-  User getUserWithTypeHandler(HashMap<String, String> map);
+    @Select("select * from users where name = #{map}")
+    User getUserWithTypeHandler(HashMap<String, String> map);
 
-  User getUserWithTypeHandlerXml(HashMap<String, String> map);
+    User getUserWithTypeHandlerXml(HashMap<String, String> map);
 
 }

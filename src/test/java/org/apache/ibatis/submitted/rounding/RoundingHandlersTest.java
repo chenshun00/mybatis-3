@@ -31,45 +31,45 @@ import org.junit.Test;
 
 public class RoundingHandlersTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/rounding/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/rounding/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/rounding/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/rounding/CreateDB.sql");
-  }
-
-  @Test
-  public void shouldGetAUser() {
-    try (SqlSession session = sqlSessionFactory.openSession()) {
-      Mapper mapper = session.getMapper(Mapper.class);
-      User user = mapper.getUser(1);
-      Assert.assertEquals("User1", user.getName());
-      Assert.assertEquals(RoundingMode.UP, user.getRoundingMode());
-      user = mapper.getUser2(1);
-      Assert.assertEquals("User1", user.getName());
-      Assert.assertEquals(RoundingMode.UP, user.getRoundingMode());
+    @Test
+    public void shouldGetAUser() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            Mapper mapper = session.getMapper(Mapper.class);
+            User user = mapper.getUser(1);
+            Assert.assertEquals("User1", user.getName());
+            Assert.assertEquals(RoundingMode.UP, user.getRoundingMode());
+            user = mapper.getUser2(1);
+            Assert.assertEquals("User1", user.getName());
+            Assert.assertEquals(RoundingMode.UP, user.getRoundingMode());
+        }
     }
-  }
 
-  @Test
-  public void shouldInsertUser2() {
-    try (SqlSession session = sqlSessionFactory.openSession()) {
-      Mapper mapper = session.getMapper(Mapper.class);
-      User user = new User();
-      user.setId(2);
-      user.setName("User2");
-      user.setFunkyNumber(BigDecimal.ZERO);
-      user.setRoundingMode(RoundingMode.UNNECESSARY);
-      mapper.insert(user);
-      mapper.insert2(user);
+    @Test
+    public void shouldInsertUser2() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            Mapper mapper = session.getMapper(Mapper.class);
+            User user = new User();
+            user.setId(2);
+            user.setName("User2");
+            user.setFunkyNumber(BigDecimal.ZERO);
+            user.setRoundingMode(RoundingMode.UNNECESSARY);
+            mapper.insert(user);
+            mapper.insert2(user);
+        }
     }
-  }
 
 }

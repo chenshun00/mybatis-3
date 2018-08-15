@@ -26,18 +26,18 @@ import org.junit.Test;
 
 public class UnknownObjectTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @Test(expected=PersistenceException.class)
-  public void shouldFailBecauseThereIsAPropertyWithoutTypeHandler() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/unknownobject/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @Test(expected = PersistenceException.class)
+    public void shouldFailBecauseThereIsAPropertyWithoutTypeHandler() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/unknownobject/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/unknownobject/CreateDB.sql");
     }
-
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/unknownobject/CreateDB.sql");
-  }
 
 }

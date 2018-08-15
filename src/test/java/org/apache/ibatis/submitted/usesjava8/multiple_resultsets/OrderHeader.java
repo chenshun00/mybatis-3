@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,23 +17,23 @@ package org.apache.ibatis.submitted.usesjava8.multiple_resultsets;
 
 public class OrderHeader {
 
-  private int orderId;
-  private String custName;
+    private int orderId;
+    private String custName;
 
-  public int getOrderId() {
-    return orderId;
-  }
+    public int getOrderId() {
+        return orderId;
+    }
 
-  public void setOrderId(int orderId) {
-    this.orderId = orderId;
-  }
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
 
-  public String getCustName() {
-    return custName;
-  }
+    public String getCustName() {
+        return custName;
+    }
 
-  public void setCustName(String custName) {
-    this.custName = custName;
-  }
+    public void setCustName(String custName) {
+        this.custName = custName;
+    }
 
 }

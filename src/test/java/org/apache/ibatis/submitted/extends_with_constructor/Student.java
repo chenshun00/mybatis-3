@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,31 +16,31 @@
 package org.apache.ibatis.submitted.extends_with_constructor;
 
 public class Student {
-  private int id;
-  private int name;
-  private Teacher teacher;
+    private int id;
+    private int name;
+    private Teacher teacher;
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public int getName() {
-    return name;
-  }
+    public int getName() {
+        return name;
+    }
 
-  public void setName(int name) {
-    this.name = name;
-  }
+    public void setName(int name) {
+        this.name = name;
+    }
 
-  public Teacher getTeacher() {
-    return teacher;
-  }
+    public Teacher getTeacher() {
+        return teacher;
+    }
 
-  public void setTeacher(Teacher teacher) {
-    this.teacher = teacher;
-  }
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
 }

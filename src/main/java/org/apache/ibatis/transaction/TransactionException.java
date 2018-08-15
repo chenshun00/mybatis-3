@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,22 +22,22 @@ import org.apache.ibatis.exceptions.PersistenceException;
  */
 public class TransactionException extends PersistenceException {
 
-  private static final long serialVersionUID = -433589569461084605L;
+    private static final long serialVersionUID = -433589569461084605L;
 
-  public TransactionException() {
-    super();
-  }
+    public TransactionException() {
+        super();
+    }
 
-  public TransactionException(String message) {
-    super(message);
-  }
+    public TransactionException(String message) {
+        super(message);
+    }
 
-  public TransactionException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public TransactionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public TransactionException(Throwable cause) {
-    super(cause);
-  }
+    public TransactionException(Throwable cause) {
+        super(cause);
+    }
 
 }

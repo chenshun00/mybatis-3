@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,22 +22,22 @@ import org.apache.ibatis.exceptions.PersistenceException;
  */
 public class TypeException extends PersistenceException {
 
-  private static final long serialVersionUID = 8614420898975117130L;
+    private static final long serialVersionUID = 8614420898975117130L;
 
-  public TypeException() {
-    super();
-  }
+    public TypeException() {
+        super();
+    }
 
-  public TypeException(String message) {
-    super(message);
-  }
+    public TypeException(String message) {
+        super(message);
+    }
 
-  public TypeException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public TypeException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public TypeException(Throwable cause) {
-    super(cause);
-  }
+    public TypeException(Throwable cause) {
+        super(cause);
+    }
 
 }

@@ -27,46 +27,42 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class BatchTest
-{
+public class BatchTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create an SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/batch_test/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create an SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/batch_test/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/batch_test/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/batch_test/CreateDB.sql");
-  }
+    @Test
+    public void shouldGetAUserNoException() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)) {
+            try {
+                Mapper mapper = sqlSession.getMapper(Mapper.class);
 
-  @Test
-  public void shouldGetAUserNoException() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH,false)) {
-      try {
-        Mapper mapper = sqlSession.getMapper(Mapper.class);
+                User user = mapper.getUser(1);
 
-        User user = mapper.getUser(1);
+                user.setId(2);
+                user.setName("User2");
+                mapper.insertUser(user);
+                Assert.assertEquals("Dept1", mapper.getUser(2).getDept().getName());
+            } finally {
+                sqlSession.commit();
+            }
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
 
-        user.setId(2);
-        user.setName("User2");
-        mapper.insertUser(user);
-        Assert.assertEquals("Dept1", mapper.getUser(2).getDept().getName());
-      } finally {
-        sqlSession.commit();
-      }
+        }
     }
-    catch (Exception e)
-    {
-      Assert.fail(e.getMessage());
-
-    }
-  }
-
 
 
 }

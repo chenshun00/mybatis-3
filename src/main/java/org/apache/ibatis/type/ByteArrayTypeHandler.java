@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,27 +25,27 @@ import java.sql.SQLException;
  */
 public class ByteArrayTypeHandler extends BaseTypeHandler<byte[]> {
 
-  @Override
-  public void setNonNullParameter(PreparedStatement ps, int i, byte[] parameter, JdbcType jdbcType)
-      throws SQLException {
-    ps.setBytes(i, parameter);
-  }
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, byte[] parameter, JdbcType jdbcType)
+            throws SQLException {
+        ps.setBytes(i, parameter);
+    }
 
-  @Override
-  public byte[] getNullableResult(ResultSet rs, String columnName)
-      throws SQLException {
-    return rs.getBytes(columnName);
-  }
+    @Override
+    public byte[] getNullableResult(ResultSet rs, String columnName)
+            throws SQLException {
+        return rs.getBytes(columnName);
+    }
 
-  @Override
-  public byte[] getNullableResult(ResultSet rs, int columnIndex)
-      throws SQLException {
-    return rs.getBytes(columnIndex);
-  }
+    @Override
+    public byte[] getNullableResult(ResultSet rs, int columnIndex)
+            throws SQLException {
+        return rs.getBytes(columnIndex);
+    }
 
-  @Override
-  public byte[] getNullableResult(CallableStatement cs, int columnIndex)
-      throws SQLException {
-    return cs.getBytes(columnIndex);
-  }
+    @Override
+    public byte[] getNullableResult(CallableStatement cs, int columnIndex)
+            throws SQLException {
+        return cs.getBytes(columnIndex);
+    }
 }

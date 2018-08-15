@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package org.apache.ibatis.submitted.usesjava8.default_method;
 import org.apache.ibatis.annotations.Select;
 
 interface PackageMapper {
-  @Select("select * from users where id = #{id}")
-  User getUserById(Integer id);
+    @Select("select * from users where id = #{id}")
+    User getUserById(Integer id);
 
-  default User defaultGetUser(Object... args) {
-    return getUserById((Integer) args[0]);
-  }
+    default User defaultGetUser(Object... args) {
+        return getUserById((Integer) args[0]);
+    }
 }

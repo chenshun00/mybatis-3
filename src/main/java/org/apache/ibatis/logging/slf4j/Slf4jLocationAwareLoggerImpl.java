@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,50 +25,50 @@ import org.slf4j.spi.LocationAwareLogger;
  * @author Eduardo Macarron
  */
 class Slf4jLocationAwareLoggerImpl implements Log {
-  
-  private static final Marker MARKER = MarkerFactory.getMarker(LogFactory.MARKER);
 
-  private static final String FQCN = Slf4jImpl.class.getName();
+    private static final Marker MARKER = MarkerFactory.getMarker(LogFactory.MARKER);
 
-  private final LocationAwareLogger logger;
+    private static final String FQCN = Slf4jImpl.class.getName();
 
-  Slf4jLocationAwareLoggerImpl(LocationAwareLogger logger) {
-    this.logger = logger;
-  }
+    private final LocationAwareLogger logger;
 
-  @Override
-  public boolean isDebugEnabled() {
-    return logger.isDebugEnabled();
-  }
+    Slf4jLocationAwareLoggerImpl(LocationAwareLogger logger) {
+        this.logger = logger;
+    }
 
-  @Override
-  public boolean isTraceEnabled() {
-    return logger.isTraceEnabled();
-  }
+    @Override
+    public boolean isDebugEnabled() {
+        return logger.isDebugEnabled();
+    }
 
-  @Override
-  public void error(String s, Throwable e) {
-    logger.log(MARKER, FQCN, LocationAwareLogger.ERROR_INT, s, null, e);
-  }
+    @Override
+    public boolean isTraceEnabled() {
+        return logger.isTraceEnabled();
+    }
 
-  @Override
-  public void error(String s) {
-    logger.log(MARKER, FQCN, LocationAwareLogger.ERROR_INT, s, null, null);
-  }
+    @Override
+    public void error(String s, Throwable e) {
+        logger.log(MARKER, FQCN, LocationAwareLogger.ERROR_INT, s, null, e);
+    }
 
-  @Override
-  public void debug(String s) {
-    logger.log(MARKER, FQCN, LocationAwareLogger.DEBUG_INT, s, null, null);
-  }
+    @Override
+    public void error(String s) {
+        logger.log(MARKER, FQCN, LocationAwareLogger.ERROR_INT, s, null, null);
+    }
 
-  @Override
-  public void trace(String s) {
-    logger.log(MARKER, FQCN, LocationAwareLogger.TRACE_INT, s, null, null);
-  }
+    @Override
+    public void debug(String s) {
+        logger.log(MARKER, FQCN, LocationAwareLogger.DEBUG_INT, s, null, null);
+    }
 
-  @Override
-  public void warn(String s) {
-    logger.log(MARKER, FQCN, LocationAwareLogger.WARN_INT, s, null, null);
-  }
+    @Override
+    public void trace(String s) {
+        logger.log(MARKER, FQCN, LocationAwareLogger.TRACE_INT, s, null, null);
+    }
+
+    @Override
+    public void warn(String s) {
+        logger.log(MARKER, FQCN, LocationAwareLogger.WARN_INT, s, null, null);
+    }
 
 }

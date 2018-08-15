@@ -30,9 +30,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class EnumWithOgnlTest {
-    
+
     private static SqlSessionFactory sqlSessionFactory;
-    
+
     @BeforeClass
     public static void initDatabase() throws Exception {
         try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/ognl_enum/ibatisConfig.xml")) {
@@ -42,7 +42,7 @@ public class EnumWithOgnlTest {
         BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
                 "org/apache/ibatis/submitted/ognl_enum/CreateDB.sql");
     }
-    
+
     @Test
     public void testEnumWithOgnl() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
@@ -52,7 +52,7 @@ public class EnumWithOgnlTest {
         }
     }
 
-  @Test
+    @Test
     public void testEnumWithOgnlDirector() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
@@ -70,7 +70,7 @@ public class EnumWithOgnlTest {
         }
     }
 
-  @Test
+    @Test
     public void testEnumWithOgnlDirectorWithInterface() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
@@ -83,6 +83,7 @@ public class EnumWithOgnlTest {
             Assert.assertEquals("Persons must contain 1 persons", 1, persons.size());
         }
     }
+
     @Test
     public void testEnumWithOgnlDirectorNameAttributeWithInterface() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {

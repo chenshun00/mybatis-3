@@ -28,63 +28,63 @@ import org.junit.Test;
 
 public class ZonedDateTimeTypeHandlerTest extends BaseTypeHandlerTest {
 
-  private static final TypeHandler<ZonedDateTime> TYPE_HANDLER = new ZonedDateTimeTypeHandler();
-  private static final ZonedDateTime ZONED_DATE_TIME = ZonedDateTime.now();
-  private static final Timestamp TIMESTAMP = Timestamp.from(ZONED_DATE_TIME.toInstant());
+    private static final TypeHandler<ZonedDateTime> TYPE_HANDLER = new ZonedDateTimeTypeHandler();
+    private static final ZonedDateTime ZONED_DATE_TIME = ZonedDateTime.now();
+    private static final Timestamp TIMESTAMP = Timestamp.from(ZONED_DATE_TIME.toInstant());
 
-  @Override
-  @Test
-  public void shouldSetParameter() throws Exception {
-    TYPE_HANDLER.setParameter(ps, 1, ZONED_DATE_TIME, null);
-    verify(ps).setTimestamp(1, TIMESTAMP);
-  }
+    @Override
+    @Test
+    public void shouldSetParameter() throws Exception {
+        TYPE_HANDLER.setParameter(ps, 1, ZONED_DATE_TIME, null);
+        verify(ps).setTimestamp(1, TIMESTAMP);
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultFromResultSetByName() throws Exception {
-    when(rs.getTimestamp("column")).thenReturn(TIMESTAMP);
-    assertEquals(ZONED_DATE_TIME, TYPE_HANDLER.getResult(rs, "column"));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultFromResultSetByName() throws Exception {
+        when(rs.getTimestamp("column")).thenReturn(TIMESTAMP);
+        assertEquals(ZONED_DATE_TIME, TYPE_HANDLER.getResult(rs, "column"));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultNullFromResultSetByName() throws Exception {
-    when(rs.getTimestamp("column")).thenReturn(null);
-    assertNull(TYPE_HANDLER.getResult(rs, "column"));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultNullFromResultSetByName() throws Exception {
+        when(rs.getTimestamp("column")).thenReturn(null);
+        assertNull(TYPE_HANDLER.getResult(rs, "column"));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultFromResultSetByPosition() throws Exception {
-    when(rs.getTimestamp(1)).thenReturn(TIMESTAMP);
-    assertEquals(ZONED_DATE_TIME, TYPE_HANDLER.getResult(rs, 1));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultFromResultSetByPosition() throws Exception {
+        when(rs.getTimestamp(1)).thenReturn(TIMESTAMP);
+        assertEquals(ZONED_DATE_TIME, TYPE_HANDLER.getResult(rs, 1));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultNullFromResultSetByPosition() throws Exception {
-    when(rs.getTimestamp(1)).thenReturn(null);
-    assertNull(TYPE_HANDLER.getResult(rs, 1));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultNullFromResultSetByPosition() throws Exception {
+        when(rs.getTimestamp(1)).thenReturn(null);
+        assertNull(TYPE_HANDLER.getResult(rs, 1));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultFromCallableStatement() throws Exception {
-    when(cs.getTimestamp(1)).thenReturn(TIMESTAMP);
-    assertEquals(ZONED_DATE_TIME, TYPE_HANDLER.getResult(cs, 1));
-    verify(cs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultFromCallableStatement() throws Exception {
+        when(cs.getTimestamp(1)).thenReturn(TIMESTAMP);
+        assertEquals(ZONED_DATE_TIME, TYPE_HANDLER.getResult(cs, 1));
+        verify(cs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultNullFromCallableStatement() throws Exception {
-    when(cs.getTimestamp(1)).thenReturn(null);
-    assertNull(TYPE_HANDLER.getResult(cs, 1));
-    verify(cs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultNullFromCallableStatement() throws Exception {
+        when(cs.getTimestamp(1)).thenReturn(null);
+        assertNull(TYPE_HANDLER.getResult(cs, 1));
+        verify(cs, never()).wasNull();
+    }
 
 }

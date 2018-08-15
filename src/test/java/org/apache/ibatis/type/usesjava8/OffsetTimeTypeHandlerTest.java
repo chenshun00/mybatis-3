@@ -28,63 +28,63 @@ import org.junit.Test;
 
 public class OffsetTimeTypeHandlerTest extends BaseTypeHandlerTest {
 
-  private static final TypeHandler<OffsetTime> TYPE_HANDLER = new OffsetTimeTypeHandler();
-  // java.sql.Time doesn't contain millis, so set nano to 0
-  private static final OffsetTime OFFSET_TIME = OffsetTime.now().withNano(0);
-  private static final Time TIME = Time.valueOf(OFFSET_TIME.toLocalTime());
+    private static final TypeHandler<OffsetTime> TYPE_HANDLER = new OffsetTimeTypeHandler();
+    // java.sql.Time doesn't contain millis, so set nano to 0
+    private static final OffsetTime OFFSET_TIME = OffsetTime.now().withNano(0);
+    private static final Time TIME = Time.valueOf(OFFSET_TIME.toLocalTime());
 
-  @Override
-  @Test
-  public void shouldSetParameter() throws Exception {
-    TYPE_HANDLER.setParameter(ps, 1, OFFSET_TIME, null);
-    verify(ps).setTime(1, TIME);
-  }
+    @Override
+    @Test
+    public void shouldSetParameter() throws Exception {
+        TYPE_HANDLER.setParameter(ps, 1, OFFSET_TIME, null);
+        verify(ps).setTime(1, TIME);
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultFromResultSetByName() throws Exception {
-    when(rs.getTime("column")).thenReturn(TIME);
-    assertEquals(OFFSET_TIME, TYPE_HANDLER.getResult(rs, "column"));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultFromResultSetByName() throws Exception {
+        when(rs.getTime("column")).thenReturn(TIME);
+        assertEquals(OFFSET_TIME, TYPE_HANDLER.getResult(rs, "column"));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultNullFromResultSetByName() throws Exception {
-    when(rs.getTime("column")).thenReturn(null);
-    assertNull(TYPE_HANDLER.getResult(rs, "column"));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultNullFromResultSetByName() throws Exception {
+        when(rs.getTime("column")).thenReturn(null);
+        assertNull(TYPE_HANDLER.getResult(rs, "column"));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultFromResultSetByPosition() throws Exception {
-    when(rs.getTime(1)).thenReturn(TIME);
-    assertEquals(OFFSET_TIME, TYPE_HANDLER.getResult(rs, 1));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultFromResultSetByPosition() throws Exception {
+        when(rs.getTime(1)).thenReturn(TIME);
+        assertEquals(OFFSET_TIME, TYPE_HANDLER.getResult(rs, 1));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultNullFromResultSetByPosition() throws Exception {
-    when(rs.getTime(1)).thenReturn(null);
-    assertNull(TYPE_HANDLER.getResult(rs, 1));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultNullFromResultSetByPosition() throws Exception {
+        when(rs.getTime(1)).thenReturn(null);
+        assertNull(TYPE_HANDLER.getResult(rs, 1));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultFromCallableStatement() throws Exception {
-    when(cs.getTime(1)).thenReturn(TIME);
-    assertEquals(OFFSET_TIME, TYPE_HANDLER.getResult(cs, 1));
-    verify(cs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultFromCallableStatement() throws Exception {
+        when(cs.getTime(1)).thenReturn(TIME);
+        assertEquals(OFFSET_TIME, TYPE_HANDLER.getResult(cs, 1));
+        verify(cs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultNullFromCallableStatement() throws Exception {
-    when(cs.getTime(1)).thenReturn(null);
-    assertNull(TYPE_HANDLER.getResult(cs, 1));
-    verify(cs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultNullFromCallableStatement() throws Exception {
+        when(cs.getTime(1)).thenReturn(null);
+        assertNull(TYPE_HANDLER.getResult(cs, 1));
+        verify(cs, never()).wasNull();
+    }
 }

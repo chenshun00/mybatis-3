@@ -32,94 +32,94 @@ import org.junit.Test;
 
 public class NestedForEachTest {
 
-  protected static SqlSessionFactory sqlSessionFactory;
-  
-  @BeforeClass
-  public static void setUp() throws Exception {
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/nested/MapperConfig.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    protected static SqlSessionFactory sqlSessionFactory;
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/nested/MapperConfig.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/nested/CreateDB.sql");
     }
 
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/nested/CreateDB.sql");
-  }
+    @Test
+    public void testSimpleSelect() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Name name = new Name();
+            name.setLastName("Flintstone");
+            Parameter parameter = new Parameter();
+            parameter.addName(name);
 
-  @Test
-  public void testSimpleSelect() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Name name = new Name();
-      name.setLastName("Flintstone");
-      Parameter parameter = new Parameter();
-      parameter.addName(name);
+            List<Map<String, Object>> answer =
+                    sqlSession.selectList("org.apache.ibatis.submitted.nested.Mapper.simpleSelect", parameter);
 
-      List<Map<String, Object>> answer =
-          sqlSession.selectList("org.apache.ibatis.submitted.nested.Mapper.simpleSelect", parameter);
-
-      assertEquals(3, answer.size());
+            assertEquals(3, answer.size());
+        }
     }
-  }
 
-  @Test
-  public void testSimpleSelectWithPrimitives() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Map<String, Object> parameter = new HashMap<String, Object>();
-      int[] array = new int[] {1, 3, 5};
-      parameter.put("ids", array);
+    @Test
+    public void testSimpleSelectWithPrimitives() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Map<String, Object> parameter = new HashMap<String, Object>();
+            int[] array = new int[]{1, 3, 5};
+            parameter.put("ids", array);
 
-      List<Map<String, Object>> answer =
-          sqlSession.selectList("org.apache.ibatis.submitted.nested.Mapper.simpleSelectWithPrimitives", parameter);
+            List<Map<String, Object>> answer =
+                    sqlSession.selectList("org.apache.ibatis.submitted.nested.Mapper.simpleSelectWithPrimitives", parameter);
 
-      assertEquals(3, answer.size());
+            assertEquals(3, answer.size());
+        }
     }
-  }
 
-  @Test
-  public void testSimpleSelectWithMapperAndPrimitives() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      List<Map<String, Object>> answer = mapper.simpleSelectWithMapperAndPrimitives(1, 3, 5);
-      assertEquals(3, answer.size());
+    @Test
+    public void testSimpleSelectWithMapperAndPrimitives() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            List<Map<String, Object>> answer = mapper.simpleSelectWithMapperAndPrimitives(1, 3, 5);
+            assertEquals(3, answer.size());
+        }
     }
-  }
-  
-  @Test
-  public void testNestedSelect() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Name name = new Name();
-      name.setLastName("Flintstone");
-      name.addFirstName("Fred");
-      name.addFirstName("Wilma");
 
-      Parameter parameter = new Parameter();
-      parameter.addName(name);
+    @Test
+    public void testNestedSelect() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Name name = new Name();
+            name.setLastName("Flintstone");
+            name.addFirstName("Fred");
+            name.addFirstName("Wilma");
 
-      List<Map<String, Object>> answer =
-          sqlSession.selectList("org.apache.ibatis.submitted.nested.Mapper.nestedSelect", parameter);
+            Parameter parameter = new Parameter();
+            parameter.addName(name);
 
-      assertEquals(2, answer.size());
+            List<Map<String, Object>> answer =
+                    sqlSession.selectList("org.apache.ibatis.submitted.nested.Mapper.nestedSelect", parameter);
+
+            assertEquals(2, answer.size());
+        }
     }
-  }
 
-  @Test
-  public void testNestedSelect2() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Name name = new Name();
-      name.setLastName("Flintstone");
-      name.addFirstName("Fred");
-      name.addFirstName("Wilma");
+    @Test
+    public void testNestedSelect2() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Name name = new Name();
+            name.setLastName("Flintstone");
+            name.addFirstName("Fred");
+            name.addFirstName("Wilma");
 
-      Parameter parameter = new Parameter();
-      parameter.addName(name);
+            Parameter parameter = new Parameter();
+            parameter.addName(name);
 
-      name = new Name();
-      name.setLastName("Rubble");
-      name.addFirstName("Betty");
-      parameter.addName(name);
+            name = new Name();
+            name.setLastName("Rubble");
+            name.addFirstName("Betty");
+            parameter.addName(name);
 
-      List<Map<String, Object>> answer =
-          sqlSession.selectList("org.apache.ibatis.submitted.nested.Mapper.nestedSelect", parameter);
+            List<Map<String, Object>> answer =
+                    sqlSession.selectList("org.apache.ibatis.submitted.nested.Mapper.nestedSelect", parameter);
 
-      assertEquals(3, answer.size());
+            assertEquals(3, answer.size());
+        }
     }
-  }
 }

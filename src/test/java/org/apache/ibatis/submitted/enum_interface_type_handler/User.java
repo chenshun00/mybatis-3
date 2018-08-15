@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,22 +17,22 @@ package org.apache.ibatis.submitted.enum_interface_type_handler;
 
 public class User {
 
-  private Integer id;
-  private Color color;
+    private Integer id;
+    private Color color;
 
-  public Integer getId() {
-    return id;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public Color getColor() {
-    return color;
-  }
+    public Color getColor() {
+        return color;
+    }
 
-  public void setColor(Color color) {
-    this.color = color;
-  }
+    public void setColor(Color color) {
+        this.color = color;
+    }
 }

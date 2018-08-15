@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,23 +13,22 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
 package org.apache.ibatis.submitted.enum_interface_type_handler;
 
 public enum Color implements HasValue {
-  WHITE {
-    public int getValue() {
-      return 1;
+    WHITE {
+        public int getValue() {
+            return 1;
+        }
+    },
+    RED {
+        public int getValue() {
+            return 2;
+        }
+    },
+    BLUE {
+        public int getValue() {
+            return 3;
+        }
     }
-  },
-  RED {
-    public int getValue() {
-      return 2;
-    }
-  },
-  BLUE {
-    public int getValue() {
-      return 3;
-    }
-  }
 }

@@ -31,60 +31,60 @@ import static org.junit.Assert.*;
 
 public class NestedQueryCacheTest extends BaseDataTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/nested_query_cache/MapperConfig.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/nested_query_cache/MapperConfig.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        createBlogDataSource();
     }
 
-    createBlogDataSource();
-  }
+    @Test
+    public void testThatNestedQueryItemsAreRetrievedFromCache() throws Exception {
+        final Author author;
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            final AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
+            author = authorMapper.selectAuthor(101);
 
-  @Test
-  public void testThatNestedQueryItemsAreRetrievedFromCache() throws Exception {
-    final Author author;
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      final AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-      author = authorMapper.selectAuthor(101);
-      
-      // ensure that author is cached
-      final Author cachedAuthor = authorMapper.selectAuthor(101);
-      assertThat(author).isSameAs(cachedAuthor);
+            // ensure that author is cached
+            final Author cachedAuthor = authorMapper.selectAuthor(101);
+            assertThat(author).isSameAs(cachedAuthor);
+        }
+
+        // open a new session
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            final BlogMapper blogMapper = sqlSession.getMapper(BlogMapper.class);
+
+            // ensure that nested author within blog is cached
+            assertThat(blogMapper.selectBlog(1).getAuthor()).isSameAs(author);
+            assertThat(blogMapper.selectBlogUsingConstructor(1).getAuthor()).isSameAs(author);
+        }
     }
 
-    // open a new session
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      final BlogMapper blogMapper = sqlSession.getMapper(BlogMapper.class);
+    @Test
+    public void testThatNestedQueryItemsAreRetrievedIfNotInCache() throws Exception {
+        Author author;
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            final BlogMapper blogMapper = sqlSession.getMapper(BlogMapper.class);
+            author = blogMapper.selectBlog(1).getAuthor();
 
-      // ensure that nested author within blog is cached
-      assertThat(blogMapper.selectBlog(1).getAuthor()).isSameAs(author);
-      assertThat(blogMapper.selectBlogUsingConstructor(1).getAuthor()).isSameAs(author);
-    }
-  }
-  
-  @Test
-  public void testThatNestedQueryItemsAreRetrievedIfNotInCache() throws Exception {
-    Author author;
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      final BlogMapper blogMapper = sqlSession.getMapper(BlogMapper.class);
-      author = blogMapper.selectBlog(1).getAuthor();
-      
-      // ensure that nested author within blog is cached
-      assertNotNull("blog author", blogMapper.selectBlog(1).getAuthor());
-      assertNotNull("blog author", blogMapper.selectBlogUsingConstructor(1).getAuthor());
-    }
+            // ensure that nested author within blog is cached
+            assertNotNull("blog author", blogMapper.selectBlog(1).getAuthor());
+            assertNotNull("blog author", blogMapper.selectBlogUsingConstructor(1).getAuthor());
+        }
 
-    // open a new session
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      final AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-      Author cachedAuthor = authorMapper.selectAuthor(101);
+        // open a new session
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            final AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
+            Author cachedAuthor = authorMapper.selectAuthor(101);
 
-      // ensure that nested author within blog is cached
-      assertThat(cachedAuthor).isSameAs(author);
+            // ensure that nested author within blog is cached
+            assertThat(cachedAuthor).isSameAs(author);
+        }
+
     }
-    
-  }  
 }

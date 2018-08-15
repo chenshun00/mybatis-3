@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,19 +17,19 @@ package org.apache.ibatis.submitted.manyanno;
 
 public class AnnoPostTag {
 
-  private int id;
-  private String name;
+    private int id;
+    private String name;
 
-  public AnnoPostTag(int id, String name) {
-    this.id = id;
-    this.name = name;
-  }
+    public AnnoPostTag(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 }

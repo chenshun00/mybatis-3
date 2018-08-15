@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,31 +26,31 @@ import java.sql.SQLException;
  */
 public class ArrayTypeHandler extends BaseTypeHandler<Object> {
 
-  public ArrayTypeHandler() {
-    super();
-  }
+    public ArrayTypeHandler() {
+        super();
+    }
 
-  @Override
-  public void setNonNullParameter(PreparedStatement ps, int i, Object parameter, JdbcType jdbcType) throws SQLException {
-    ps.setArray(i, (Array) parameter);
-  }
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, Object parameter, JdbcType jdbcType) throws SQLException {
+        ps.setArray(i, (Array) parameter);
+    }
 
-  @Override
-  public Object getNullableResult(ResultSet rs, String columnName) throws SQLException {
-    Array array = rs.getArray(columnName);
-    return array == null ? null : array.getArray();
-  }
+    @Override
+    public Object getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        Array array = rs.getArray(columnName);
+        return array == null ? null : array.getArray();
+    }
 
-  @Override
-  public Object getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-    Array array = rs.getArray(columnIndex);
-    return array == null ? null : array.getArray();
-  }
+    @Override
+    public Object getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        Array array = rs.getArray(columnIndex);
+        return array == null ? null : array.getArray();
+    }
 
-  @Override
-  public Object getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-    Array array = cs.getArray(columnIndex);
-    return array == null ? null : array.getArray();
-  }
+    @Override
+    public Object getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        Array array = cs.getArray(columnIndex);
+        return array == null ? null : array.getArray();
+    }
 
 }

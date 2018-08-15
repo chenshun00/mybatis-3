@@ -50,8 +50,8 @@ public class BlobTest {
     public void testInsertBlobThenSelectAll() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             BlobMapper blobMapper = sqlSession.getMapper(BlobMapper.class);
-            
-            byte[] myblob = new byte[] {1, 2, 3, 4, 5};
+
+            byte[] myblob = new byte[]{1, 2, 3, 4, 5};
             BlobRecord blobRecord = new BlobRecord(1, myblob);
             int rows = blobMapper.insert(blobRecord);
             assertEquals(1, rows);
@@ -61,8 +61,8 @@ public class BlobTest {
 
             assertEquals(1, results.size());
             BlobRecord result = results.get(0);
-            assertEquals (blobRecord.getId(), result.getId());
-            assertTrue (blobsAreEqual(blobRecord.getBlob(), result.getBlob()));
+            assertEquals(blobRecord.getId(), result.getId());
+            assertTrue(blobsAreEqual(blobRecord.getBlob(), result.getBlob()));
         }
     }
 
@@ -75,7 +75,7 @@ public class BlobTest {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             BlobMapper blobMapper = sqlSession.getMapper(BlobMapper.class);
 
-            Byte[] myblob = new Byte[] {1, 2, 3, 4, 5};
+            Byte[] myblob = new Byte[]{1, 2, 3, 4, 5};
             BlobRecord blobRecord = new BlobRecord(1, myblob);
             int rows = blobMapper.insert(blobRecord);
             assertEquals(1, rows);
@@ -85,8 +85,8 @@ public class BlobTest {
 
             assertEquals(1, results.size());
             BlobRecord result = results.get(0);
-            assertEquals (blobRecord.getId(), result.getId());
-            assertTrue (blobsAreEqual(blobRecord.getBlob(), result.getBlob()));
+            assertEquals(blobRecord.getId(), result.getId());
+            assertTrue(blobsAreEqual(blobRecord.getBlob(), result.getBlob()));
         }
     }
 

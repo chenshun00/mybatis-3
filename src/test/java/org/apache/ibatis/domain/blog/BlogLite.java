@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,22 +19,22 @@ import java.util.List;
 
 public class BlogLite {
 
-  private int id;
-  private List<PostLite> posts;
+    private int id;
+    private List<PostLite> posts;
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public List<PostLite> getPosts() {
-    return posts;
-  }
+    public List<PostLite> getPosts() {
+        return posts;
+    }
 
-  public void setPosts(List<PostLite> posts) {
-    this.posts = posts;
-  }
+    public void setPosts(List<PostLite> posts) {
+        this.posts = posts;
+    }
 }

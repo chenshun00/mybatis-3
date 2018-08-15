@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,22 +21,22 @@ package org.apache.ibatis.exceptions;
 @Deprecated
 public class IbatisException extends RuntimeException {
 
-  private static final long serialVersionUID = 3880206998166270511L;
+    private static final long serialVersionUID = 3880206998166270511L;
 
-  public IbatisException() {
-    super();
-  }
+    public IbatisException() {
+        super();
+    }
 
-  public IbatisException(String message) {
-    super(message);
-  }
+    public IbatisException(String message) {
+        super(message);
+    }
 
-  public IbatisException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public IbatisException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public IbatisException(Throwable cause) {
-    super(cause);
-  }
+    public IbatisException(Throwable cause) {
+        super(cause);
+    }
 
 }

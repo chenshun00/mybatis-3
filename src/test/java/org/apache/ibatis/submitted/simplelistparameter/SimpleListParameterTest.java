@@ -30,50 +30,50 @@ import org.junit.Test;
 
 public class SimpleListParameterTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/simplelistparameter/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/simplelistparameter/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/simplelistparameter/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/simplelistparameter/CreateDB.sql");
-  }
-
-  @Test
-  public void shouldGetACar() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      CarMapper carMapper = sqlSession.getMapper(CarMapper.class);
-      Car car = new Car();
-      car.setDoors(Arrays.asList(new String[] {"2", "4"}));
-      List<Car> cars = carMapper.getCar(car);
-      Assert.assertNotNull(cars);
+    @Test
+    public void shouldGetACar() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            CarMapper carMapper = sqlSession.getMapper(CarMapper.class);
+            Car car = new Car();
+            car.setDoors(Arrays.asList(new String[]{"2", "4"}));
+            List<Car> cars = carMapper.getCar(car);
+            Assert.assertNotNull(cars);
+        }
     }
-  }
 
-  @Test
-  public void shouldResolveGenericFieldGetterType() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      CarMapper carMapper = sqlSession.getMapper(CarMapper.class);
-      Rv rv = new Rv();
-      rv.doors1 = Arrays.asList(new String[] {"2", "4"});
-      List<Rv> rvs = carMapper.getRv1(rv);
-      Assert.assertNotNull(rvs);
+    @Test
+    public void shouldResolveGenericFieldGetterType() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            CarMapper carMapper = sqlSession.getMapper(CarMapper.class);
+            Rv rv = new Rv();
+            rv.doors1 = Arrays.asList(new String[]{"2", "4"});
+            List<Rv> rvs = carMapper.getRv1(rv);
+            Assert.assertNotNull(rvs);
+        }
     }
-  }
 
-  @Test
-  public void shouldResolveGenericMethodGetterType() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      CarMapper carMapper = sqlSession.getMapper(CarMapper.class);
-      Rv rv = new Rv();
-      rv.setDoors2(Arrays.asList(new String[] {"2", "4"}));
-      List<Rv> rvs = carMapper.getRv2(rv);
-      Assert.assertNotNull(rvs);
+    @Test
+    public void shouldResolveGenericMethodGetterType() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            CarMapper carMapper = sqlSession.getMapper(CarMapper.class);
+            Rv rv = new Rv();
+            rv.setDoors2(Arrays.asList(new String[]{"2", "4"}));
+            List<Rv> rvs = carMapper.getRv2(rv);
+            Assert.assertNotNull(rvs);
+        }
     }
-  }
 }

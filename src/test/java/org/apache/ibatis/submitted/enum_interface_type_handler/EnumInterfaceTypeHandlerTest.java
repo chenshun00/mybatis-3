@@ -29,40 +29,40 @@ import org.junit.Test;
 
 public class EnumInterfaceTypeHandlerTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create an SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader(
-        "org/apache/ibatis/submitted/enum_interface_type_handler/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create an SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader(
+                "org/apache/ibatis/submitted/enum_interface_type_handler/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/enum_interface_type_handler/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/enum_interface_type_handler/CreateDB.sql");
-  }
-
-  @Test
-  public void shouldGetAUser() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      User user = mapper.getUser(1);
-      assertEquals(Color.RED, user.getColor());
+    @Test
+    public void shouldGetAUser() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            User user = mapper.getUser(1);
+            assertEquals(Color.RED, user.getColor());
+        }
     }
-  }
 
-  @Test
-  public void shouldInsertAUser() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      User user = new User();
-      user.setId(2);
-      user.setColor(Color.BLUE);
-      mapper.insertUser(user);
-      User result = mapper.getUser(2);
-      assertEquals(Color.BLUE, result.getColor());
+    @Test
+    public void shouldInsertAUser() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            User user = new User();
+            user.setId(2);
+            user.setColor(Color.BLUE);
+            mapper.insertUser(user);
+            User result = mapper.getUser(2);
+            assertEquals(Color.BLUE, result.getColor());
+        }
     }
-  }
 }

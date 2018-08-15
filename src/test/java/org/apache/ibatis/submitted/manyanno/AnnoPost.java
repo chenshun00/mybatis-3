@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,41 +19,41 @@ import java.util.List;
 
 public class AnnoPost {
 
-  private int id;
-  private String subject;
-  private String body;
+    private int id;
+    private String subject;
+    private String body;
 
-  private List<AnnoPostTag> tags;
+    private List<AnnoPostTag> tags;
 
-  public String getBody() {
-    return body;
-  }
+    public String getBody() {
+        return body;
+    }
 
-  public void setBody(String body) {
-    this.body = body;
-  }
+    public void setBody(String body) {
+        this.body = body;
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public String getSubject() {
-    return subject;
-  }
+    public String getSubject() {
+        return subject;
+    }
 
-  public void setSubject(String subject) {
-    this.subject = subject;
-  }
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 
-  public List<AnnoPostTag> getTags() {
-    return tags;
-  }
+    public List<AnnoPostTag> getTags() {
+        return tags;
+    }
 
-  public void setTags(List<AnnoPostTag> tags) {
-    this.tags = tags;
-  }
+    public void setTags(List<AnnoPostTag> tags) {
+        this.tags = tags;
+    }
 }

@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,17 +16,17 @@
 package org.apache.ibatis.submitted.column_prefix;
 
 public class AddressWithCaution extends Address {
-  private String caution;
+    private String caution;
 
-  public AddressWithCaution(Integer id, String state) {
-    super(id, state);
-  }
+    public AddressWithCaution(Integer id, String state) {
+        super(id, state);
+    }
 
-  public String getCaution() {
-    return caution;
-  }
+    public String getCaution() {
+        return caution;
+    }
 
-  public void setCaution(String caution) {
-    this.caution = caution;
-  }
+    public void setCaution(String caution) {
+        this.caution = caution;
+    }
 }

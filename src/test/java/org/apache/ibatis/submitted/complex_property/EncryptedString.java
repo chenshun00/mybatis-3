@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,29 +16,29 @@
 package org.apache.ibatis.submitted.complex_property;
 
 public class EncryptedString {
-  private String encrypted;
+    private String encrypted;
 
-  public EncryptedString() {
-    setEncrypted(null);
-  }
+    public EncryptedString() {
+        setEncrypted(null);
+    }
 
-  public EncryptedString(String message) {
-    this();
+    public EncryptedString(String message) {
+        this();
 
-    //encrypt the message.
-    setEncrypted(message);
-  }
+        //encrypt the message.
+        setEncrypted(message);
+    }
 
-  public String decrypt() {
-    return encrypted;
-  }
+    public String decrypt() {
+        return encrypted;
+    }
 
-  public String getEncrypted() {
-    return encrypted;
-  }
+    public String getEncrypted() {
+        return encrypted;
+    }
 
-  public void setEncrypted(String arg) {
-    this.encrypted = arg;
-  }
+    public void setEncrypted(String arg) {
+        this.encrypted = arg;
+    }
 
 }

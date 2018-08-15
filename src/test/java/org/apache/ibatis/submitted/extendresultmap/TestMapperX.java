@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Select;
 
 public interface TestMapperX {
-  @Select("SELECT * FROM test AS t LIMIT 1")
-  @ResultMap("map")
-  TestModel retrieveTestString();
+    @Select("SELECT * FROM test AS t LIMIT 1")
+    @ResultMap("map")
+    TestModel retrieveTestString();
 }

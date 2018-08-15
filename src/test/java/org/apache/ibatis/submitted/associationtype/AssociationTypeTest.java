@@ -31,29 +31,29 @@ import org.junit.Test;
 
 public class AssociationTypeTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/associationtype/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/associationtype/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/associationtype/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/associationtype/CreateDB.sql");
-  }
-
-  @Test
-  public void shouldGetAUser() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      List<Map> results = sqlSession.selectList("getUser");
-      for (Map r : results) {
-          Assert.assertEquals(String.class, r.get("a1").getClass());
-          Assert.assertEquals(String.class, r.get("a2").getClass());
-      }
+    @Test
+    public void shouldGetAUser() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            List<Map> results = sqlSession.selectList("getUser");
+            for (Map r : results) {
+                Assert.assertEquals(String.class, r.get("a1").getClass());
+                Assert.assertEquals(String.class, r.get("a2").getClass());
+            }
+        }
     }
-  }
 
 }

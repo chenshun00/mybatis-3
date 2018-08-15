@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,26 +19,28 @@ public class Child extends Base {
     private Integer id;
     private Integer fatherId;
     private String name;
+
     public Integer getId() {
         return id;
     }
+
     public void setId(Integer id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public Integer getFatherId()
-    {
+    public Integer getFatherId() {
         return fatherId;
     }
 
-    public void setFatherId(Integer fatherId)
-    {
+    public void setFatherId(Integer fatherId) {
         this.fatherId = fatherId;
     }
 }

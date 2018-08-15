@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,48 +25,48 @@ import org.apache.logging.log4j.MarkerManager;
  * @author Eduardo Macarron
  */
 public class Log4j2LoggerImpl implements Log {
-  
-  private static final Marker MARKER = MarkerManager.getMarker(LogFactory.MARKER);
 
-  private final Logger log;
+    private static final Marker MARKER = MarkerManager.getMarker(LogFactory.MARKER);
 
-  public Log4j2LoggerImpl(Logger logger) {
-    log = logger;
-  }
+    private final Logger log;
 
-  @Override
-  public boolean isDebugEnabled() {
-    return log.isDebugEnabled();
-  }
+    public Log4j2LoggerImpl(Logger logger) {
+        log = logger;
+    }
 
-  @Override
-  public boolean isTraceEnabled() {
-    return log.isTraceEnabled();
-  }
+    @Override
+    public boolean isDebugEnabled() {
+        return log.isDebugEnabled();
+    }
 
-  @Override
-  public void error(String s, Throwable e) {
-    log.error(MARKER, s, e);
-  }
+    @Override
+    public boolean isTraceEnabled() {
+        return log.isTraceEnabled();
+    }
 
-  @Override
-  public void error(String s) {
-    log.error(MARKER, s);
-  }
+    @Override
+    public void error(String s, Throwable e) {
+        log.error(MARKER, s, e);
+    }
 
-  @Override
-  public void debug(String s) {
-    log.debug(MARKER, s);
-  }
+    @Override
+    public void error(String s) {
+        log.error(MARKER, s);
+    }
 
-  @Override
-  public void trace(String s) {
-    log.trace(MARKER, s);
-  }
+    @Override
+    public void debug(String s) {
+        log.debug(MARKER, s);
+    }
 
-  @Override
-  public void warn(String s) {
-    log.warn(MARKER, s);
-  }
+    @Override
+    public void trace(String s) {
+        log.trace(MARKER, s);
+    }
+
+    @Override
+    public void warn(String s) {
+        log.warn(MARKER, s);
+    }
 
 }

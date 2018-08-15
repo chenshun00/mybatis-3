@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import java.util.Properties;
  */
 public interface Interceptor {
 
-  Object intercept(Invocation invocation) throws Throwable;
+    Object intercept(Invocation invocation) throws Throwable;
 
-  Object plugin(Object target);
+    Object plugin(Object target);
 
-  void setProperties(Properties properties);
+    void setProperties(Properties properties);
 
 }

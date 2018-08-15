@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,19 +22,19 @@ import java.lang.reflect.InvocationTargetException;
  * @author Clinton Begin
  */
 public class GetFieldInvoker implements Invoker {
-  private final Field field;
+    private final Field field;
 
-  public GetFieldInvoker(Field field) {
-    this.field = field;
-  }
+    public GetFieldInvoker(Field field) {
+        this.field = field;
+    }
 
-  @Override
-  public Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException {
-    return field.get(target);
-  }
+    @Override
+    public Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException {
+        return field.get(target);
+    }
 
-  @Override
-  public Class<?> getType() {
-    return field.getType();
-  }
+    @Override
+    public Class<?> getType() {
+        return field.getType();
+    }
 }

@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,17 +21,17 @@ import java.sql.ResultSet;
  * @author Clinton Begin
  */
 public enum ResultSetType {
-  FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
-  SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
-  SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE);
+    FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
+    SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
+    SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE);
 
-  private final int value;
+    private final int value;
 
-  ResultSetType(int value) {
-    this.value = value;
-  }
+    ResultSetType(int value) {
+        this.value = value;
+    }
 
-  public int getValue() {
-    return value;
-  }
+    public int getValue() {
+        return value;
+    }
 }

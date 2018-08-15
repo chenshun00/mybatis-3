@@ -27,59 +27,59 @@ import java.sql.SQLException;
 
 public class FooMapperTest {
 
-  private final static String SQL_MAP_CONFIG = "org/apache/ibatis/submitted/null_associations/sqlmap.xml";
-  private static SqlSession session;
-  private static Connection conn;
+    private final static String SQL_MAP_CONFIG = "org/apache/ibatis/submitted/null_associations/sqlmap.xml";
+    private static SqlSession session;
+    private static Connection conn;
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
-    final SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(Resources.getResourceAsReader(SQL_MAP_CONFIG));
-    session = factory.openSession();
-    conn = session.getConnection();
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        final SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(Resources.getResourceAsReader(SQL_MAP_CONFIG));
+        session = factory.openSession();
+        conn = session.getConnection();
 
-    BaseDataTest.runScript(factory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/null_associations/create-schema-mysql.sql");
-  }
+        BaseDataTest.runScript(factory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/null_associations/create-schema-mysql.sql");
+    }
 
-  @Before
-  public void setUp() {
-    final FooMapper mapper = session.getMapper(FooMapper.class);
-    mapper.deleteAllFoo();
-    session.commit();
-  }
+    @Before
+    public void setUp() {
+        final FooMapper mapper = session.getMapper(FooMapper.class);
+        mapper.deleteAllFoo();
+        session.commit();
+    }
 
-  @Test
-  public void testNullAssociation() {
-    final FooMapper mapper = session.getMapper(FooMapper.class);
-    final Foo foo = new Foo(1L, null, true);
-    mapper.insertFoo(foo);
-    session.commit();
-    final Foo read = mapper.selectFoo();
-    Assert.assertEquals("Invalid mapping", 1L, read.getField1());
-    Assert.assertNull("Invalid mapping - field2 (Bar) should be null", read.getField2());
-    Assert.assertTrue("Invalid mapping", read.isField3());
-  }
+    @Test
+    public void testNullAssociation() {
+        final FooMapper mapper = session.getMapper(FooMapper.class);
+        final Foo foo = new Foo(1L, null, true);
+        mapper.insertFoo(foo);
+        session.commit();
+        final Foo read = mapper.selectFoo();
+        Assert.assertEquals("Invalid mapping", 1L, read.getField1());
+        Assert.assertNull("Invalid mapping - field2 (Bar) should be null", read.getField2());
+        Assert.assertTrue("Invalid mapping", read.isField3());
+    }
 
-  @Test
-  public void testNotNullAssociation() {
-    final FooMapper mapper = session.getMapper(FooMapper.class);
-    final Bar bar = new Bar(1L, 2L, 3L);
-    final Foo foo = new Foo(1L, bar, true);
-    mapper.insertFoo(foo);
-    session.commit();
-    final Foo read = mapper.selectFoo();
-    Assert.assertEquals("Invalid mapping", 1L, read.getField1());
-    Assert.assertNotNull("Bar should be not null", read.getField2());
-    Assert.assertTrue("Invalid mapping", read.isField3());
-    Assert.assertEquals("Invalid mapping", 1L, read.getField2().getField1());
-    Assert.assertEquals("Invalid mapping", 2L, read.getField2().getField2());
-    Assert.assertEquals("Invalid mapping", 3L, read.getField2().getField3());
-  }
+    @Test
+    public void testNotNullAssociation() {
+        final FooMapper mapper = session.getMapper(FooMapper.class);
+        final Bar bar = new Bar(1L, 2L, 3L);
+        final Foo foo = new Foo(1L, bar, true);
+        mapper.insertFoo(foo);
+        session.commit();
+        final Foo read = mapper.selectFoo();
+        Assert.assertEquals("Invalid mapping", 1L, read.getField1());
+        Assert.assertNotNull("Bar should be not null", read.getField2());
+        Assert.assertTrue("Invalid mapping", read.isField3());
+        Assert.assertEquals("Invalid mapping", 1L, read.getField2().getField1());
+        Assert.assertEquals("Invalid mapping", 2L, read.getField2().getField2());
+        Assert.assertEquals("Invalid mapping", 3L, read.getField2().getField3());
+    }
 
-  @AfterClass
-  public static void tearDownAfterClass() throws SQLException {
-    conn.close();
-    session.close();
-  }
+    @AfterClass
+    public static void tearDownAfterClass() throws SQLException {
+        conn.close();
+        session.close();
+    }
 
 }

@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,20 +17,20 @@ package org.apache.ibatis.submitted.dml_return_types;
 
 public interface Mapper {
 
-  User getUser(int id);
+    User getUser(int id);
 
-  void updateReturnsVoid(User user);
+    void updateReturnsVoid(User user);
 
-  int updateReturnsPrimitiveInteger(User user);
+    int updateReturnsPrimitiveInteger(User user);
 
-  Integer updateReturnsInteger(User user);
+    Integer updateReturnsInteger(User user);
 
-  long updateReturnsPrimitiveLong(User user);
+    long updateReturnsPrimitiveLong(User user);
 
-  Long updateReturnsLong(User user);
+    Long updateReturnsLong(User user);
 
-  boolean updateReturnsPrimitiveBoolean(User user);
+    boolean updateReturnsPrimitiveBoolean(User user);
 
-  Boolean updateReturnsBoolean(User user);
+    Boolean updateReturnsBoolean(User user);
 
 }

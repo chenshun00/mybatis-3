@@ -30,9 +30,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class EnumTypeHandlerTest {
-    
+
     private static SqlSessionFactory sqlSessionFactory;
-    
+
     @BeforeClass
     public static void initDatabase() throws Exception {
         try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/enumtypehandler_on_map/ibatisConfig.xml")) {
@@ -42,16 +42,17 @@ public class EnumTypeHandlerTest {
         BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
                 "org/apache/ibatis/submitted/enumtypehandler_on_map/CreateDB.sql");
     }
-    
+
     @Test
     public void testEnumWithParam() {
-        try (SqlSession sqlSession = sqlSessionFactory.openSession() ) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
             List<Person> persons = personMapper.getByType(Person.Type.PERSON, "");
             Assert.assertNotNull("Persons must not be null", persons);
             Assert.assertEquals("Persons must contain exactly 1 person", 1, persons.size());
         }
     }
+
     @Test
     public void testEnumWithoutParam() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {

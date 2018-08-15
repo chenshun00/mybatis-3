@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Select;
 
 public interface PersonMapper {
-  List<Person> doSelect();
+    List<Person> doSelect();
 
-  @Select("select * from person")
-  @MapKey("id")
-  Map<Integer, Person> selectAsMap();
+    @Select("select * from person")
+    @MapKey("id")
+    Map<Integer, Person> selectAsMap();
 }

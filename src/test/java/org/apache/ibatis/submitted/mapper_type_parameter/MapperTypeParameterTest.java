@@ -31,77 +31,77 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class MapperTypeParameterTest {
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create an SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/mapper_type_parameter/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create an SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/mapper_type_parameter/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/mapper_type_parameter/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/mapper_type_parameter/CreateDB.sql");
-  }
-
-  @Test
-  public void shouldResolveReturnType() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      PersonMapper mapper = sqlSession.getMapper(PersonMapper.class);
-      Person person = mapper.select(new Person(1));
-      assertEquals("Jane", person.getName());
+    @Test
+    public void shouldResolveReturnType() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PersonMapper mapper = sqlSession.getMapper(PersonMapper.class);
+            Person person = mapper.select(new Person(1));
+            assertEquals("Jane", person.getName());
+        }
     }
-  }
 
-  @Test
-  public void shouldResolveListTypeParam() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      PersonMapper mapper = sqlSession.getMapper(PersonMapper.class);
-      List<Person> persons = mapper.selectList(null);
-      assertEquals(2, persons.size());
-      assertEquals("Jane", persons.get(0).getName());
-      assertEquals("John", persons.get(1).getName());
+    @Test
+    public void shouldResolveListTypeParam() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PersonMapper mapper = sqlSession.getMapper(PersonMapper.class);
+            List<Person> persons = mapper.selectList(null);
+            assertEquals(2, persons.size());
+            assertEquals("Jane", persons.get(0).getName());
+            assertEquals("John", persons.get(1).getName());
+        }
     }
-  }
 
-  @Test
-  public void shouldResolveMultipleTypeParam() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      CountryMapper mapper = sqlSession.getMapper(CountryMapper.class);
-      Map<Long, Country> results = mapper.selectMap(new Country());
-      assertEquals(2, results.size());
-      assertEquals("Japan", results.get(1L).getName());
-      assertEquals("New Zealand", results.get(2L).getName());
+    @Test
+    public void shouldResolveMultipleTypeParam() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            CountryMapper mapper = sqlSession.getMapper(CountryMapper.class);
+            Map<Long, Country> results = mapper.selectMap(new Country());
+            assertEquals(2, results.size());
+            assertEquals("Japan", results.get(1L).getName());
+            assertEquals("New Zealand", results.get(2L).getName());
+        }
     }
-  }
 
-  @Test
-  public void shouldResolveParameterizedReturnType() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      PersonListMapper mapper = sqlSession.getMapper(PersonListMapper.class);
-      List<Person> persons = mapper.select(null);
-      assertEquals(2, persons.size());
-      assertEquals("Jane", persons.get(0).getName());
-      assertEquals("John", persons.get(1).getName());
+    @Test
+    public void shouldResolveParameterizedReturnType() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PersonListMapper mapper = sqlSession.getMapper(PersonListMapper.class);
+            List<Person> persons = mapper.select(null);
+            assertEquals(2, persons.size());
+            assertEquals("Jane", persons.get(0).getName());
+            assertEquals("John", persons.get(1).getName());
+        }
     }
-  }
 
-  @Test
-  public void shouldResolveParam() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      CountryMapper mapper = sqlSession.getMapper(CountryMapper.class);
-      assertEquals(1, mapper.update(new Country(2L, "Greenland")));
+    @Test
+    public void shouldResolveParam() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            CountryMapper mapper = sqlSession.getMapper(CountryMapper.class);
+            assertEquals(1, mapper.update(new Country(2L, "Greenland")));
+        }
     }
-  }
 
-  @Test
-  public void shouldResolveListParam() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      PersonMapper mapper = sqlSession.getMapper(PersonMapper.class);
-      Person person1 = new Person("James");
-      assertEquals(1, mapper.insert(Arrays.asList(person1)));
-      assertNotNull(person1.getId());
+    @Test
+    public void shouldResolveListParam() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PersonMapper mapper = sqlSession.getMapper(PersonMapper.class);
+            Person person1 = new Person("James");
+            assertEquals(1, mapper.insert(Arrays.asList(person1)));
+            assertNotNull(person1.getId());
+        }
     }
-  }
 }

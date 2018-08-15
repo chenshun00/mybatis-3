@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,44 +13,43 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
 package org.apache.ibatis.submitted.ancestor_ref;
 
 public class Blog {
-  private Integer id;
-  private String title;
-  private Author author;
-  private Author coAuthor;
+    private Integer id;
+    private String title;
+    private Author author;
+    private Author coAuthor;
 
-  public Integer getId() {
-    return id;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public String getTitle() {
-    return title;
-  }
+    public String getTitle() {
+        return title;
+    }
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-  public Author getAuthor() {
-    return author;
-  }
+    public Author getAuthor() {
+        return author;
+    }
 
-  public void setAuthor(Author author) {
-    this.author = author;
-  }
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
 
-  public Author getCoAuthor() {
-    return coAuthor;
-  }
+    public Author getCoAuthor() {
+        return coAuthor;
+    }
 
-  public void setCoAuthor(Author coAuthor) {
-    this.coAuthor = coAuthor;
-  }
+    public void setCoAuthor(Author coAuthor) {
+        this.coAuthor = coAuthor;
+    }
 }

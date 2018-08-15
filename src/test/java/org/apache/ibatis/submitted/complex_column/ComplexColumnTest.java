@@ -27,9 +27,9 @@ import org.junit.Test;
 import java.io.Reader;
 
 public class ComplexColumnTest {
-    
+
     private static SqlSessionFactory sqlSessionFactory;
-    
+
     @BeforeClass
     public static void initDatabase() throws Exception {
         try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/complex_column/ibatisConfig.xml")) {
@@ -39,7 +39,7 @@ public class ComplexColumnTest {
         BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
                 "org/apache/ibatis/submitted/complex_column/CreateDB.sql");
     }
-    
+
     @Test
     public void testWithoutComplex() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
@@ -54,7 +54,7 @@ public class ComplexColumnTest {
             Assert.assertEquals("Smith", parent.getLastName());
         }
     }
-    
+
     @Test
     public void testWithComplex() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
@@ -102,20 +102,20 @@ public class ComplexColumnTest {
 
     @Test
     public void testWithComplex4() {
-      try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-          PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
-          Person criteria = new Person();
-          criteria.setFirstName("Christian");
-          criteria.setLastName("Poitras");
-          Person person = personMapper.getParentWithComplex(criteria);
-          Assert.assertNotNull("person must not be null", person);
-          Assert.assertEquals("Christian", person.getFirstName());
-          Assert.assertEquals("Poitras", person.getLastName());
-          Person parent = person.getParent();
-          Assert.assertNotNull("parent must not be null", parent);
-          Assert.assertEquals("John", parent.getFirstName());
-          Assert.assertEquals("Smith", parent.getLastName());
-      }
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
+            Person criteria = new Person();
+            criteria.setFirstName("Christian");
+            criteria.setLastName("Poitras");
+            Person person = personMapper.getParentWithComplex(criteria);
+            Assert.assertNotNull("person must not be null", person);
+            Assert.assertEquals("Christian", person.getFirstName());
+            Assert.assertEquals("Poitras", person.getLastName());
+            Person parent = person.getParent();
+            Assert.assertNotNull("parent must not be null", parent);
+            Assert.assertEquals("John", parent.getFirstName());
+            Assert.assertEquals("Smith", parent.getLastName());
+        }
     }
 
     @Test

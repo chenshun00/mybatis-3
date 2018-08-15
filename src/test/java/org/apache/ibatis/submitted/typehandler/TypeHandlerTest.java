@@ -34,121 +34,121 @@ import org.junit.Test;
 
 public class TypeHandlerTest {
 
-  private SqlSessionFactory sqlSessionFactory;
+    private SqlSessionFactory sqlSessionFactory;
 
-  @Before
-  public void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/typehandler/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-      sqlSessionFactory.getConfiguration().getTypeHandlerRegistry().register(StringTrimmingTypeHandler.class);
+    @Before
+    public void setUp() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/typehandler/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+            sqlSessionFactory.getConfiguration().getTypeHandlerRegistry().register(StringTrimmingTypeHandler.class);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/typehandler/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/typehandler/CreateDB.sql");
-  }
-
-  // Some tests need to register additional type handler
-  // before adding mapper.
-  private void addMapper() {
-    sqlSessionFactory.getConfiguration().addMapper(Mapper.class);
-  }
-
-  @Test
-  public void shouldGetAUser() {
-    addMapper();
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      User user = mapper.getUser(1);
-      assertEquals("User1", user.getName());
-      assertEquals("Carmel", user.getCity());
-      assertEquals("IN", user.getState());
+    // Some tests need to register additional type handler
+    // before adding mapper.
+    private void addMapper() {
+        sqlSessionFactory.getConfiguration().addMapper(Mapper.class);
     }
-  }
 
-  @Test
-  public void shouldApplyTypeHandlerOnGeneratedKey() {
-    addMapper();
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      Product product = new Product();
-      product.setName("new product");
-      mapper.insertProduct(product);
-      assertNotNull(product.getId());
-      assertNotNull(product.getId().getValue());
+    @Test
+    public void shouldGetAUser() {
+        addMapper();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            User user = mapper.getUser(1);
+            assertEquals("User1", user.getName());
+            assertEquals("Carmel", user.getCity());
+            assertEquals("IN", user.getState());
+        }
     }
-  }
 
-  @Test
-  public void shouldApplyTypeHandlerWithJdbcTypeSpecified() {
-    addMapper();
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      Product product = mapper.getProductByName("iPad");
-      assertEquals(Integer.valueOf(2), product.getId().getValue());
+    @Test
+    public void shouldApplyTypeHandlerOnGeneratedKey() {
+        addMapper();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            Product product = new Product();
+            product.setName("new product");
+            mapper.insertProduct(product);
+            assertNotNull(product.getId());
+            assertNotNull(product.getId().getValue());
+        }
     }
-  }
 
-  @Test
-  public void shouldApplyTypeHandlerUsingConstructor() {
-    addMapper();
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      Product product = mapper.getProductByName("iPad");
-      assertEquals(Integer.valueOf(2), product.getId().getValue());
+    @Test
+    public void shouldApplyTypeHandlerWithJdbcTypeSpecified() {
+        addMapper();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            Product product = mapper.getProductByName("iPad");
+            assertEquals(Integer.valueOf(2), product.getId().getValue());
+        }
     }
-  }
 
-  @Test
-  public void shouldApplyTypeHandlerOnReturnTypeWithJdbcTypeSpecified() {
-    addMapper();
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      ProductId productId = mapper.getProductIdByName("iPad");
-      assertEquals(Integer.valueOf(2), productId.getValue());
+    @Test
+    public void shouldApplyTypeHandlerUsingConstructor() {
+        addMapper();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            Product product = mapper.getProductByName("iPad");
+            assertEquals(Integer.valueOf(2), product.getId().getValue());
+        }
     }
-  }
 
-  @Test
-  public void shouldPickSoleTypeHandlerOnXmlResultMap() {
-    addMapper();
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      Product product = mapper.getProductByNameXml("iPad");
-      assertEquals(Integer.valueOf(2), product.getId().getValue());
+    @Test
+    public void shouldApplyTypeHandlerOnReturnTypeWithJdbcTypeSpecified() {
+        addMapper();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            ProductId productId = mapper.getProductIdByName("iPad");
+            assertEquals(Integer.valueOf(2), productId.getValue());
+        }
     }
-  }
 
-  @Test
-  public void shouldPickSameTypeHandlerMappedToDifferentJdbcTypes() {
-    sqlSessionFactory.getConfiguration().getTypeHandlerRegistry().register(ProductId.class, JdbcType.BIGINT, ProductIdTypeHandler.class);
-    addMapper();
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      Product product = mapper.getProductByNameXml("iPad");
-      assertEquals(Integer.valueOf(2), product.getId().getValue());
+    @Test
+    public void shouldPickSoleTypeHandlerOnXmlResultMap() {
+        addMapper();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            Product product = mapper.getProductByNameXml("iPad");
+            assertEquals(Integer.valueOf(2), product.getId().getValue());
+        }
     }
-  }
 
-  @Test(expected = BuilderException.class)
-  public void shouldFailIfMultipleHandlerMappedToAType() {
-    sqlSessionFactory.getConfiguration().getTypeHandlerRegistry().register(ProductId.class, JdbcType.BIGINT, ConstantProductIdTypeHandler.class);
-    // multiple type handlers are mapped to ProductId and
-    // none of them are mapped to null jdbcType.
-    addMapper();
-  }
-
-  @Test
-  public void shouldPickHandlerForNull() {
-    sqlSessionFactory.getConfiguration().getTypeHandlerRegistry().register(ProductId.class, null, ConstantProductIdTypeHandler.class);
-    // multiple type handlers are mapped to ProductId and
-    // one of them are mapped to null jdbcType.
-    addMapper();
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      Product product = mapper.getProductByNameXml("iPad");
-      assertEquals(Integer.valueOf(999), product.getId().getValue());
+    @Test
+    public void shouldPickSameTypeHandlerMappedToDifferentJdbcTypes() {
+        sqlSessionFactory.getConfiguration().getTypeHandlerRegistry().register(ProductId.class, JdbcType.BIGINT, ProductIdTypeHandler.class);
+        addMapper();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            Product product = mapper.getProductByNameXml("iPad");
+            assertEquals(Integer.valueOf(2), product.getId().getValue());
+        }
     }
-  }
+
+    @Test(expected = BuilderException.class)
+    public void shouldFailIfMultipleHandlerMappedToAType() {
+        sqlSessionFactory.getConfiguration().getTypeHandlerRegistry().register(ProductId.class, JdbcType.BIGINT, ConstantProductIdTypeHandler.class);
+        // multiple type handlers are mapped to ProductId and
+        // none of them are mapped to null jdbcType.
+        addMapper();
+    }
+
+    @Test
+    public void shouldPickHandlerForNull() {
+        sqlSessionFactory.getConfiguration().getTypeHandlerRegistry().register(ProductId.class, null, ConstantProductIdTypeHandler.class);
+        // multiple type handlers are mapped to ProductId and
+        // one of them are mapped to null jdbcType.
+        addMapper();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            Product product = mapper.getProductByNameXml("iPad");
+            assertEquals(Integer.valueOf(999), product.getId().getValue());
+        }
+    }
 }

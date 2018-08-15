@@ -47,78 +47,78 @@ import ru.yandex.qatools.embed.postgresql.util.SocketUtil;
 @Category(EmbeddedPostgresqlTests.class)
 public class InsertTest {
 
-  private static final EmbeddedPostgres postgres = new EmbeddedPostgres();
+    private static final EmbeddedPostgres postgres = new EmbeddedPostgres();
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // Launch PostgreSQL server. Download / unarchive if necessary.
-    String url = postgres.start(EmbeddedPostgres.cachedRuntimeConfig(Paths.get(System.getProperty("java.io.tmpdir"), "pgembed")), "localhost", SocketUtil.findFreePort(), "keycolumn", "postgres", "root", Collections.emptyList());
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // Launch PostgreSQL server. Download / unarchive if necessary.
+        String url = postgres.start(EmbeddedPostgres.cachedRuntimeConfig(Paths.get(System.getProperty("java.io.tmpdir"), "pgembed")), "localhost", SocketUtil.findFreePort(), "keycolumn", "postgres", "root", Collections.emptyList());
 
-    Configuration configuration = new Configuration();
-    Environment environment = new Environment("development", new JdbcTransactionFactory(), new UnpooledDataSource(
-        "org.postgresql.Driver", url, null));
-    configuration.setEnvironment(environment);
-    configuration.addMapper(InsertMapper.class);
-    sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+        Configuration configuration = new Configuration();
+        Environment environment = new Environment("development", new JdbcTransactionFactory(), new UnpooledDataSource(
+                "org.postgresql.Driver", url, null));
+        configuration.setEnvironment(environment);
+        configuration.addMapper(InsertMapper.class);
+        sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
 
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/usesjava8/keycolumn/CreateDB.sql");
-  }
-
-  @AfterClass
-  public static void tearDown() {
-    postgres.stop();
-  }
-
-  @Test
-  public void testInsertAnnotated() throws Exception {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      InsertMapper mapper = sqlSession.getMapper(InsertMapper.class);
-      Name name = new Name();
-      name.setFirstName("Fred");
-      name.setLastName("Flintstone");
-
-      int rows = mapper.insertNameAnnotated(name);
-
-      assertNotNull(name.getId());
-      assertEquals(1, rows);
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/usesjava8/keycolumn/CreateDB.sql");
     }
-  }
 
-  @Test
-  public void testInsertMapped() throws Exception {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      InsertMapper mapper = sqlSession.getMapper(InsertMapper.class);
-      Name name = new Name();
-      name.setFirstName("Fred");
-      name.setLastName("Flintstone");
-
-      int rows = mapper.insertNameMapped(name);
-
-      assertNotNull(name.getId());
-      assertEquals(1, rows);
+    @AfterClass
+    public static void tearDown() {
+        postgres.stop();
     }
-  }
 
-  @Test
-  public void testInsertMappedBatch() throws Exception {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
-      InsertMapper mapper = sqlSession.getMapper(InsertMapper.class);
-      Name name = new Name();
-      name.setFirstName("Fred");
-      name.setLastName("Flintstone");
-      mapper.insertNameMapped(name);
-      Name name2 = new Name();
-      name2.setFirstName("Wilma");
-      name2.setLastName("Flintstone");
-      mapper.insertNameMapped(name2);
-      List<BatchResult> batchResults = sqlSession.flushStatements();
-      assertNotNull(name.getId());
-      assertNotNull(name2.getId());
-      assertEquals(1, batchResults.size());
+    @Test
+    public void testInsertAnnotated() throws Exception {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            InsertMapper mapper = sqlSession.getMapper(InsertMapper.class);
+            Name name = new Name();
+            name.setFirstName("Fred");
+            name.setLastName("Flintstone");
+
+            int rows = mapper.insertNameAnnotated(name);
+
+            assertNotNull(name.getId());
+            assertEquals(1, rows);
+        }
     }
-  }
+
+    @Test
+    public void testInsertMapped() throws Exception {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            InsertMapper mapper = sqlSession.getMapper(InsertMapper.class);
+            Name name = new Name();
+            name.setFirstName("Fred");
+            name.setLastName("Flintstone");
+
+            int rows = mapper.insertNameMapped(name);
+
+            assertNotNull(name.getId());
+            assertEquals(1, rows);
+        }
+    }
+
+    @Test
+    public void testInsertMappedBatch() throws Exception {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
+            InsertMapper mapper = sqlSession.getMapper(InsertMapper.class);
+            Name name = new Name();
+            name.setFirstName("Fred");
+            name.setLastName("Flintstone");
+            mapper.insertNameMapped(name);
+            Name name2 = new Name();
+            name2.setFirstName("Wilma");
+            name2.setLastName("Flintstone");
+            mapper.insertNameMapped(name2);
+            List<BatchResult> batchResults = sqlSession.flushStatements();
+            assertNotNull(name.getId());
+            assertNotNull(name2.getId());
+            assertEquals(1, batchResults.size());
+        }
+    }
 
 }

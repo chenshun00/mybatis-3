@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,18 +20,18 @@ import org.junit.Test;
 
 public class ReuseExecutorTest extends BaseExecutorTest {
 
-  @Test
-  public void dummy() {
-  }
+    @Test
+    public void dummy() {
+    }
 
-  @Override
-  @Test
-  public void shouldFetchPostWithBlogWithCompositeKey() throws Exception {
-    super.shouldFetchPostWithBlogWithCompositeKey();
-  }
+    @Override
+    @Test
+    public void shouldFetchPostWithBlogWithCompositeKey() throws Exception {
+        super.shouldFetchPostWithBlogWithCompositeKey();
+    }
 
-  @Override
-  protected Executor createExecutor(Transaction transaction) {
-    return new ReuseExecutor(config,transaction);
-  }
+    @Override
+    protected Executor createExecutor(Transaction transaction) {
+        return new ReuseExecutor(config, transaction);
+    }
 }

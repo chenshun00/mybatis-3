@@ -31,121 +31,121 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class NestedResultHandlerTest {
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/nestedresulthandler/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-    }
-
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/nestedresulthandler/CreateDB.sql");
-  }
-
-  @Test
-  public void testGetPerson() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-
-      List<Person> persons = mapper.getPersons();
-
-      Person person = persons.get(0);
-      Assert.assertEquals("grandma", person.getName());
-      Assert.assertTrue(person.owns("book"));
-      Assert.assertTrue(person.owns("tv"));
-      Assert.assertEquals(2, person.getItems().size());
-
-      person = persons.get(1);
-      Assert.assertEquals("sister", person.getName());
-      Assert.assertTrue(person.owns("phone"));
-      Assert.assertTrue(person.owns("shoes"));
-      Assert.assertEquals(2, person.getItems().size());
-
-      person = persons.get(2);
-      Assert.assertEquals("brother", person.getName());
-      Assert.assertTrue(person.owns("car"));
-      Assert.assertEquals(1, person.getItems().size());
-    }
-  }
-
-  @Test
-  // issue #542
-  public void testGetPersonWithHandler() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      sqlSession.select("getPersons", new ResultHandler() {
-        public void handleResult(ResultContext context) {
-          Person person = (Person) context.getResultObject();
-          if ("grandma".equals(person.getName())) {
-            Assert.assertEquals(2, person.getItems().size());
-          }
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/nestedresulthandler/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
         }
-      });
-    }
-  }
 
-  @Test(expected=PersistenceException.class)
-  public void testUnorderedGetPersonWithHandler() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      sqlSession.select("getPersonsWithItemsOrdered", new ResultHandler() {
-        public void handleResult(ResultContext context) {
-          Person person = (Person) context.getResultObject();
-          if ("grandma".equals(person.getName())) {
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/nestedresulthandler/CreateDB.sql");
+    }
+
+    @Test
+    public void testGetPerson() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+
+            List<Person> persons = mapper.getPersons();
+
+            Person person = persons.get(0);
+            Assert.assertEquals("grandma", person.getName());
+            Assert.assertTrue(person.owns("book"));
+            Assert.assertTrue(person.owns("tv"));
             Assert.assertEquals(2, person.getItems().size());
-          }
+
+            person = persons.get(1);
+            Assert.assertEquals("sister", person.getName());
+            Assert.assertTrue(person.owns("phone"));
+            Assert.assertTrue(person.owns("shoes"));
+            Assert.assertEquals(2, person.getItems().size());
+
+            person = persons.get(2);
+            Assert.assertEquals("brother", person.getName());
+            Assert.assertTrue(person.owns("car"));
+            Assert.assertEquals(1, person.getItems().size());
         }
-      });
     }
-  }
 
-  /**
-   * Fix bug caused by issue #542, see new issue #22 on github If we order by a
-   * nested result map attribute we can miss some records and end up with
-   * duplicates instead.
-   */
-  @Test
-  public void testGetPersonOrderedByItem() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-
-      List<Person> persons = mapper.getPersonsWithItemsOrdered();
-
-      Person person = persons.get(0);
-      Assert.assertEquals("grandma", person.getName());
-      Assert.assertTrue(person.owns("book"));
-      Assert.assertTrue(person.owns("tv"));
-      Assert.assertEquals(2, person.getItems().size());
-
-      person = persons.get(1);
-      Assert.assertEquals("brother", person.getName());
-      Assert.assertTrue(person.owns("car"));
-      Assert.assertEquals(1, person.getItems().size());
-
-      person = persons.get(2);
-      Assert.assertEquals("sister", person.getName());
-      Assert.assertTrue(person.owns("phone"));
-      Assert.assertTrue(person.owns("shoes"));
-      Assert.assertEquals(2, person.getItems().size());
+    @Test
+    // issue #542
+    public void testGetPersonWithHandler() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            sqlSession.select("getPersons", new ResultHandler() {
+                public void handleResult(ResultContext context) {
+                    Person person = (Person) context.getResultObject();
+                    if ("grandma".equals(person.getName())) {
+                        Assert.assertEquals(2, person.getItems().size());
+                    }
+                }
+            });
+        }
     }
-  }
 
-  @Test //reopen issue 39? (not a bug?)
-  public void testGetPersonItemPairs(){
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      List<PersonItemPair> pairs = mapper.getPersonItemPairs();
+    @Test(expected = PersistenceException.class)
+    public void testUnorderedGetPersonWithHandler() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            sqlSession.select("getPersonsWithItemsOrdered", new ResultHandler() {
+                public void handleResult(ResultContext context) {
+                    Person person = (Person) context.getResultObject();
+                    if ("grandma".equals(person.getName())) {
+                        Assert.assertEquals(2, person.getItems().size());
+                    }
+                }
+            });
+        }
+    }
 
-      Assert.assertNotNull( pairs );
+    /**
+     * Fix bug caused by issue #542, see new issue #22 on github If we order by a
+     * nested result map attribute we can miss some records and end up with
+     * duplicates instead.
+     */
+    @Test
+    public void testGetPersonOrderedByItem() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+
+            List<Person> persons = mapper.getPersonsWithItemsOrdered();
+
+            Person person = persons.get(0);
+            Assert.assertEquals("grandma", person.getName());
+            Assert.assertTrue(person.owns("book"));
+            Assert.assertTrue(person.owns("tv"));
+            Assert.assertEquals(2, person.getItems().size());
+
+            person = persons.get(1);
+            Assert.assertEquals("brother", person.getName());
+            Assert.assertTrue(person.owns("car"));
+            Assert.assertEquals(1, person.getItems().size());
+
+            person = persons.get(2);
+            Assert.assertEquals("sister", person.getName());
+            Assert.assertTrue(person.owns("phone"));
+            Assert.assertTrue(person.owns("shoes"));
+            Assert.assertEquals(2, person.getItems().size());
+        }
+    }
+
+    @Test //reopen issue 39? (not a bug?)
+    public void testGetPersonItemPairs() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            List<PersonItemPair> pairs = mapper.getPersonItemPairs();
+
+            Assert.assertNotNull(pairs);
 //      System.out.println( new StringBuilder().append("selected pairs: ").append(pairs) );
 
-      Assert.assertEquals(5, pairs.size() );
-      Assert.assertNotNull(pairs.get(0).getPerson());
-      Assert.assertEquals(pairs.get(0).getPerson().getId(), Integer.valueOf(1));
-      Assert.assertNotNull(pairs.get(0).getItem());
-      Assert.assertEquals( pairs.get(0).getItem().getId(), Integer.valueOf(1));
+            Assert.assertEquals(5, pairs.size());
+            Assert.assertNotNull(pairs.get(0).getPerson());
+            Assert.assertEquals(pairs.get(0).getPerson().getId(), Integer.valueOf(1));
+            Assert.assertNotNull(pairs.get(0).getItem());
+            Assert.assertEquals(pairs.get(0).getItem().getId(), Integer.valueOf(1));
+        }
     }
-  }
 
 }

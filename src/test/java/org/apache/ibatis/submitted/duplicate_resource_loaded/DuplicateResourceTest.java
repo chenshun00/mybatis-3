@@ -30,21 +30,21 @@ import java.util.Map;
 
 public class DuplicateResourceTest extends BaseDataTest {
 
-  @Before
-  public void setup() throws Exception {
-    BaseDataTest.createBlogDataSource();
-  }
-
-  @Test
-  public void shouldDemonstrateDuplicateResourceIssue() throws Exception {
-    final String resource = "org/apache/ibatis/submitted/duplicate_resource_loaded/Config.xml";
-    final Reader reader = Resources.getResourceAsReader(resource);
-    final SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
-    final SqlSessionFactory factory = builder.build(reader);
-    try (SqlSession sqlSession = factory.openSession()) {
-      final Mapper mapper = sqlSession.getMapper(Mapper.class);
-      final List<Map<String, Object>> list = mapper.selectAllBlogs();
-      Assert.assertEquals(2,list.size());
+    @Before
+    public void setup() throws Exception {
+        BaseDataTest.createBlogDataSource();
     }
-  }
+
+    @Test
+    public void shouldDemonstrateDuplicateResourceIssue() throws Exception {
+        final String resource = "org/apache/ibatis/submitted/duplicate_resource_loaded/Config.xml";
+        final Reader reader = Resources.getResourceAsReader(resource);
+        final SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
+        final SqlSessionFactory factory = builder.build(reader);
+        try (SqlSession sqlSession = factory.openSession()) {
+            final Mapper mapper = sqlSession.getMapper(Mapper.class);
+            final List<Map<String, Object>> list = mapper.selectAllBlogs();
+            Assert.assertEquals(2, list.size());
+        }
+    }
 }

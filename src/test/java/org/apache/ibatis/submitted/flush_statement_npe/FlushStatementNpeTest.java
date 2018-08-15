@@ -27,9 +27,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class FlushStatementNpeTest {
-    
+
     private static SqlSessionFactory sqlSessionFactory;
-    
+
     @BeforeClass
     public static void initDatabase() throws Exception {
         try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/flush_statement_npe/ibatisConfig.xml")) {
@@ -39,50 +39,52 @@ public class FlushStatementNpeTest {
         BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
                 "org/apache/ibatis/submitted/flush_statement_npe/CreateDB.sql");
     }
-    
+
     @Test
     public void testSameUpdateAfterCommitSimple() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.SIMPLE)) {
             PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
             Person person = personMapper.selectById(1);
             person.setFirstName("Simone");
-            
+
             // Execute first update then commit.
             personMapper.update(person);
             sqlSession.commit();
-            
+
             // Execute same update a second time. This used to raise an NPE.
             personMapper.update(person);
             sqlSession.commit();
         }
     }
+
     @Test
     public void testSameUpdateAfterCommitReuse() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.REUSE)) {
             PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
             Person person = personMapper.selectById(1);
             person.setFirstName("Simone");
-            
+
             // Execute first update then commit.
             personMapper.update(person);
             sqlSession.commit();
-            
+
             // Execute same update a second time. This used to raise an NPE.
             personMapper.update(person);
             sqlSession.commit();
         }
     }
+
     @Test
     public void testSameUpdateAfterCommitBatch() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
             PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
             Person person = personMapper.selectById(1);
             person.setFirstName("Simone");
-            
+
             // Execute first update then commit.
             personMapper.update(person);
             sqlSession.commit();
-            
+
             // Execute same update a second time. This used to raise an NPE.
             personMapper.update(person);
             sqlSession.commit();

@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -30,15 +30,15 @@ import org.apache.ibatis.mapping.StatementType;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface SelectKey {
-  String[] statement();
+    String[] statement();
 
-  String keyProperty();
+    String keyProperty();
 
-  String keyColumn() default "";
+    String keyColumn() default "";
 
-  boolean before();
+    boolean before();
 
-  Class<?> resultType();
+    Class<?> resultType();
 
-  StatementType statementType() default StatementType.PREPARED;
+    StatementType statementType() default StatementType.PREPARED;
 }

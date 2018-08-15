@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,29 +19,29 @@ import org.junit.Test;
 
 public class ErrorContextTest {
 
-  @Test
-  public void shouldShowProgressiveErrorContextBuilding() {
-    ErrorContext context = ErrorContext.instance();
-    context.resource("somefile.xml").activity("some activity").object("some object").message("Here's more info.");
-    context.toString().startsWith("### The error occurred in somefile.xml.");
-    context.reset();
+    @Test
+    public void shouldShowProgressiveErrorContextBuilding() {
+        ErrorContext context = ErrorContext.instance();
+        context.resource("somefile.xml").activity("some activity").object("some object").message("Here's more info.");
+        context.toString().startsWith("### The error occurred in somefile.xml.");
+        context.reset();
 
-    context.activity("some activity").object("some object").message("Here's more info.");
-    context.toString().startsWith("### The error occurred while some activity.");
-    context.reset();
+        context.activity("some activity").object("some object").message("Here's more info.");
+        context.toString().startsWith("### The error occurred while some activity.");
+        context.reset();
 
-    context.object("some object").message("Here's more info.");
-    context.toString().startsWith("### Check some object.");
-    context.reset();
+        context.object("some object").message("Here's more info.");
+        context.toString().startsWith("### Check some object.");
+        context.reset();
 
-    context.message("Here's more info.");
-    context.toString().startsWith("### Here's more info.");
-    context.reset();
+        context.message("Here's more info.");
+        context.toString().startsWith("### Here's more info.");
+        context.reset();
 
-    context.cause(new Exception("test"));
-    context.toString().startsWith("### Cause: java.lang.Exception: test");
-    context.reset();
+        context.cause(new Exception("test"));
+        context.toString().startsWith("### Cause: java.lang.Exception: test");
+        context.reset();
 
-  }
+    }
 
 }

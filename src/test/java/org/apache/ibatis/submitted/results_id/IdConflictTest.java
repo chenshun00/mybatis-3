@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,12 +23,12 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 public class IdConflictTest {
 
-  @Test
-  public void shouldFailOnDuplicatedId() throws Exception {
-    Configuration configuration = new Configuration();
-    when(configuration).addMapper(IdConflictMapper.class);
-    then(caughtException()).isInstanceOf(RuntimeException.class)
-      .hasMessage("Result Maps collection already contains value for org.apache.ibatis.submitted.results_id.IdConflictMapper.userResult");
-  }
+    @Test
+    public void shouldFailOnDuplicatedId() throws Exception {
+        Configuration configuration = new Configuration();
+        when(configuration).addMapper(IdConflictMapper.class);
+        then(caughtException()).isInstanceOf(RuntimeException.class)
+                .hasMessage("Result Maps collection already contains value for org.apache.ibatis.submitted.results_id.IdConflictMapper.userResult");
+    }
 
 }

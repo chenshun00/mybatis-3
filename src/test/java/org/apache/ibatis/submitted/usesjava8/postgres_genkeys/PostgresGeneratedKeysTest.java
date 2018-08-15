@@ -37,62 +37,62 @@ import ru.yandex.qatools.embed.postgresql.util.SocketUtil;
 
 public class PostgresGeneratedKeysTest {
 
-  private static final EmbeddedPostgres postgres = new EmbeddedPostgres();
+    private static final EmbeddedPostgres postgres = new EmbeddedPostgres();
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    //  Launch PostgreSQL server. Download / unarchive if necessary.
-    String url = postgres.start(EmbeddedPostgres.cachedRuntimeConfig(Paths.get(System.getProperty("java.io.tmpdir"), "pgembed")), "localhost", SocketUtil.findFreePort(), "postgres_genkeys", "postgres", "root", Collections.emptyList());
+    @BeforeClass
+    public static void setUp() throws Exception {
+        //  Launch PostgreSQL server. Download / unarchive if necessary.
+        String url = postgres.start(EmbeddedPostgres.cachedRuntimeConfig(Paths.get(System.getProperty("java.io.tmpdir"), "pgembed")), "localhost", SocketUtil.findFreePort(), "postgres_genkeys", "postgres", "root", Collections.emptyList());
 
-    Configuration configuration = new Configuration();
-    Environment environment = new Environment("development", new JdbcTransactionFactory(), new UnpooledDataSource(
-        "org.postgresql.Driver", url, null));
-    configuration.setEnvironment(environment);
-    configuration.setUseGeneratedKeys(true);
-    configuration.addMapper(Mapper.class);
-    sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+        Configuration configuration = new Configuration();
+        Environment environment = new Environment("development", new JdbcTransactionFactory(), new UnpooledDataSource(
+                "org.postgresql.Driver", url, null));
+        configuration.setEnvironment(environment);
+        configuration.setUseGeneratedKeys(true);
+        configuration.addMapper(Mapper.class);
+        sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
 
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/usesjava8/postgres_genkeys/CreateDB.sql");
-  }
-
-  @AfterClass
-  public static void tearDown() {
-    postgres.stop();
-  }
-
-  @Test
-  public void testInsertIntoTableWithNoSerialColumn() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      Section section = new Section();
-      section.setSectionId(2);
-      section.setName("Section 2");
-      int result = mapper.insertSection(section);
-      assertEquals(1, result);
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/usesjava8/postgres_genkeys/CreateDB.sql");
     }
-  }
 
-  @Test
-  public void testUpdateTableWithSerial() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      User user = new User();
-      user.setUserId(1);
-      user.setName("Ethan");
-      int result = mapper.updateUser(user);
-      assertEquals(1, result);
+    @AfterClass
+    public static void tearDown() {
+        postgres.stop();
     }
-  }
 
-  @Test
-  public void testUnusedGeneratedKey() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      int result = mapper.insertUser("John");
-      assertEquals(1, result);
+    @Test
+    public void testInsertIntoTableWithNoSerialColumn() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            Section section = new Section();
+            section.setSectionId(2);
+            section.setName("Section 2");
+            int result = mapper.insertSection(section);
+            assertEquals(1, result);
+        }
     }
-  }
+
+    @Test
+    public void testUpdateTableWithSerial() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            User user = new User();
+            user.setUserId(1);
+            user.setName("Ethan");
+            int result = mapper.updateUser(user);
+            assertEquals(1, result);
+        }
+    }
+
+    @Test
+    public void testUnusedGeneratedKey() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            int result = mapper.insertUser("John");
+            assertEquals(1, result);
+        }
+    }
 }

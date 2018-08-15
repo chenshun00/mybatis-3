@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,33 +16,33 @@
 package org.apache.ibatis.submitted.column_prefix;
 
 public class Phone {
-  private Integer id;
+    private Integer id;
 
-  private String phone;
+    private String phone;
 
-  private String areaCode;
+    private String areaCode;
 
-  public Integer getId() {
-    return id;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public String getPhone() {
-    return phone;
-  }
+    public String getPhone() {
+        return phone;
+    }
 
-  public void setPhone(String phone) {
-    this.phone = phone;
-  }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-  public String getAreaCode() {
-    return areaCode;
-  }
+    public String getAreaCode() {
+        return areaCode;
+    }
 
-  public void setAreaCode(String areaCode) {
-    this.areaCode = areaCode;
-  }
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
+    }
 }

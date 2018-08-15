@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,21 +21,21 @@ import org.apache.ibatis.exceptions.PersistenceException;
  * @author Clinton Begin
  */
 public class ParsingException extends PersistenceException {
-  private static final long serialVersionUID = -176685891441325943L;
+    private static final long serialVersionUID = -176685891441325943L;
 
-  public ParsingException() {
-    super();
-  }
+    public ParsingException() {
+        super();
+    }
 
-  public ParsingException(String message) {
-    super(message);
-  }
+    public ParsingException(String message) {
+        super(message);
+    }
 
-  public ParsingException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public ParsingException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public ParsingException(Throwable cause) {
-    super(cause);
-  }
+    public ParsingException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,30 +18,30 @@ package org.apache.ibatis.submitted.emptycollection;
 import java.util.List;
 
 public class TodoLists {
-  
-  @Override
-  public String toString() {
-    return "TodoLists [id=" + id + ", todoItems=" + todoItems + "]";
-  }
 
-  private int id;
+    @Override
+    public String toString() {
+        return "TodoLists [id=" + id + ", todoItems=" + todoItems + "]";
+    }
 
-  private List<TodoItem> todoItems;
-  
-  public int getId() {
-    return id;
-  }
+    private int id;
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    private List<TodoItem> todoItems;
 
-  public List<TodoItem> getTodoItems() {
-    return todoItems;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setTodoItems(List<TodoItem> todoItems) {
-    this.todoItems = todoItems;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public List<TodoItem> getTodoItems() {
+        return todoItems;
+    }
+
+    public void setTodoItems(List<TodoItem> todoItems) {
+        this.todoItems = todoItems;
+    }
 
 }

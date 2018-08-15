@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,19 +16,19 @@
 package org.apache.ibatis.submitted.foreach_map;
 
 public class NestedBean {
-  public NestedBean(Integer a, Boolean b) {
-    this.a = a;
-    this.b = b;
-  }
+    public NestedBean(Integer a, Boolean b) {
+        this.a = a;
+        this.b = b;
+    }
 
-  public Integer getA() {
-    return a;
-  }
+    public Integer getA() {
+        return a;
+    }
 
-  public Boolean getB() {
-    return b;
-  }
+    public Boolean getB() {
+        return b;
+    }
 
-  private Integer a;
-  private Boolean b;
+    private Integer a;
+    private Boolean b;
 }

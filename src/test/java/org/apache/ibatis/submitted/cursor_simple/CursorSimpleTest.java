@@ -338,9 +338,9 @@ public class CursorSimpleTest {
             Assert.assertEquals(-1, usersCursor.getCurrentIndex());
 
             List<User> userList = new ArrayList<User>();
-            for (User user : usersCursor){
+            for (User user : usersCursor) {
                 userList.add(user);
-                Assert.assertEquals(userList.size() -1, usersCursor.getCurrentIndex());
+                Assert.assertEquals(userList.size() - 1, usersCursor.getCurrentIndex());
             }
 
             Assert.assertFalse(usersCursor.isOpen());

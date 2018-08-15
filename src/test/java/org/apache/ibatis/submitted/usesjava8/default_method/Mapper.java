@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,20 +20,20 @@ import org.apache.ibatis.annotations.Select;
 
 public interface Mapper {
 
-  @Select("select * from users where id = #{id}")
-  User getUserById(Integer id);
+    @Select("select * from users where id = #{id}")
+    User getUserById(Integer id);
 
-  @Select("select * from users where id = #{id} and name = #{name}")
-  User getUserByIdAndName(@Param("name") String name, @Param("id") Integer id);
+    @Select("select * from users where id = #{id} and name = #{name}")
+    User getUserByIdAndName(@Param("name") String name, @Param("id") Integer id);
 
-  default User defaultGetUser(Object... args) {
-    return getUserById((Integer) args[0]);
-  }
-
-  static interface SubMapper extends Mapper {
     default User defaultGetUser(Object... args) {
-      return getUserByIdAndName((String) args[0], (Integer) args[1]);
+        return getUserById((Integer) args[0]);
     }
-  }
+
+    static interface SubMapper extends Mapper {
+        default User defaultGetUser(Object... args) {
+            return getUserByIdAndName((String) args[0], (Integer) args[1]);
+        }
+    }
 
 }

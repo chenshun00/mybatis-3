@@ -36,58 +36,58 @@ import org.junit.Test;
 
 public class NestedResultHandlerAssociationTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create an SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/nestedresulthandler_association/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-    }
-
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/nestedresulthandler_association/CreateDB.sql");
-  }
-
-  @Test
-  public void shouldHandleRowBounds() throws Exception {
-    final SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-    Date targetMonth = fmt.parse("2014-01-01");
-    final List<Account> accounts = new ArrayList<Account>();
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      sqlSession.select("collectPageByBirthMonth", targetMonth, new RowBounds(1, 2), new ResultHandler() {
-        @Override
-        public void handleResult(ResultContext context) {
-          Account account = (Account) context.getResultObject();
-          accounts.add(account);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create an SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/nestedresulthandler_association/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
         }
-      });
-    }
-    assertEquals(2, accounts.size());
-    assertEquals("Bob2", accounts.get(0).getAccountName());
-    assertEquals("Bob3", accounts.get(1).getAccountName());
-  }
 
-  @Test
-  public void shouldHandleStop() throws Exception {
-    final SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-    final List<Account> accounts = new ArrayList<Account>();
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Date targetMonth = fmt.parse("2014-01-01");
-      sqlSession.select("collectPageByBirthMonth", targetMonth, new ResultHandler() {
-        @Override
-        public void handleResult(ResultContext context) {
-          Account account = (Account) context.getResultObject();
-          accounts.add(account);
-          if (accounts.size() > 1)
-            context.stop();
-        }
-      });
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/nestedresulthandler_association/CreateDB.sql");
     }
-    assertEquals(2, accounts.size());
-    assertEquals("Bob1", accounts.get(0).getAccountName());
-    assertEquals("Bob2", accounts.get(1).getAccountName());
-  }
+
+    @Test
+    public void shouldHandleRowBounds() throws Exception {
+        final SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+        Date targetMonth = fmt.parse("2014-01-01");
+        final List<Account> accounts = new ArrayList<Account>();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            sqlSession.select("collectPageByBirthMonth", targetMonth, new RowBounds(1, 2), new ResultHandler() {
+                @Override
+                public void handleResult(ResultContext context) {
+                    Account account = (Account) context.getResultObject();
+                    accounts.add(account);
+                }
+            });
+        }
+        assertEquals(2, accounts.size());
+        assertEquals("Bob2", accounts.get(0).getAccountName());
+        assertEquals("Bob3", accounts.get(1).getAccountName());
+    }
+
+    @Test
+    public void shouldHandleStop() throws Exception {
+        final SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+        final List<Account> accounts = new ArrayList<Account>();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Date targetMonth = fmt.parse("2014-01-01");
+            sqlSession.select("collectPageByBirthMonth", targetMonth, new ResultHandler() {
+                @Override
+                public void handleResult(ResultContext context) {
+                    Account account = (Account) context.getResultObject();
+                    accounts.add(account);
+                    if (accounts.size() > 1)
+                        context.stop();
+                }
+            });
+        }
+        assertEquals(2, accounts.size());
+        assertEquals("Bob1", accounts.get(0).getAccountName());
+        assertEquals("Bob2", accounts.get(1).getAccountName());
+    }
 
 }

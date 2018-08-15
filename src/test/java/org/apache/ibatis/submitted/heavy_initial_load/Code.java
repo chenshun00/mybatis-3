@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -1017,13 +1017,13 @@ public class Code {
     public static final Code _999 = new Code("999");
     public static final Code _1000 = new Code("1000");
 
-  private String value;
+    private String value;
 
-  public Code(String aValue) {
-    value = aValue;
-  }
+    public Code(String aValue) {
+        value = aValue;
+    }
 
-  public String getValue() {
-    return value;
-  }
+    public String getValue() {
+        return value;
+    }
 }

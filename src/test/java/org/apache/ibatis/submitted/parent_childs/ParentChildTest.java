@@ -29,33 +29,33 @@ import org.junit.Test;
 
 public class ParentChildTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/parent_childs/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/parent_childs/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/parent_childs/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/parent_childs/CreateDB.sql");
-  }
-
-  @Test
-  public void shouldGetAUser() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      List<Parent> parents = mapper.getParents();
-      Assert.assertEquals(2, parents.size());
-      Parent firstParent = parents.get(0);
-      Assert.assertEquals("Jose", firstParent.getName());
-      Assert.assertEquals(2, firstParent.getChilds().size());
-      Parent secondParent = parents.get(1);
-      Assert.assertEquals("Juan", secondParent.getName());
-      Assert.assertEquals(0, secondParent.getChilds().size()); // note an empty list is inyected
+    @Test
+    public void shouldGetAUser() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            List<Parent> parents = mapper.getParents();
+            Assert.assertEquals(2, parents.size());
+            Parent firstParent = parents.get(0);
+            Assert.assertEquals("Jose", firstParent.getName());
+            Assert.assertEquals(2, firstParent.getChilds().size());
+            Parent secondParent = parents.get(1);
+            Assert.assertEquals("Juan", secondParent.getName());
+            Assert.assertEquals(0, secondParent.getChilds().size()); // note an empty list is inyected
+        }
     }
-  }
 
 }

@@ -30,61 +30,61 @@ import org.junit.Test;
 
 public class BaseTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create an SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/global_variables/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create an SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/global_variables/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/global_variables/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/global_variables/CreateDB.sql");
-  }
+    @Test
+    public void shouldGetAUser() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            User user = mapper.getUser(1);
+            CustomCache customCache = unwrap(sqlSessionFactory.getConfiguration().getCache(Mapper.class.getName()));
+            Assert.assertEquals("User1", user.getName());
+            Assert.assertEquals("foo", customCache.getStringValue());
+            Assert.assertEquals(10, customCache.getIntegerValue().intValue());
+            Assert.assertEquals(1000, customCache.getLongValue());
+        }
+    }
 
-  @Test
-  public void shouldGetAUser() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      User user = mapper.getUser(1);
-      CustomCache customCache = unwrap(sqlSessionFactory.getConfiguration().getCache(Mapper.class.getName()));
-      Assert.assertEquals("User1", user.getName());
-      Assert.assertEquals("foo", customCache.getStringValue());
-      Assert.assertEquals(10, customCache.getIntegerValue().intValue());
-      Assert.assertEquals(1000, customCache.getLongValue());
+    @Test
+    public void shouldGetAUserFromAnnotation() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            AnnotationMapper mapper = sqlSession.getMapper(AnnotationMapper.class);
+            User user = mapper.getUser(1);
+            CustomCache customCache = unwrap(sqlSessionFactory.getConfiguration().getCache(Mapper.class.getName()));
+            Assert.assertEquals("User1", user.getName());
+            Assert.assertEquals("foo", customCache.getStringValue());
+            Assert.assertEquals(10, customCache.getIntegerValue().intValue());
+            Assert.assertEquals(1000, customCache.getLongValue());
+        }
     }
-  }
 
-  @Test
-  public void shouldGetAUserFromAnnotation() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      AnnotationMapper mapper = sqlSession.getMapper(AnnotationMapper.class);
-      User user = mapper.getUser(1);
-      CustomCache customCache = unwrap(sqlSessionFactory.getConfiguration().getCache(Mapper.class.getName()));
-      Assert.assertEquals("User1", user.getName());
-      Assert.assertEquals("foo", customCache.getStringValue());
-      Assert.assertEquals(10, customCache.getIntegerValue().intValue());
-      Assert.assertEquals(1000, customCache.getLongValue());
+    private CustomCache unwrap(Cache cache) {
+        Field field;
+        try {
+            field = cache.getClass().getDeclaredField("delegate");
+        } catch (NoSuchFieldException e) {
+            throw new IllegalStateException(e);
+        }
+        try {
+            field.setAccessible(true);
+            return (CustomCache) field.get(cache);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            field.setAccessible(false);
+        }
     }
-  }
 
-  private CustomCache unwrap(Cache cache){
-    Field field;
-    try {
-      field = cache.getClass().getDeclaredField("delegate");
-    } catch (NoSuchFieldException e) {
-      throw new IllegalStateException(e);
-    }
-    try {
-      field.setAccessible(true);
-      return (CustomCache)field.get(cache);
-    } catch (IllegalAccessException e) {
-      throw new IllegalStateException(e);
-    } finally {
-      field.setAccessible(false);
-    }
-  }
-  
 }

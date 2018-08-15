@@ -31,55 +31,55 @@ import org.junit.Test;
 // issue #524
 public class BlockingCacheTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @Before
-  public void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/blocking_cache/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-    }
-
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/blocking_cache/CreateDB.sql");
-  }
-
-  @Test
-  public void testBlockingCache() {
-    ExecutorService defaultThreadPool = Executors.newFixedThreadPool(2);
-
-    long init = System.currentTimeMillis();
-
-    for (int i = 0; i < 2; i++) {
-      defaultThreadPool.execute(new Runnable() {
-
-        @Override
-        public void run() {
-          accessDB();
+    @Before
+    public void setUp() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/blocking_cache/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
         }
-      });
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/blocking_cache/CreateDB.sql");
     }
 
-    defaultThreadPool.shutdown();
+    @Test
+    public void testBlockingCache() {
+        ExecutorService defaultThreadPool = Executors.newFixedThreadPool(2);
 
-    while (!defaultThreadPool.isTerminated()) {
+        long init = System.currentTimeMillis();
+
+        for (int i = 0; i < 2; i++) {
+            defaultThreadPool.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    accessDB();
+                }
+            });
+        }
+
+        defaultThreadPool.shutdown();
+
+        while (!defaultThreadPool.isTerminated()) {
+        }
+
+        long totalTime = System.currentTimeMillis() - init;
+        Assert.assertTrue(totalTime > 1000);
     }
 
-    long totalTime = System.currentTimeMillis() - init;
-    Assert.assertTrue(totalTime > 1000);
-  }
-
-  private void accessDB() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      PersonMapper pm = sqlSession.getMapper(PersonMapper.class);
-      pm.findAll();
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        Assert.fail(e.getMessage());
-      }
+    private void accessDB() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PersonMapper pm = sqlSession.getMapper(PersonMapper.class);
+            pm.findAll();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Assert.fail(e.getMessage());
+            }
+        }
     }
-  }
 
 }

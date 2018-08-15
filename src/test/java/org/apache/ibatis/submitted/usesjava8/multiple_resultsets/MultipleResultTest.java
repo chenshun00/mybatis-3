@@ -39,89 +39,89 @@ import ru.yandex.qatools.embed.postgresql.EmbeddedPostgres;
 import ru.yandex.qatools.embed.postgresql.util.SocketUtil;
 
 /*
- * This class contains tests for multiple results.  
+ * This class contains tests for multiple results.
  * It is based on Jeff's ref cursor tests.
  */
 @Category(EmbeddedPostgresqlTests.class)
 public class MultipleResultTest {
 
-  private static final EmbeddedPostgres postgres = new EmbeddedPostgres();
+    private static final EmbeddedPostgres postgres = new EmbeddedPostgres();
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // Launch PostgreSQL server. Download / unarchive if necessary.
-    String url = postgres.start(EmbeddedPostgres.cachedRuntimeConfig(Paths.get(System.getProperty("java.io.tmpdir"), "pgembed")), "localhost", SocketUtil.findFreePort(), "multiple_resultsets", "postgres", "root", Collections.emptyList());
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // Launch PostgreSQL server. Download / unarchive if necessary.
+        String url = postgres.start(EmbeddedPostgres.cachedRuntimeConfig(Paths.get(System.getProperty("java.io.tmpdir"), "pgembed")), "localhost", SocketUtil.findFreePort(), "multiple_resultsets", "postgres", "root", Collections.emptyList());
 
-    Configuration configuration = new Configuration();
-    Environment environment = new Environment("development", new JdbcTransactionFactory(), new UnpooledDataSource(
-        "org.postgresql.Driver", url, null));
-    configuration.setEnvironment(environment);
-    configuration.setMapUnderscoreToCamelCase(true);
-    configuration.addMapper(Mapper.class);
-    sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+        Configuration configuration = new Configuration();
+        Environment environment = new Environment("development", new JdbcTransactionFactory(), new UnpooledDataSource(
+                "org.postgresql.Driver", url, null));
+        configuration.setEnvironment(environment);
+        configuration.setMapUnderscoreToCamelCase(true);
+        configuration.addMapper(Mapper.class);
+        sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
 
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/usesjava8/multiple_resultsets/CreateDB.sql");
-  }
-
-  @AfterClass
-  public static void tearDown() {
-    postgres.stop();
-  }
-
-  @Test
-  public void shouldGetMultipleResultSetsWithOneStatement() throws IOException {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      List<List<?>> results = mapper.getUsersAndGroups();
-      Assert.assertEquals(2, results.size());
-
-      Assert.assertEquals(6, results.get(0).size());
-      OrderDetail detail = (OrderDetail)results.get(0).get(0);
-      Assert.assertEquals(1, detail.getOrderId());
-      Assert.assertEquals(1, detail.getLineNumber());
-      Assert.assertEquals(1, detail.getQuantity());
-      Assert.assertEquals("Pen", detail.getItemDescription());
-
-      Assert.assertEquals(2, results.get(1).size());
-      OrderHeader header = (OrderHeader)results.get(1).get(0);
-      Assert.assertEquals(1, header.getOrderId());
-      Assert.assertEquals("Fred", header.getCustName());
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/usesjava8/multiple_resultsets/CreateDB.sql");
     }
-  }
 
-  @Test
-  public void shouldSkipNullResultSet() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      try {
-        Mapper mapper = sqlSession.getMapper(Mapper.class);
-        List<List<?>> results = mapper.multiResultsWithUpdate();
-        Assert.assertEquals(2, results.size());
-
-        Assert.assertEquals(6, results.get(0).size());
-        OrderDetail detail = (OrderDetail) results.get(0).get(0);
-        Assert.assertEquals(1, detail.getOrderId());
-        Assert.assertEquals(1, detail.getLineNumber());
-        Assert.assertEquals(1, detail.getQuantity());
-        Assert.assertEquals("Pen", detail.getItemDescription());
-
-        Assert.assertEquals(2, results.get(1).size());
-        OrderHeader header = (OrderHeader) results.get(1).get(0);
-        Assert.assertEquals(1, header.getOrderId());
-        Assert.assertEquals("Fred", header.getCustName());
-
-        results = mapper.getUsersAndGroups();
-        Assert.assertEquals(7, results.get(0).size());
-        detail = (OrderDetail) results.get(0).get(6);
-        Assert.assertEquals(2, detail.getOrderId());
-        Assert.assertEquals(4, detail.getLineNumber());
-        Assert.assertEquals(5, detail.getQuantity());
-        Assert.assertEquals("Eraser", detail.getItemDescription());
-      } finally {
-        sqlSession.rollback(true);
-      }
+    @AfterClass
+    public static void tearDown() {
+        postgres.stop();
     }
-  }
+
+    @Test
+    public void shouldGetMultipleResultSetsWithOneStatement() throws IOException {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            List<List<?>> results = mapper.getUsersAndGroups();
+            Assert.assertEquals(2, results.size());
+
+            Assert.assertEquals(6, results.get(0).size());
+            OrderDetail detail = (OrderDetail) results.get(0).get(0);
+            Assert.assertEquals(1, detail.getOrderId());
+            Assert.assertEquals(1, detail.getLineNumber());
+            Assert.assertEquals(1, detail.getQuantity());
+            Assert.assertEquals("Pen", detail.getItemDescription());
+
+            Assert.assertEquals(2, results.get(1).size());
+            OrderHeader header = (OrderHeader) results.get(1).get(0);
+            Assert.assertEquals(1, header.getOrderId());
+            Assert.assertEquals("Fred", header.getCustName());
+        }
+    }
+
+    @Test
+    public void shouldSkipNullResultSet() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            try {
+                Mapper mapper = sqlSession.getMapper(Mapper.class);
+                List<List<?>> results = mapper.multiResultsWithUpdate();
+                Assert.assertEquals(2, results.size());
+
+                Assert.assertEquals(6, results.get(0).size());
+                OrderDetail detail = (OrderDetail) results.get(0).get(0);
+                Assert.assertEquals(1, detail.getOrderId());
+                Assert.assertEquals(1, detail.getLineNumber());
+                Assert.assertEquals(1, detail.getQuantity());
+                Assert.assertEquals("Pen", detail.getItemDescription());
+
+                Assert.assertEquals(2, results.get(1).size());
+                OrderHeader header = (OrderHeader) results.get(1).get(0);
+                Assert.assertEquals(1, header.getOrderId());
+                Assert.assertEquals("Fred", header.getCustName());
+
+                results = mapper.getUsersAndGroups();
+                Assert.assertEquals(7, results.get(0).size());
+                detail = (OrderDetail) results.get(0).get(6);
+                Assert.assertEquals(2, detail.getOrderId());
+                Assert.assertEquals(4, detail.getLineNumber());
+                Assert.assertEquals(5, detail.getQuantity());
+                Assert.assertEquals("Eraser", detail.getItemDescription());
+            } finally {
+                sqlSession.rollback(true);
+            }
+        }
+    }
 }

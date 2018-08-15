@@ -32,144 +32,144 @@ import org.junit.Test;
 
 public class ResourcesTest extends BaseDataTest {
 
-  private static final ClassLoader CLASS_LOADER = ResourcesTest.class.getClassLoader();
+    private static final ClassLoader CLASS_LOADER = ResourcesTest.class.getClassLoader();
 
-  @Test
-  public void shouldGetUrlForResource() throws Exception {
-    URL url = Resources.getResourceURL(JPETSTORE_PROPERTIES);
-    assertTrue(url.toString().endsWith("jpetstore/jpetstore-hsqldb.properties"));
-  }
-
-  @Test
-  public void shouldGetUrlAsProperties() throws Exception {
-    URL url = Resources.getResourceURL(CLASS_LOADER, JPETSTORE_PROPERTIES);
-    Properties props = Resources.getUrlAsProperties(url.toString());
-    assertNotNull(props.getProperty("driver"));
-  }
-
-  @Test
-  public void shouldGetResourceAsProperties() throws Exception {
-    Properties props = Resources.getResourceAsProperties(CLASS_LOADER, JPETSTORE_PROPERTIES);
-    assertNotNull(props.getProperty("driver"));
-  }
-
-  @Test
-  public void shouldGetUrlAsStream() throws Exception {
-    URL url = Resources.getResourceURL(CLASS_LOADER, JPETSTORE_PROPERTIES);
-    try (InputStream in = Resources.getUrlAsStream(url.toString())) {
-      assertNotNull(in);
+    @Test
+    public void shouldGetUrlForResource() throws Exception {
+        URL url = Resources.getResourceURL(JPETSTORE_PROPERTIES);
+        assertTrue(url.toString().endsWith("jpetstore/jpetstore-hsqldb.properties"));
     }
-  }
 
-  @Test
-  public void shouldGetUrlAsReader() throws Exception {
-    URL url = Resources.getResourceURL(CLASS_LOADER, JPETSTORE_PROPERTIES);
-    try (Reader in = Resources.getUrlAsReader(url.toString())) {
-      assertNotNull(in);
+    @Test
+    public void shouldGetUrlAsProperties() throws Exception {
+        URL url = Resources.getResourceURL(CLASS_LOADER, JPETSTORE_PROPERTIES);
+        Properties props = Resources.getUrlAsProperties(url.toString());
+        assertNotNull(props.getProperty("driver"));
     }
-  }
 
-  @Test
-  public void shouldGetResourceAsStream() throws Exception {
-    try (InputStream in = Resources.getResourceAsStream(CLASS_LOADER, JPETSTORE_PROPERTIES)) {
-      assertNotNull(in);
+    @Test
+    public void shouldGetResourceAsProperties() throws Exception {
+        Properties props = Resources.getResourceAsProperties(CLASS_LOADER, JPETSTORE_PROPERTIES);
+        assertNotNull(props.getProperty("driver"));
     }
-  }
 
-  @Test
-  public void shouldGetResourceAsReader() throws Exception {
-    try(Reader in = Resources.getResourceAsReader(CLASS_LOADER, JPETSTORE_PROPERTIES)) {
-      assertNotNull(in);
+    @Test
+    public void shouldGetUrlAsStream() throws Exception {
+        URL url = Resources.getResourceURL(CLASS_LOADER, JPETSTORE_PROPERTIES);
+        try (InputStream in = Resources.getUrlAsStream(url.toString())) {
+            assertNotNull(in);
+        }
     }
-  }
 
-  @Test
-  public void shouldGetResourceAsFile() throws Exception {
-    File file = Resources.getResourceAsFile(JPETSTORE_PROPERTIES);
-    assertTrue(file.getAbsolutePath().replace('\\', '/').endsWith("jpetstore/jpetstore-hsqldb.properties"));
-  }
+    @Test
+    public void shouldGetUrlAsReader() throws Exception {
+        URL url = Resources.getResourceURL(CLASS_LOADER, JPETSTORE_PROPERTIES);
+        try (Reader in = Resources.getUrlAsReader(url.toString())) {
+            assertNotNull(in);
+        }
+    }
 
-  @Test
-  public void shouldGetResourceAsFileWithClassloader() throws Exception {
-    File file = Resources.getResourceAsFile(CLASS_LOADER, JPETSTORE_PROPERTIES);
-    assertTrue(file.getAbsolutePath().replace('\\', '/').endsWith("jpetstore/jpetstore-hsqldb.properties"));
-  }
+    @Test
+    public void shouldGetResourceAsStream() throws Exception {
+        try (InputStream in = Resources.getResourceAsStream(CLASS_LOADER, JPETSTORE_PROPERTIES)) {
+            assertNotNull(in);
+        }
+    }
 
-  @Test
-  public void shouldGetResourceAsPropertiesWithOutClassloader() throws Exception {
-    Properties file = Resources.getResourceAsProperties(JPETSTORE_PROPERTIES);
-    assertNotNull(file);
-  }
+    @Test
+    public void shouldGetResourceAsReader() throws Exception {
+        try (Reader in = Resources.getResourceAsReader(CLASS_LOADER, JPETSTORE_PROPERTIES)) {
+            assertNotNull(in);
+        }
+    }
 
-  @Test
-  public void shouldGetResourceAsPropertiesWithClassloader() throws Exception {
-    Properties file = Resources.getResourceAsProperties(CLASS_LOADER, JPETSTORE_PROPERTIES);
-    assertNotNull(file);
-  }
+    @Test
+    public void shouldGetResourceAsFile() throws Exception {
+        File file = Resources.getResourceAsFile(JPETSTORE_PROPERTIES);
+        assertTrue(file.getAbsolutePath().replace('\\', '/').endsWith("jpetstore/jpetstore-hsqldb.properties"));
+    }
 
-  @Test
-  public void shouldAllowDefaultClassLoaderToBeSet() {
-    Resources.setDefaultClassLoader(this.getClass().getClassLoader());
-    assertEquals(this.getClass().getClassLoader(), Resources.getDefaultClassLoader());
-  }
+    @Test
+    public void shouldGetResourceAsFileWithClassloader() throws Exception {
+        File file = Resources.getResourceAsFile(CLASS_LOADER, JPETSTORE_PROPERTIES);
+        assertTrue(file.getAbsolutePath().replace('\\', '/').endsWith("jpetstore/jpetstore-hsqldb.properties"));
+    }
 
-  @Test
-  public void shouldAllowDefaultCharsetToBeSet() {
-    Resources.setCharset(Charset.defaultCharset());
-    assertEquals(Charset.defaultCharset(), Resources.getCharset());
-  }
+    @Test
+    public void shouldGetResourceAsPropertiesWithOutClassloader() throws Exception {
+        Properties file = Resources.getResourceAsProperties(JPETSTORE_PROPERTIES);
+        assertNotNull(file);
+    }
 
-  @Test
-  public void shouldGetClassForName() throws Exception {
-    Class<?> clazz = Resources.classForName(ResourcesTest.class.getName());
-    assertNotNull(clazz);
-  }
+    @Test
+    public void shouldGetResourceAsPropertiesWithClassloader() throws Exception {
+        Properties file = Resources.getResourceAsProperties(CLASS_LOADER, JPETSTORE_PROPERTIES);
+        assertNotNull(file);
+    }
 
-  @Test(expected = ClassNotFoundException.class)
-  public void shouldNotFindThisClass() throws ClassNotFoundException {
-    Resources.classForName("some.random.class.that.does.not.Exist");
-  }
+    @Test
+    public void shouldAllowDefaultClassLoaderToBeSet() {
+        Resources.setDefaultClassLoader(this.getClass().getClassLoader());
+        assertEquals(this.getClass().getClassLoader(), Resources.getDefaultClassLoader());
+    }
 
-  @Test
-  public void shouldGetReader() throws IOException {
+    @Test
+    public void shouldAllowDefaultCharsetToBeSet() {
+        Resources.setCharset(Charset.defaultCharset());
+        assertEquals(Charset.defaultCharset(), Resources.getCharset());
+    }
 
-    // save the value
-    Charset charset = Resources.getCharset();
+    @Test
+    public void shouldGetClassForName() throws Exception {
+        Class<?> clazz = Resources.classForName(ResourcesTest.class.getName());
+        assertNotNull(clazz);
+    }
 
-    // charset
-    Resources.setCharset(Charset.forName("US-ASCII"));
-    assertNotNull(Resources.getResourceAsReader(JPETSTORE_PROPERTIES));
+    @Test(expected = ClassNotFoundException.class)
+    public void shouldNotFindThisClass() throws ClassNotFoundException {
+        Resources.classForName("some.random.class.that.does.not.Exist");
+    }
 
-    // no charset
-    Resources.setCharset(null);
-    assertNotNull(Resources.getResourceAsReader(JPETSTORE_PROPERTIES));
+    @Test
+    public void shouldGetReader() throws IOException {
 
-    // clean up
-    Resources.setCharset(charset);
+        // save the value
+        Charset charset = Resources.getCharset();
 
-  }
+        // charset
+        Resources.setCharset(Charset.forName("US-ASCII"));
+        assertNotNull(Resources.getResourceAsReader(JPETSTORE_PROPERTIES));
 
-  @Test
-  public void shouldGetReaderWithClassLoader() throws IOException {
+        // no charset
+        Resources.setCharset(null);
+        assertNotNull(Resources.getResourceAsReader(JPETSTORE_PROPERTIES));
 
-    // save the value
-    Charset charset = Resources.getCharset();
+        // clean up
+        Resources.setCharset(charset);
 
-    // charset
-    Resources.setCharset(Charset.forName("US-ASCII"));
-    assertNotNull(Resources.getResourceAsReader(getClass().getClassLoader(), JPETSTORE_PROPERTIES));
+    }
 
-    // no charset
-    Resources.setCharset(null);
-    assertNotNull(Resources.getResourceAsReader(getClass().getClassLoader(), JPETSTORE_PROPERTIES));
+    @Test
+    public void shouldGetReaderWithClassLoader() throws IOException {
 
-    // clean up
-    Resources.setCharset(charset);
+        // save the value
+        Charset charset = Resources.getCharset();
 
-  }
+        // charset
+        Resources.setCharset(Charset.forName("US-ASCII"));
+        assertNotNull(Resources.getResourceAsReader(getClass().getClassLoader(), JPETSTORE_PROPERTIES));
 
-  @Test
-  public void stupidJustForCoverage() {
-    assertNotNull(new Resources());
-  }
+        // no charset
+        Resources.setCharset(null);
+        assertNotNull(Resources.getResourceAsReader(getClass().getClassLoader(), JPETSTORE_PROPERTIES));
+
+        // clean up
+        Resources.setCharset(charset);
+
+    }
+
+    @Test
+    public void stupidJustForCoverage() {
+        assertNotNull(new Resources());
+    }
 }

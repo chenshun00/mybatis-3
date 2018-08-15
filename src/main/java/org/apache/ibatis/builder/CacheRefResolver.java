@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,15 +21,15 @@ import org.apache.ibatis.cache.Cache;
  * @author Clinton Begin
  */
 public class CacheRefResolver {
-  private final MapperBuilderAssistant assistant;
-  private final String cacheRefNamespace;
+    private final MapperBuilderAssistant assistant;
+    private final String cacheRefNamespace;
 
-  public CacheRefResolver(MapperBuilderAssistant assistant, String cacheRefNamespace) {
-    this.assistant = assistant;
-    this.cacheRefNamespace = cacheRefNamespace;
-  }
+    public CacheRefResolver(MapperBuilderAssistant assistant, String cacheRefNamespace) {
+        this.assistant = assistant;
+        this.cacheRefNamespace = cacheRefNamespace;
+    }
 
-  public Cache resolveCacheRef() {
-    return assistant.useCacheRef(cacheRefNamespace);
-  }
+    public Cache resolveCacheRef() {
+        return assistant.useCacheRef(cacheRefNamespace);
+    }
 }

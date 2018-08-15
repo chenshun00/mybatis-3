@@ -34,88 +34,88 @@ import static org.assertj.core.api.BDDAssertions.then;
  */
 public class LanguageDriverRegistryTest {
 
-  private LanguageDriverRegistry registry = new LanguageDriverRegistry();
+    private LanguageDriverRegistry registry = new LanguageDriverRegistry();
 
-  @Test
-  public void registerByType() {
-    registry.register(RawLanguageDriver.class);
-    LanguageDriver driver = registry.getDriver(RawLanguageDriver.class);
+    @Test
+    public void registerByType() {
+        registry.register(RawLanguageDriver.class);
+        LanguageDriver driver = registry.getDriver(RawLanguageDriver.class);
 
-    assertThat(driver).isInstanceOf(RawLanguageDriver.class);
-  }
-
-  @Test
-  public void registerByTypeSameType() {
-    registry.register(RawLanguageDriver.class);
-    LanguageDriver driver = registry.getDriver(RawLanguageDriver.class);
-
-    registry.register(RawLanguageDriver.class);
-
-    assertThat(driver).isSameAs(registry.getDriver(RawLanguageDriver.class));
-  }
-
-  @Test
-  public void registerByTypeNull() {
-    when(registry).register((Class<? extends LanguageDriver>) null);
-    then(caughtException()).isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("null is not a valid Language Driver");
-  }
-
-  @Test
-  public void registerByTypeDoesNotCreateNewInstance() {
-    when(registry).register(PrivateLanguageDriver.class);
-    then(caughtException()).isInstanceOf(ScriptingException.class)
-      .hasMessage("Failed to load language driver for org.apache.ibatis.scripting.LanguageDriverRegistryTest$PrivateLanguageDriver");
-  }
-
-  @Test
-  public void registerByInstance() {
-    registry.register(new PrivateLanguageDriver());
-    LanguageDriver driver = registry.getDriver(PrivateLanguageDriver.class);
-
-    assertThat(driver).isInstanceOf(PrivateLanguageDriver.class);
-  }
-
-  @Test
-  public void registerByInstanceSameType() {
-    registry.register(new PrivateLanguageDriver());
-    LanguageDriver driver = registry.getDriver(PrivateLanguageDriver.class);
-
-    registry.register(new PrivateLanguageDriver());
-
-    assertThat(driver).isSameAs(registry.getDriver(PrivateLanguageDriver.class));
-  }
-
-  @Test
-  public void registerByInstanceNull() {
-    when(registry).register((LanguageDriver) null);
-    then(caughtException()).isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("null is not a valid Language Driver");
-  }
-
-  @Test
-  public void setDefaultDriverClass() {
-    registry.setDefaultDriverClass(RawLanguageDriver.class);
-    assertThat(registry.getDefaultDriverClass() == RawLanguageDriver.class).isTrue();
-    assertThat(registry.getDefaultDriver()).isInstanceOf(RawLanguageDriver.class);
-  }
-
-  static private class PrivateLanguageDriver implements LanguageDriver {
-
-    @Override
-    public ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
-      return null;
+        assertThat(driver).isInstanceOf(RawLanguageDriver.class);
     }
 
-    @Override
-    public SqlSource createSqlSource(Configuration configuration, XNode script, Class<?> parameterType) {
-      return null;
+    @Test
+    public void registerByTypeSameType() {
+        registry.register(RawLanguageDriver.class);
+        LanguageDriver driver = registry.getDriver(RawLanguageDriver.class);
+
+        registry.register(RawLanguageDriver.class);
+
+        assertThat(driver).isSameAs(registry.getDriver(RawLanguageDriver.class));
     }
 
-    @Override
-    public SqlSource createSqlSource(Configuration configuration, String script, Class<?> parameterType) {
-      return null;
+    @Test
+    public void registerByTypeNull() {
+        when(registry).register((Class<? extends LanguageDriver>) null);
+        then(caughtException()).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("null is not a valid Language Driver");
     }
-  }
+
+    @Test
+    public void registerByTypeDoesNotCreateNewInstance() {
+        when(registry).register(PrivateLanguageDriver.class);
+        then(caughtException()).isInstanceOf(ScriptingException.class)
+                .hasMessage("Failed to load language driver for org.apache.ibatis.scripting.LanguageDriverRegistryTest$PrivateLanguageDriver");
+    }
+
+    @Test
+    public void registerByInstance() {
+        registry.register(new PrivateLanguageDriver());
+        LanguageDriver driver = registry.getDriver(PrivateLanguageDriver.class);
+
+        assertThat(driver).isInstanceOf(PrivateLanguageDriver.class);
+    }
+
+    @Test
+    public void registerByInstanceSameType() {
+        registry.register(new PrivateLanguageDriver());
+        LanguageDriver driver = registry.getDriver(PrivateLanguageDriver.class);
+
+        registry.register(new PrivateLanguageDriver());
+
+        assertThat(driver).isSameAs(registry.getDriver(PrivateLanguageDriver.class));
+    }
+
+    @Test
+    public void registerByInstanceNull() {
+        when(registry).register((LanguageDriver) null);
+        then(caughtException()).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("null is not a valid Language Driver");
+    }
+
+    @Test
+    public void setDefaultDriverClass() {
+        registry.setDefaultDriverClass(RawLanguageDriver.class);
+        assertThat(registry.getDefaultDriverClass() == RawLanguageDriver.class).isTrue();
+        assertThat(registry.getDefaultDriver()).isInstanceOf(RawLanguageDriver.class);
+    }
+
+    static private class PrivateLanguageDriver implements LanguageDriver {
+
+        @Override
+        public ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
+            return null;
+        }
+
+        @Override
+        public SqlSource createSqlSource(Configuration configuration, XNode script, Class<?> parameterType) {
+            return null;
+        }
+
+        @Override
+        public SqlSource createSqlSource(Configuration configuration, String script, Class<?> parameterType) {
+            return null;
+        }
+    }
 
 }

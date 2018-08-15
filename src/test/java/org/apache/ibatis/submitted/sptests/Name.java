@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,40 +18,40 @@ package org.apache.ibatis.submitted.sptests;
 import java.util.List;
 
 public class Name {
-  private Integer id;
-  private String firstName;
-  private String lastName;
-  private List<Item> items;
+    private Integer id;
+    private String firstName;
+    private String lastName;
+    private List<Item> items;
 
-  public List<Item> getItems() {
-    return items;
-  }
+    public List<Item> getItems() {
+        return items;
+    }
 
-  public void setItems(List<Item> items) {
-    this.items = items;
-  }
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
 
-  public Integer getId() {
-    return id;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public String getFirstName() {
-    return firstName;
-  }
+    public String getFirstName() {
+        return firstName;
+    }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-  public String getLastName() {
-    return lastName;
-  }
+    public String getLastName() {
+        return lastName;
+    }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 }

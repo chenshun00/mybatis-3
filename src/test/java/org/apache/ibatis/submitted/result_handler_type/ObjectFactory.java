@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,18 +25,18 @@ import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
 
 public class ObjectFactory extends DefaultObjectFactory {
 
-  private static final long serialVersionUID = -8855120656740914948L;
+    private static final long serialVersionUID = -8855120656740914948L;
 
-  @Override
-  protected Class<?> resolveInterface(Class<?> type) {
-    Class<?> classToCreate;
-    if (type == Map.class) {
-      classToCreate = LinkedHashMap.class;
-    } else if (type == List.class || type == Collection.class) {
-      classToCreate = LinkedList.class;
-    } else {
-      classToCreate = super.resolveInterface(type);
+    @Override
+    protected Class<?> resolveInterface(Class<?> type) {
+        Class<?> classToCreate;
+        if (type == Map.class) {
+            classToCreate = LinkedHashMap.class;
+        } else if (type == List.class || type == Collection.class) {
+            classToCreate = LinkedList.class;
+        } else {
+            classToCreate = super.resolveInterface(type);
+        }
+        return classToCreate;
     }
-    return classToCreate;
-  }
 }

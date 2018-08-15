@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,55 +24,55 @@ import org.apache.ibatis.cache.Cache;
  */
 public class SynchronizedCache implements Cache {
 
-  private final Cache delegate;
-  
-  public SynchronizedCache(Cache delegate) {
-    this.delegate = delegate;
-  }
+    private final Cache delegate;
 
-  @Override
-  public String getId() {
-    return delegate.getId();
-  }
+    public SynchronizedCache(Cache delegate) {
+        this.delegate = delegate;
+    }
 
-  @Override
-  public synchronized int getSize() {
-    return delegate.getSize();
-  }
+    @Override
+    public String getId() {
+        return delegate.getId();
+    }
 
-  @Override
-  public synchronized void putObject(Object key, Object object) {
-    delegate.putObject(key, object);
-  }
+    @Override
+    public synchronized int getSize() {
+        return delegate.getSize();
+    }
 
-  @Override
-  public synchronized Object getObject(Object key) {
-    return delegate.getObject(key);
-  }
+    @Override
+    public synchronized void putObject(Object key, Object object) {
+        delegate.putObject(key, object);
+    }
 
-  @Override
-  public synchronized Object removeObject(Object key) {
-    return delegate.removeObject(key);
-  }
+    @Override
+    public synchronized Object getObject(Object key) {
+        return delegate.getObject(key);
+    }
 
-  @Override
-  public synchronized void clear() {
-    delegate.clear();
-  }
+    @Override
+    public synchronized Object removeObject(Object key) {
+        return delegate.removeObject(key);
+    }
 
-  @Override
-  public int hashCode() {
-    return delegate.hashCode();
-  }
+    @Override
+    public synchronized void clear() {
+        delegate.clear();
+    }
 
-  @Override
-  public boolean equals(Object obj) {
-    return delegate.equals(obj);
-  }
+    @Override
+    public int hashCode() {
+        return delegate.hashCode();
+    }
 
-  @Override
-  public ReadWriteLock getReadWriteLock() {
-    return null;
-  }
+    @Override
+    public boolean equals(Object obj) {
+        return delegate.equals(obj);
+    }
+
+    @Override
+    public ReadWriteLock getReadWriteLock() {
+        return null;
+    }
 
 }

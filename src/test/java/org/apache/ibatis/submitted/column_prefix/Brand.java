@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,33 +18,33 @@ package org.apache.ibatis.submitted.column_prefix;
 import java.util.List;
 
 public class Brand {
-  private Integer id;
+    private Integer id;
 
-  private String name;
+    private String name;
 
-  private List<Product> products;
+    private List<Product> products;
 
-  public Integer getId() {
-    return id;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public List<Product> getProducts() {
-    return products;
-  }
+    public List<Product> getProducts() {
+        return products;
+    }
 
-  public void setProducts(List<Product> products) {
-    this.products = products;
-  }
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
 }

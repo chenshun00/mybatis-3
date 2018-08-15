@@ -30,40 +30,40 @@ import org.junit.Test;
 
 public class EncodingTest {
 
-  protected static SqlSessionFactory sqlSessionFactory;
+    protected static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/encoding/EncodingConfig.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/encoding/EncodingConfig.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        Charset charset = Resources.getCharset();
+        try {
+            // make sure that the SQL file has been saved in UTF-8!
+            Resources.setCharset(Charset.forName("utf-8"));
+            BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                    "org/apache/ibatis/submitted/encoding/CreateDB.sql");
+        } finally {
+            Resources.setCharset(charset);
+        }
     }
 
-    Charset charset = Resources.getCharset();
-    try {
-      // make sure that the SQL file has been saved in UTF-8!
-      Resources.setCharset(Charset.forName("utf-8"));
-      BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-              "org/apache/ibatis/submitted/encoding/CreateDB.sql");
-    } finally {
-      Resources.setCharset(charset);
+    @Test
+    public void testEncoding1() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            EncodingMapper mapper = sqlSession.getMapper(EncodingMapper.class);
+            String answer = mapper.select1();
+            assertEquals("Mara\u00f1\u00f3n", answer);
+        }
     }
-  }
 
-  @Test
-  public void testEncoding1() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      EncodingMapper mapper = sqlSession.getMapper(EncodingMapper.class);
-      String answer = mapper.select1();
-      assertEquals("Mara\u00f1\u00f3n", answer);
+    @Test
+    public void testEncoding2() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            EncodingMapper mapper = sqlSession.getMapper(EncodingMapper.class);
+            String answer = mapper.select2();
+            assertEquals("Mara\u00f1\u00f3n", answer);
+        }
     }
-  }
-
-  @Test
-  public void testEncoding2() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      EncodingMapper mapper = sqlSession.getMapper(EncodingMapper.class);
-      String answer = mapper.select2();
-      assertEquals("Mara\u00f1\u00f3n", answer);
-    }
-  }
 }

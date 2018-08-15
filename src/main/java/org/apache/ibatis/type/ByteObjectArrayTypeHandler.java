@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,35 +25,35 @@ import java.sql.SQLException;
  */
 public class ByteObjectArrayTypeHandler extends BaseTypeHandler<Byte[]> {
 
-  @Override
-  public void setNonNullParameter(PreparedStatement ps, int i, Byte[] parameter, JdbcType jdbcType) throws SQLException {
-    ps.setBytes(i, ByteArrayUtils.convertToPrimitiveArray(parameter));
-  }
-
-  @Override
-  public Byte[] getNullableResult(ResultSet rs, String columnName) throws SQLException {
-    byte[] bytes = rs.getBytes(columnName);
-    return getBytes(bytes);
-  }
-
-  @Override
-  public Byte[] getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-    byte[] bytes = rs.getBytes(columnIndex);
-    return getBytes(bytes);
-  }
-
-  @Override
-  public Byte[] getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-    byte[] bytes = cs.getBytes(columnIndex);
-    return getBytes(bytes);
-  }
-
-  private Byte[] getBytes(byte[] bytes) {
-    Byte[] returnValue = null;
-    if (bytes != null) {
-      returnValue = ByteArrayUtils.convertToObjectArray(bytes);
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, Byte[] parameter, JdbcType jdbcType) throws SQLException {
+        ps.setBytes(i, ByteArrayUtils.convertToPrimitiveArray(parameter));
     }
-    return returnValue;
-  }
+
+    @Override
+    public Byte[] getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        byte[] bytes = rs.getBytes(columnName);
+        return getBytes(bytes);
+    }
+
+    @Override
+    public Byte[] getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        byte[] bytes = rs.getBytes(columnIndex);
+        return getBytes(bytes);
+    }
+
+    @Override
+    public Byte[] getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        byte[] bytes = cs.getBytes(columnIndex);
+        return getBytes(bytes);
+    }
+
+    private Byte[] getBytes(byte[] bytes) {
+        Byte[] returnValue = null;
+        if (bytes != null) {
+            returnValue = ByteArrayUtils.convertToObjectArray(bytes);
+        }
+        return returnValue;
+    }
 
 }

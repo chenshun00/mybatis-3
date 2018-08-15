@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,24 +27,24 @@ import java.sql.SQLException;
 @MappedTypes(Integer.class)
 public class CustomIntegerTypeHandler implements TypeHandler<Integer> {
 
-  @Override
-  public void setParameter(PreparedStatement ps, int i, Integer parameter, JdbcType jdbcType) throws SQLException {
-    ps.setInt(i, parameter);
-  }
+    @Override
+    public void setParameter(PreparedStatement ps, int i, Integer parameter, JdbcType jdbcType) throws SQLException {
+        ps.setInt(i, parameter);
+    }
 
-  @Override
-  public Integer getResult(ResultSet rs, String columnName) throws SQLException {
-    return rs.getInt(columnName);
-  }
+    @Override
+    public Integer getResult(ResultSet rs, String columnName) throws SQLException {
+        return rs.getInt(columnName);
+    }
 
-  @Override
-  public Integer getResult(ResultSet rs, int columnIndex) throws SQLException {
-    return rs.getInt(columnIndex);
-  }
+    @Override
+    public Integer getResult(ResultSet rs, int columnIndex) throws SQLException {
+        return rs.getInt(columnIndex);
+    }
 
-  @Override
-  public Integer getResult(CallableStatement cs, int columnIndex) throws SQLException {
-    return cs.getInt(columnIndex);
-  }
+    @Override
+    public Integer getResult(CallableStatement cs, int columnIndex) throws SQLException {
+        return cs.getInt(columnIndex);
+    }
 
 }

@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -31,46 +31,46 @@ import java.util.Properties;
 
 public class ConfigurationTest {
 
-  @Test
-  public void applyDefaultValueOnXmlConfiguration() throws IOException {
+    @Test
+    public void applyDefaultValueOnXmlConfiguration() throws IOException {
 
-    Properties props = new Properties();
-    props.setProperty(PropertyParser.KEY_ENABLE_DEFAULT_VALUE, "true");
+        Properties props = new Properties();
+        props.setProperty(PropertyParser.KEY_ENABLE_DEFAULT_VALUE, "true");
 
-    Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/global_variables_defaults/mybatis-config.xml");
-    SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(reader, props);
-    Configuration configuration = factory.getConfiguration();
+        Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/global_variables_defaults/mybatis-config.xml");
+        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(reader, props);
+        Configuration configuration = factory.getConfiguration();
 
-    Assertions.assertThat(configuration.getJdbcTypeForNull()).isEqualTo(JdbcType.NULL);
-    Assertions.assertThat(((UnpooledDataSource) configuration.getEnvironment().getDataSource()).getUrl())
-            .isEqualTo("jdbc:hsqldb:mem:global_variables_defaults");
-    Assertions.assertThat(configuration.getDatabaseId()).isEqualTo("hsql");
-    Assertions.assertThat(((SupportClasses.CustomObjectFactory) configuration.getObjectFactory()).getProperties().getProperty("name"))
-            .isEqualTo("default");
+        Assertions.assertThat(configuration.getJdbcTypeForNull()).isEqualTo(JdbcType.NULL);
+        Assertions.assertThat(((UnpooledDataSource) configuration.getEnvironment().getDataSource()).getUrl())
+                .isEqualTo("jdbc:hsqldb:mem:global_variables_defaults");
+        Assertions.assertThat(configuration.getDatabaseId()).isEqualTo("hsql");
+        Assertions.assertThat(((SupportClasses.CustomObjectFactory) configuration.getObjectFactory()).getProperties().getProperty("name"))
+                .isEqualTo("default");
 
-  }
+    }
 
-  @Test
-  public void applyPropertyValueOnXmlConfiguration() throws IOException {
+    @Test
+    public void applyPropertyValueOnXmlConfiguration() throws IOException {
 
-    Properties props = new Properties();
-    props.setProperty(PropertyParser.KEY_ENABLE_DEFAULT_VALUE, "true");
-    props.setProperty("settings.jdbcTypeForNull", JdbcType.CHAR.name());
-    props.setProperty("db.name", "global_variables_defaults_custom");
-    props.setProperty("productName.hsql", "Hsql");
-    props.setProperty("objectFactory.name", "custom");
+        Properties props = new Properties();
+        props.setProperty(PropertyParser.KEY_ENABLE_DEFAULT_VALUE, "true");
+        props.setProperty("settings.jdbcTypeForNull", JdbcType.CHAR.name());
+        props.setProperty("db.name", "global_variables_defaults_custom");
+        props.setProperty("productName.hsql", "Hsql");
+        props.setProperty("objectFactory.name", "custom");
 
-    Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/global_variables_defaults/mybatis-config.xml");
-    SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(reader, props);
-    Configuration configuration = factory.getConfiguration();
+        Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/global_variables_defaults/mybatis-config.xml");
+        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(reader, props);
+        Configuration configuration = factory.getConfiguration();
 
-    Assertions.assertThat(configuration.getJdbcTypeForNull()).isEqualTo(JdbcType.CHAR);
-    Assertions.assertThat(((UnpooledDataSource) configuration.getEnvironment().getDataSource()).getUrl())
-            .isEqualTo("jdbc:hsqldb:mem:global_variables_defaults_custom");
-    Assertions.assertThat(configuration.getDatabaseId()).isNull();
-    Assertions.assertThat(((SupportClasses.CustomObjectFactory) configuration.getObjectFactory()).getProperties().getProperty("name"))
-            .isEqualTo("custom");
+        Assertions.assertThat(configuration.getJdbcTypeForNull()).isEqualTo(JdbcType.CHAR);
+        Assertions.assertThat(((UnpooledDataSource) configuration.getEnvironment().getDataSource()).getUrl())
+                .isEqualTo("jdbc:hsqldb:mem:global_variables_defaults_custom");
+        Assertions.assertThat(configuration.getDatabaseId()).isNull();
+        Assertions.assertThat(((SupportClasses.CustomObjectFactory) configuration.getObjectFactory()).getProperties().getProperty("name"))
+                .isEqualTo("custom");
 
-  }
+    }
 
 }

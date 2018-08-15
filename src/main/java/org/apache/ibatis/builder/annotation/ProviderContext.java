@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,36 +25,36 @@ import java.lang.reflect.Method;
  */
 public final class ProviderContext {
 
-  private final Class<?> mapperType;
-  private final Method mapperMethod;
+    private final Class<?> mapperType;
+    private final Method mapperMethod;
 
-  /**
-   * Constructor.
-   *
-   * @param mapperType A mapper interface type that specified provider
-   * @param mapperMethod A mapper method that specified provider
-   */
-  ProviderContext(Class<?> mapperType, Method mapperMethod) {
-    this.mapperType = mapperType;
-    this.mapperMethod = mapperMethod;
-  }
+    /**
+     * Constructor.
+     *
+     * @param mapperType A mapper interface type that specified provider
+     * @param mapperMethod A mapper method that specified provider
+     */
+    ProviderContext(Class<?> mapperType, Method mapperMethod) {
+        this.mapperType = mapperType;
+        this.mapperMethod = mapperMethod;
+    }
 
-  /**
-   * Get a mapper interface type that specified provider.
-   *
-   * @return A mapper interface type that specified provider
-   */
-  public Class<?> getMapperType() {
-    return mapperType;
-  }
+    /**
+     * Get a mapper interface type that specified provider.
+     *
+     * @return A mapper interface type that specified provider
+     */
+    public Class<?> getMapperType() {
+        return mapperType;
+    }
 
-  /**
-   * Get a mapper method that specified provider.
-   *
-   * @return A mapper method that specified provider
-   */
-  public Method getMapperMethod() {
-    return mapperMethod;
-  }
+    /**
+     * Get a mapper method that specified provider.
+     *
+     * @return A mapper method that specified provider
+     */
+    public Method getMapperMethod() {
+        return mapperMethod;
+    }
 
 }

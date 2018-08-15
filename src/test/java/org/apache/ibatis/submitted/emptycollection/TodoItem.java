@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,28 +17,28 @@ package org.apache.ibatis.submitted.emptycollection;
 
 public class TodoItem {
 
-  @Override
-  public String toString() {
-    return "TodoItem [order=" + order + ", description=" + description + "]";
-  }
+    @Override
+    public String toString() {
+        return "TodoItem [order=" + order + ", description=" + description + "]";
+    }
 
-  private int order;
-  private String description;
+    private int order;
+    private String description;
 
-  public int getOrder() {
-    return order;
-  }
+    public int getOrder() {
+        return order;
+    }
 
-  public void setOrder(int order) {
-    this.order = order;
-  }
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 }

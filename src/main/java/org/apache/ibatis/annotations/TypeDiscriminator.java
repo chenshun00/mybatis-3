@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -32,13 +32,13 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface TypeDiscriminator {
-  String column();
+    String column();
 
-  Class<?> javaType() default void.class;
+    Class<?> javaType() default void.class;
 
-  JdbcType jdbcType() default JdbcType.UNDEFINED;
+    JdbcType jdbcType() default JdbcType.UNDEFINED;
 
-  Class<? extends TypeHandler> typeHandler() default UnknownTypeHandler.class;
+    Class<? extends TypeHandler> typeHandler() default UnknownTypeHandler.class;
 
-  Case[] cases();
+    Case[] cases();
 }

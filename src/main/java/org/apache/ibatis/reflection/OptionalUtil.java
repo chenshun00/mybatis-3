@@ -13,7 +13,6 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
 package org.apache.ibatis.reflection;
 
 import java.util.Optional;
@@ -22,12 +21,12 @@ import org.apache.ibatis.lang.UsesJava8;
 
 public abstract class OptionalUtil {
 
-  @UsesJava8
-  public static Object ofNullable(Object value) {
-    return Optional.ofNullable(value);
-  }
+    @UsesJava8
+    public static Object ofNullable(Object value) {
+        return Optional.ofNullable(value);
+    }
 
-  private OptionalUtil() {
-    super();
-  }
+    private OptionalUtil() {
+        super();
+    }
 }

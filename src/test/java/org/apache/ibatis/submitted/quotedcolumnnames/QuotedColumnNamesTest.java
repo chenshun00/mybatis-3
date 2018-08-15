@@ -30,49 +30,49 @@ import org.junit.Test;
 
 public class QuotedColumnNamesTest {
 
-  protected static SqlSessionFactory sqlSessionFactory;
+    protected static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/quotedcolumnnames/MapperConfig.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/quotedcolumnnames/MapperConfig.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/quotedcolumnnames/CreateDB.sql");
     }
 
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/quotedcolumnnames/CreateDB.sql");
-  }
-
-  @Test
-  public void testIt() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      List<Map<String, Object>> list = sqlSession.selectList("org.apache.ibatis.submitted.quotedcolumnnames.Map.doSelect");
-      printList(list);
-      assertColumnNames(list);
+    @Test
+    public void testIt() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            List<Map<String, Object>> list = sqlSession.selectList("org.apache.ibatis.submitted.quotedcolumnnames.Map.doSelect");
+            printList(list);
+            assertColumnNames(list);
+        }
     }
-  }
 
-  @Test
-  public void testItWithResultMap() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      List<Map<String, Object>> list = sqlSession.selectList("org.apache.ibatis.submitted.quotedcolumnnames.Map.doSelectWithResultMap");
-      printList(list);
-      assertColumnNames(list);
+    @Test
+    public void testItWithResultMap() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            List<Map<String, Object>> list = sqlSession.selectList("org.apache.ibatis.submitted.quotedcolumnnames.Map.doSelectWithResultMap");
+            printList(list);
+            assertColumnNames(list);
+        }
     }
-  }
 
-  private void assertColumnNames(List<Map<String, Object>> list) {
-    Map<String, Object> record = list.get(0);
+    private void assertColumnNames(List<Map<String, Object>> list) {
+        Map<String, Object> record = list.get(0);
 
-    Assert.assertTrue(record.containsKey("firstName"));
-    Assert.assertTrue(record.containsKey("lastName"));
+        Assert.assertTrue(record.containsKey("firstName"));
+        Assert.assertTrue(record.containsKey("lastName"));
 
-    Assert.assertFalse(record.containsKey("FIRST_NAME"));
-    Assert.assertFalse(record.containsKey("LAST_NAME"));
-  }
-
-  private void printList(List<Map<String, Object>> list) {
-    for (Map<String, Object> map : list) {
-      Assert.assertNotNull(map);
+        Assert.assertFalse(record.containsKey("FIRST_NAME"));
+        Assert.assertFalse(record.containsKey("LAST_NAME"));
     }
-  }
+
+    private void printList(List<Map<String, Object>> list) {
+        for (Map<String, Object> map : list) {
+            Assert.assertNotNull(map);
+        }
+    }
 }

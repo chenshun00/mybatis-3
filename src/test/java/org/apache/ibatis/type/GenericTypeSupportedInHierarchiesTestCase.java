@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,25 +24,25 @@ import org.junit.Test;
 
 public class GenericTypeSupportedInHierarchiesTestCase {
 
-  @Test
-  public void detectsTheGenericTypeTraversingTheHierarchy() {
-    assertEquals(String.class, new CustomStringTypeHandler().getRawType());
-  }
-
-  /**
-   *
-   */
-  public static final class CustomStringTypeHandler extends StringTypeHandler {
-
-    /**
-     * Defined as reported in #581
-     */
-    @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, String parameter, JdbcType jdbcType) throws SQLException {
-      // do something
-      super.setNonNullParameter(ps, i, parameter, jdbcType);
+    @Test
+    public void detectsTheGenericTypeTraversingTheHierarchy() {
+        assertEquals(String.class, new CustomStringTypeHandler().getRawType());
     }
 
-  }
+    /**
+     *
+     */
+    public static final class CustomStringTypeHandler extends StringTypeHandler {
+
+        /**
+         * Defined as reported in #581
+         */
+        @Override
+        public void setNonNullParameter(PreparedStatement ps, int i, String parameter, JdbcType jdbcType) throws SQLException {
+            // do something
+            super.setNonNullParameter(ps, i, parameter, jdbcType);
+        }
+
+    }
 
 }

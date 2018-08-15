@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ package org.apache.ibatis.scripting.xmltags;
  */
 public class VarDeclSqlNode implements SqlNode {
 
-  private final String name;
-  private final String expression;
+    private final String name;
+    private final String expression;
 
-  public VarDeclSqlNode(String var, String exp) {
-    name = var;
-    expression = exp;
-  }
+    public VarDeclSqlNode(String var, String exp) {
+        name = var;
+        expression = exp;
+    }
 
-  @Override
-  public boolean apply(DynamicContext context) {
-    final Object value = OgnlCache.getValue(expression, context.getBindings());
-    context.bind(name, value);
-    return true;
-  }
+    @Override
+    public boolean apply(DynamicContext context) {
+        final Object value = OgnlCache.getValue(expression, context.getBindings());
+        context.bind(name, value);
+        return true;
+    }
 
 }

@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,21 +17,21 @@ package org.apache.ibatis.submitted.language;
 
 public class Parameter {
 
-  private final boolean includeLastName;
+    private final boolean includeLastName;
 
-  private final String name;
+    private final String name;
 
-  public Parameter(boolean includeLastName, String name) {
-    this.includeLastName = includeLastName;
-    this.name = name;
-  }
+    public Parameter(boolean includeLastName, String name) {
+        this.includeLastName = includeLastName;
+        this.name = name;
+    }
 
-  public boolean isIncludeLastName() {
-    return includeLastName;
-  }
+    public boolean isIncludeLastName() {
+        return includeLastName;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
 }

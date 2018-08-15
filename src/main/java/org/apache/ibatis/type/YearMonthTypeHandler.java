@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,27 +36,27 @@ import org.apache.ibatis.lang.UsesJava8;
 @UsesJava8
 public class YearMonthTypeHandler extends BaseTypeHandler<YearMonth> {
 
-  @Override
-  public void setNonNullParameter(PreparedStatement ps, int i, YearMonth yearMonth, JdbcType jt) throws SQLException {
-    ps.setString(i, yearMonth.toString());
-  }
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, YearMonth yearMonth, JdbcType jt) throws SQLException {
+        ps.setString(i, yearMonth.toString());
+    }
 
-  @Override
-  public YearMonth getNullableResult(ResultSet rs, String columnName) throws SQLException {
-    String value = rs.getString(columnName);
-    return value == null ? null : YearMonth.parse(value);
-  }
+    @Override
+    public YearMonth getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        String value = rs.getString(columnName);
+        return value == null ? null : YearMonth.parse(value);
+    }
 
-  @Override
-  public YearMonth getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-    String value = rs.getString(columnIndex);
-    return value == null ? null : YearMonth.parse(value);
-  }
+    @Override
+    public YearMonth getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        String value = rs.getString(columnIndex);
+        return value == null ? null : YearMonth.parse(value);
+    }
 
-  @Override
-  public YearMonth getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-    String value = cs.getString(columnIndex);
-    return value == null ? null : YearMonth.parse(value);
-  }
+    @Override
+    public YearMonth getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        String value = cs.getString(columnIndex);
+        return value == null ? null : YearMonth.parse(value);
+    }
 
 }

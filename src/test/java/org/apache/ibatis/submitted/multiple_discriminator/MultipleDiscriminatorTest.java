@@ -27,9 +27,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class MultipleDiscriminatorTest {
-    
+
     private static SqlSessionFactory sqlSessionFactory;
-    
+
     @BeforeClass
     public static void initDatabase() throws Exception {
         try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/multiple_discriminator/ibatisConfig.xml")) {
@@ -39,7 +39,7 @@ public class MultipleDiscriminatorTest {
         BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
                 "org/apache/ibatis/submitted/multiple_discriminator/CreateDB.sql");
     }
-    
+
     @Test
     public void testMultipleDiscriminator() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
@@ -49,6 +49,7 @@ public class MultipleDiscriminatorTest {
             Assert.assertEquals("Person must be a director", Director.class, person.getClass());
         }
     }
+
     @Test
     public void testMultipleDiscriminator2() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
@@ -58,7 +59,8 @@ public class MultipleDiscriminatorTest {
             Assert.assertEquals("Person must be a director", Director.class, person.getClass());
         }
     }
-    @Test(timeout=20000)
+
+    @Test(timeout = 20000)
     public void testMultipleDiscriminatorLoop() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);

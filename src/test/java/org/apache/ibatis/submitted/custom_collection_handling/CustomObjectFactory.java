@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class CustomObjectFactory implements ObjectFactory {
     public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
         Class<?> classToCreate = resolveInterface(type);
         @SuppressWarnings("unchecked") // we know types are assignable
-        T created = (T) instantiateClass(classToCreate, constructorArgTypes, constructorArgs);
+                T created = (T) instantiateClass(classToCreate, constructorArgTypes, constructorArgs);
         return created;
     }
 
@@ -100,15 +100,15 @@ public class CustomObjectFactory implements ObjectFactory {
         }
         return classToCreate;
     }
-    
+
     @Override
     public <T> boolean isCollection(Class<T> type) {
-      return CustomCollection.class.isAssignableFrom(type);
+        return CustomCollection.class.isAssignableFrom(type);
     }
 
     @SuppressWarnings("unchecked")
     public <T> T[] createArray(Class<T> type, int size) {
-      return (T[]) Array.newInstance(type, size);
+        return (T[]) Array.newInstance(type, size);
     }
 
 }

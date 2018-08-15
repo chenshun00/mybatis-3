@@ -29,24 +29,24 @@ import org.junit.Test;
 
 public class CountTest {
 
-  protected static SqlSessionFactory sqlSessionFactory;
+    protected static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/count/MapperConfig.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/count/MapperConfig.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/count/CreateDB.sql");
     }
 
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/count/CreateDB.sql");
-  }
-
-  @Test
-  public void testCount() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      CountMapper mapper = sqlSession.getMapper(CountMapper.class);
-      int answer = mapper.count();
-      assertEquals(6, answer);
+    @Test
+    public void testCount() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            CountMapper mapper = sqlSession.getMapper(CountMapper.class);
+            int answer = mapper.count();
+            assertEquals(6, answer);
+        }
     }
-  }
 }

@@ -28,44 +28,44 @@ import org.junit.Test;
 
 public class OgnlStaticTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/ognlstatic/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/ognlstatic/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/ognlstatic/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/ognlstatic/CreateDB.sql");
-  }
-
-  /**
-   * This is the log output. 
-   * DEBUG [main] - ooo Using Connection [org.hsqldb.jdbc.JDBCConnection@5ae1a5c7]
-   * DEBUG [main] - ==>  Preparing: SELECT * FROM users WHERE name IN (?) AND id = ? 
-   * DEBUG [main] - ==> Parameters: 1(Integer), 1(Integer)
-   * There are two parameter mappings but DefaulParameterHandler maps them both to input paremeter (integer)
-   */
-  @Test // see issue #448
-  public void shouldGetAUserStatic() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      User user = mapper.getUserStatic(1);
-      Assert.assertNotNull(user);
-      Assert.assertEquals("User1", user.getName());
+    /**
+     * This is the log output.
+     * DEBUG [main] - ooo Using Connection [org.hsqldb.jdbc.JDBCConnection@5ae1a5c7]
+     * DEBUG [main] - ==>  Preparing: SELECT * FROM users WHERE name IN (?) AND id = ?
+     * DEBUG [main] - ==> Parameters: 1(Integer), 1(Integer)
+     * There are two parameter mappings but DefaulParameterHandler maps them both to input paremeter (integer)
+     */
+    @Test // see issue #448
+    public void shouldGetAUserStatic() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            User user = mapper.getUserStatic(1);
+            Assert.assertNotNull(user);
+            Assert.assertEquals("User1", user.getName());
+        }
     }
-  }
 
-  @Test // see issue #61 (gh)
-  public void shouldGetAUserWithIfNode() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      User user = mapper.getUserIfNode("User1");
-      Assert.assertEquals("User1", user.getName());
+    @Test // see issue #61 (gh)
+    public void shouldGetAUserWithIfNode() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            User user = mapper.getUserIfNode("User1");
+            Assert.assertEquals("User1", user.getName());
+        }
     }
-  }
-  
+
 }

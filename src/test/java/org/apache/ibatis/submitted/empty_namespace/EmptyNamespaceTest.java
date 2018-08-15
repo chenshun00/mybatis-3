@@ -23,10 +23,10 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 
 public class EmptyNamespaceTest {
-  @Test(expected = PersistenceException.class)
-  public void testEmptyNamespace() throws Exception {
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/empty_namespace/ibatisConfig.xml")) {
-      new SqlSessionFactoryBuilder().build(reader);
+    @Test(expected = PersistenceException.class)
+    public void testEmptyNamespace() throws Exception {
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/empty_namespace/ibatisConfig.xml")) {
+            new SqlSessionFactoryBuilder().build(reader);
+        }
     }
-  }
 }

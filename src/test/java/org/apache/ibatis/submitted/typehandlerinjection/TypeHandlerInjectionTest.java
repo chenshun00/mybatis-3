@@ -29,32 +29,32 @@ import org.junit.Test;
 
 public class TypeHandlerInjectionTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  private static UserStateTypeHandler<String> handler = new UserStateTypeHandler<String>();
+    private static UserStateTypeHandler<String> handler = new UserStateTypeHandler<String>();
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/typehandlerinjection/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/typehandlerinjection/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        sqlSessionFactory.getConfiguration().getTypeHandlerRegistry().register(handler);
+        sqlSessionFactory.getConfiguration().addMapper(Mapper.class);
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/typehandlerinjection/CreateDB.sql");
     }
 
-    sqlSessionFactory.getConfiguration().getTypeHandlerRegistry().register(handler);
-    sqlSessionFactory.getConfiguration().addMapper(Mapper.class);
-
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/typehandlerinjection/CreateDB.sql");
-  }
-
-  @Test
-  public void shouldGetAUser() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      List<User> users = mapper.getUsers();
-      Assert.assertEquals("Inactive", users.get(0).getName());
+    @Test
+    public void shouldGetAUser() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            List<User> users = mapper.getUsers();
+            Assert.assertEquals("Inactive", users.get(0).getName());
+        }
     }
-  }
 
 }

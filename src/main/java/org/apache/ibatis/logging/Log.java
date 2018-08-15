@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,18 +20,18 @@ package org.apache.ibatis.logging;
  */
 public interface Log {
 
-  boolean isDebugEnabled();
+    boolean isDebugEnabled();
 
-  boolean isTraceEnabled();
+    boolean isTraceEnabled();
 
-  void error(String s, Throwable e);
+    void error(String s, Throwable e);
 
-  void error(String s);
+    void error(String s);
 
-  void debug(String s);
+    void debug(String s);
 
-  void trace(String s);
+    void trace(String s);
 
-  void warn(String s);
+    void warn(String s);
 
 }

@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,25 +21,25 @@ import java.util.List;
  * @author Clinton Begin
  */
 public class ChooseSqlNode implements SqlNode {
-  private final SqlNode defaultSqlNode;
-  private final List<SqlNode> ifSqlNodes;
+    private final SqlNode defaultSqlNode;
+    private final List<SqlNode> ifSqlNodes;
 
-  public ChooseSqlNode(List<SqlNode> ifSqlNodes, SqlNode defaultSqlNode) {
-    this.ifSqlNodes = ifSqlNodes;
-    this.defaultSqlNode = defaultSqlNode;
-  }
+    public ChooseSqlNode(List<SqlNode> ifSqlNodes, SqlNode defaultSqlNode) {
+        this.ifSqlNodes = ifSqlNodes;
+        this.defaultSqlNode = defaultSqlNode;
+    }
 
-  @Override
-  public boolean apply(DynamicContext context) {
-    for (SqlNode sqlNode : ifSqlNodes) {
-      if (sqlNode.apply(context)) {
-        return true;
-      }
+    @Override
+    public boolean apply(DynamicContext context) {
+        for (SqlNode sqlNode : ifSqlNodes) {
+            if (sqlNode.apply(context)) {
+                return true;
+            }
+        }
+        if (defaultSqlNode != null) {
+            defaultSqlNode.apply(context);
+            return true;
+        }
+        return false;
     }
-    if (defaultSqlNode != null) {
-      defaultSqlNode.apply(context);
-      return true;
-    }
-    return false;
-  }
 }

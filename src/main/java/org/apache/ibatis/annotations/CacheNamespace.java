@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -32,22 +32,22 @@ import org.apache.ibatis.cache.impl.PerpetualCache;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface CacheNamespace {
-  Class<? extends org.apache.ibatis.cache.Cache> implementation() default PerpetualCache.class;
+    Class<? extends org.apache.ibatis.cache.Cache> implementation() default PerpetualCache.class;
 
-  Class<? extends org.apache.ibatis.cache.Cache> eviction() default LruCache.class;
+    Class<? extends org.apache.ibatis.cache.Cache> eviction() default LruCache.class;
 
-  long flushInterval() default 0;
+    long flushInterval() default 0;
 
-  int size() default 1024;
+    int size() default 1024;
 
-  boolean readWrite() default true;
-  
-  boolean blocking() default false;
+    boolean readWrite() default true;
 
-  /**
-   * Property values for a implementation object.
-   * @since 3.4.2
-   */
-  Property[] properties() default {};
-  
+    boolean blocking() default false;
+
+    /**
+     * Property values for a implementation object.
+     * @since 3.4.2
+     */
+    Property[] properties() default {};
+
 }

@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -18,22 +18,22 @@ package org.apache.ibatis.submitted.simplelistparameter;
 import java.util.List;
 
 public class Car {
-  private String name;
-  private List<String> doors;
+    private String name;
+    private List<String> doors;
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public List<String> getDoors() {
-    return doors;
-  }
+    public List<String> getDoors() {
+        return doors;
+    }
 
-  public void setDoors(List<String> doors) {
-    this.doors = doors;
-  }
+    public void setDoors(List<String> doors) {
+        this.doors = doors;
+    }
 }

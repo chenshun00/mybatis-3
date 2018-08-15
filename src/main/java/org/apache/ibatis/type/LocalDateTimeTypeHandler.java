@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -31,34 +31,34 @@ import org.apache.ibatis.lang.UsesJava8;
 @UsesJava8
 public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
 
-  @Override
-  public void setNonNullParameter(PreparedStatement ps, int i, LocalDateTime parameter, JdbcType jdbcType)
-          throws SQLException {
-    ps.setTimestamp(i, Timestamp.valueOf(parameter));
-  }
-
-  @Override
-  public LocalDateTime getNullableResult(ResultSet rs, String columnName) throws SQLException {
-    Timestamp timestamp = rs.getTimestamp(columnName);
-    return getLocalDateTime(timestamp);
-  }
-
-  @Override
-  public LocalDateTime getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-    Timestamp timestamp = rs.getTimestamp(columnIndex);
-    return getLocalDateTime(timestamp);
-  }
-
-  @Override
-  public LocalDateTime getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-    Timestamp timestamp = cs.getTimestamp(columnIndex);
-    return getLocalDateTime(timestamp);
-  }
-
-  private static LocalDateTime getLocalDateTime(Timestamp timestamp) {
-    if (timestamp != null) {
-      return timestamp.toLocalDateTime();
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, LocalDateTime parameter, JdbcType jdbcType)
+            throws SQLException {
+        ps.setTimestamp(i, Timestamp.valueOf(parameter));
     }
-    return null;
-  }
+
+    @Override
+    public LocalDateTime getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        Timestamp timestamp = rs.getTimestamp(columnName);
+        return getLocalDateTime(timestamp);
+    }
+
+    @Override
+    public LocalDateTime getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        Timestamp timestamp = rs.getTimestamp(columnIndex);
+        return getLocalDateTime(timestamp);
+    }
+
+    @Override
+    public LocalDateTime getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        Timestamp timestamp = cs.getTimestamp(columnIndex);
+        return getLocalDateTime(timestamp);
+    }
+
+    private static LocalDateTime getLocalDateTime(Timestamp timestamp) {
+        if (timestamp != null) {
+            return timestamp.toLocalDateTime();
+        }
+        return null;
+    }
 }

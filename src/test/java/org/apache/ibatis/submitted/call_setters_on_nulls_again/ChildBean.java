@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,38 +19,38 @@ import java.util.List;
 
 public class ChildBean {
 
-  private String name;
+    private String name;
 
-  private ChildBean child;
+    private ChildBean child;
 
-  private List<ChildBean> beans;
+    private List<ChildBean> beans;
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public ChildBean getChild() {
-    return child;
-  }
+    public ChildBean getChild() {
+        return child;
+    }
 
-  public void setChild(ChildBean child) {
-    this.child = child;
-  }
+    public void setChild(ChildBean child) {
+        this.child = child;
+    }
 
-  @Override
-  public String toString() {
-    return "ChildBean [name=" + name + ", child=" + child + ", beans=" + beans + "]";
-  }
+    @Override
+    public String toString() {
+        return "ChildBean [name=" + name + ", child=" + child + ", beans=" + beans + "]";
+    }
 
-  public List<ChildBean> getBeans() {
-    return beans;
-  }
+    public List<ChildBean> getBeans() {
+        return beans;
+    }
 
-  public void setBeans(List<ChildBean> beans) {
-    this.beans = beans;
-  }
+    public void setBeans(List<ChildBean> beans) {
+        this.beans = beans;
+    }
 }

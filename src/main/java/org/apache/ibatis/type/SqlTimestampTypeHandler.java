@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,27 +26,27 @@ import java.sql.Timestamp;
  */
 public class SqlTimestampTypeHandler extends BaseTypeHandler<Timestamp> {
 
-  @Override
-  public void setNonNullParameter(PreparedStatement ps, int i, Timestamp parameter, JdbcType jdbcType)
-      throws SQLException {
-    ps.setTimestamp(i, parameter);
-  }
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, Timestamp parameter, JdbcType jdbcType)
+            throws SQLException {
+        ps.setTimestamp(i, parameter);
+    }
 
-  @Override
-  public Timestamp getNullableResult(ResultSet rs, String columnName)
-      throws SQLException {
-    return rs.getTimestamp(columnName);
-  }
+    @Override
+    public Timestamp getNullableResult(ResultSet rs, String columnName)
+            throws SQLException {
+        return rs.getTimestamp(columnName);
+    }
 
-  @Override
-  public Timestamp getNullableResult(ResultSet rs, int columnIndex)
-      throws SQLException {
-    return rs.getTimestamp(columnIndex);
-  }
+    @Override
+    public Timestamp getNullableResult(ResultSet rs, int columnIndex)
+            throws SQLException {
+        return rs.getTimestamp(columnIndex);
+    }
 
-  @Override
-  public Timestamp getNullableResult(CallableStatement cs, int columnIndex)
-      throws SQLException {
-    return cs.getTimestamp(columnIndex);
-  }
+    @Override
+    public Timestamp getNullableResult(CallableStatement cs, int columnIndex)
+            throws SQLException {
+        return cs.getTimestamp(columnIndex);
+    }
 }

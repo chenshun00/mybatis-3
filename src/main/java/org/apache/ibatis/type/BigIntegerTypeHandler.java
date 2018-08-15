@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,26 +27,26 @@ import java.sql.SQLException;
  */
 public class BigIntegerTypeHandler extends BaseTypeHandler<BigInteger> {
 
-  @Override
-  public void setNonNullParameter(PreparedStatement ps, int i, BigInteger parameter, JdbcType jdbcType) throws SQLException {
-    ps.setBigDecimal(i, new BigDecimal(parameter));
-  }
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, BigInteger parameter, JdbcType jdbcType) throws SQLException {
+        ps.setBigDecimal(i, new BigDecimal(parameter));
+    }
 
-  @Override
-  public BigInteger getNullableResult(ResultSet rs, String columnName) throws SQLException {
-    BigDecimal bigDecimal = rs.getBigDecimal(columnName);
-    return bigDecimal == null ? null : bigDecimal.toBigInteger();
-  }
+    @Override
+    public BigInteger getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        BigDecimal bigDecimal = rs.getBigDecimal(columnName);
+        return bigDecimal == null ? null : bigDecimal.toBigInteger();
+    }
 
-  @Override
-  public BigInteger getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-    BigDecimal bigDecimal = rs.getBigDecimal(columnIndex);
-    return bigDecimal == null ? null : bigDecimal.toBigInteger();
-  }
+    @Override
+    public BigInteger getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        BigDecimal bigDecimal = rs.getBigDecimal(columnIndex);
+        return bigDecimal == null ? null : bigDecimal.toBigInteger();
+    }
 
-  @Override
-  public BigInteger getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-    BigDecimal bigDecimal = cs.getBigDecimal(columnIndex);
-    return bigDecimal == null ? null : bigDecimal.toBigInteger();
-  }
+    @Override
+    public BigInteger getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        BigDecimal bigDecimal = cs.getBigDecimal(columnIndex);
+        return bigDecimal == null ? null : bigDecimal.toBigInteger();
+    }
 }

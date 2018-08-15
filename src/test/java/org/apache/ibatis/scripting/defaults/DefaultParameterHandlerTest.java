@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -45,44 +45,44 @@ import static org.mockito.Mockito.when;
  */
 public class DefaultParameterHandlerTest {
 
-  @Test
-  public void setParametersThrowsProperException() throws SQLException {
-    final MappedStatement mappedStatement = getMappedStatement();
-    final Object parameterObject = null;
-    final BoundSql boundSql = mock(BoundSql.class);
+    @Test
+    public void setParametersThrowsProperException() throws SQLException {
+        final MappedStatement mappedStatement = getMappedStatement();
+        final Object parameterObject = null;
+        final BoundSql boundSql = mock(BoundSql.class);
 
-    TypeHandler<Object> typeHandler = mock(TypeHandler.class);
-    doThrow(new SQLException("foo")).when(typeHandler).setParameter(any(PreparedStatement.class), anyInt(), any(), any(JdbcType.class));
-    ParameterMapping parameterMapping = new ParameterMapping.Builder(mappedStatement.getConfiguration(), "prop", typeHandler).build();
-    List<ParameterMapping> parameterMappings = Collections.singletonList(parameterMapping);
-    when(boundSql.getParameterMappings()).thenReturn(parameterMappings);
+        TypeHandler<Object> typeHandler = mock(TypeHandler.class);
+        doThrow(new SQLException("foo")).when(typeHandler).setParameter(any(PreparedStatement.class), anyInt(), any(), any(JdbcType.class));
+        ParameterMapping parameterMapping = new ParameterMapping.Builder(mappedStatement.getConfiguration(), "prop", typeHandler).build();
+        List<ParameterMapping> parameterMappings = Collections.singletonList(parameterMapping);
+        when(boundSql.getParameterMappings()).thenReturn(parameterMappings);
 
-    DefaultParameterHandler defaultParameterHandler = new DefaultParameterHandler(mappedStatement, parameterObject, boundSql);
+        DefaultParameterHandler defaultParameterHandler = new DefaultParameterHandler(mappedStatement, parameterObject, boundSql);
 
-    PreparedStatement ps = mock(PreparedStatement.class);
-    try {
-      defaultParameterHandler.setParameters(ps);
-      Assert.fail("Should have thrown TypeException");
-    } catch (Exception e) {
-      Assert.assertTrue("expected TypeException", e instanceof TypeException);
-      Assert.assertTrue("", e.getMessage().contains("mapping: ParameterMapping"));
+        PreparedStatement ps = mock(PreparedStatement.class);
+        try {
+            defaultParameterHandler.setParameters(ps);
+            Assert.fail("Should have thrown TypeException");
+        } catch (Exception e) {
+            Assert.assertTrue("expected TypeException", e instanceof TypeException);
+            Assert.assertTrue("", e.getMessage().contains("mapping: ParameterMapping"));
+        }
+
     }
 
-  }
-
-  MappedStatement getMappedStatement() {
-    final Configuration config = new Configuration();
-    final TypeHandlerRegistry registry = config.getTypeHandlerRegistry();
-    return new MappedStatement.Builder(config, "testSelect", new StaticSqlSource(config, "some select statement"), SqlCommandType.SELECT).resultMaps(
-        new ArrayList<ResultMap>() {
-          {
-            add(new ResultMap.Builder(config, "testMap", HashMap.class, new ArrayList<ResultMapping>() {
-              {
-                add(new ResultMapping.Builder(config, "cOlUmN1", "CoLuMn1", registry.getTypeHandler(Integer.class)).build());
-              }
-            }).build());
-          }
-        }).build();
-  }
+    MappedStatement getMappedStatement() {
+        final Configuration config = new Configuration();
+        final TypeHandlerRegistry registry = config.getTypeHandlerRegistry();
+        return new MappedStatement.Builder(config, "testSelect", new StaticSqlSource(config, "some select statement"), SqlCommandType.SELECT).resultMaps(
+                new ArrayList<ResultMap>() {
+                    {
+                        add(new ResultMap.Builder(config, "testMap", HashMap.class, new ArrayList<ResultMapping>() {
+                            {
+                                add(new ResultMapping.Builder(config, "cOlUmN1", "CoLuMn1", registry.getTypeHandler(Integer.class)).build());
+                            }
+                        }).build());
+                    }
+                }).build();
+    }
 
 }

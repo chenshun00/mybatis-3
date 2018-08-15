@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,75 +27,75 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
  */
 public class CollectionWrapper implements ObjectWrapper {
 
-  private final Collection<Object> object;
+    private final Collection<Object> object;
 
-  public CollectionWrapper(MetaObject metaObject, Collection<Object> object) {
-    this.object = object;
-  }
+    public CollectionWrapper(MetaObject metaObject, Collection<Object> object) {
+        this.object = object;
+    }
 
-  @Override
-  public Object get(PropertyTokenizer prop) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Object get(PropertyTokenizer prop) {
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public void set(PropertyTokenizer prop, Object value) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public void set(PropertyTokenizer prop, Object value) {
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public String findProperty(String name, boolean useCamelCaseMapping) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public String findProperty(String name, boolean useCamelCaseMapping) {
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public String[] getGetterNames() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public String[] getGetterNames() {
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public String[] getSetterNames() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public String[] getSetterNames() {
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public Class<?> getSetterType(String name) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Class<?> getSetterType(String name) {
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public Class<?> getGetterType(String name) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Class<?> getGetterType(String name) {
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public boolean hasSetter(String name) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public boolean hasSetter(String name) {
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public boolean hasGetter(String name) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public boolean hasGetter(String name) {
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public MetaObject instantiatePropertyValue(String name, PropertyTokenizer prop, ObjectFactory objectFactory) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public MetaObject instantiatePropertyValue(String name, PropertyTokenizer prop, ObjectFactory objectFactory) {
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public boolean isCollection() {
-    return true;
-  }
+    @Override
+    public boolean isCollection() {
+        return true;
+    }
 
-  @Override
-  public void add(Object element) {
-    object.add(element);
-  }
+    @Override
+    public void add(Object element) {
+        object.add(element);
+    }
 
-  @Override
-  public <E> void addAll(List<E> element) {
-    object.addAll(element);
-  }
+    @Override
+    public <E> void addAll(List<E> element) {
+        object.addAll(element);
+    }
 
 }

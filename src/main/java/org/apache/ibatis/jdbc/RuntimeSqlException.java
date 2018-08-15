@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,22 +20,22 @@ package org.apache.ibatis.jdbc;
  */
 public class RuntimeSqlException extends RuntimeException {
 
-  private static final long serialVersionUID = 5224696788505678598L;
+    private static final long serialVersionUID = 5224696788505678598L;
 
-  public RuntimeSqlException() {
-    super();
-  }
+    public RuntimeSqlException() {
+        super();
+    }
 
-  public RuntimeSqlException(String message) {
-    super(message);
-  }
+    public RuntimeSqlException(String message) {
+        super(message);
+    }
 
-  public RuntimeSqlException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public RuntimeSqlException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public RuntimeSqlException(Throwable cause) {
-    super(cause);
-  }
+    public RuntimeSqlException(Throwable cause) {
+        super(cause);
+    }
 
 }

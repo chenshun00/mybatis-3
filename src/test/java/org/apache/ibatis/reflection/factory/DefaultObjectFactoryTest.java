@@ -38,62 +38,62 @@ import org.junit.Test;
  */
 public class DefaultObjectFactoryTest {
 
-  @Test
-  public void createClass() throws Exception {
-    DefaultObjectFactory defaultObjectFactory = new DefaultObjectFactory();
-    TestClass testClass = defaultObjectFactory.create(TestClass.class,
-        Arrays.<Class<?>>asList(String.class, Integer.class), Arrays.<Object>asList("foo", 0));
+    @Test
+    public void createClass() throws Exception {
+        DefaultObjectFactory defaultObjectFactory = new DefaultObjectFactory();
+        TestClass testClass = defaultObjectFactory.create(TestClass.class,
+                Arrays.<Class<?>>asList(String.class, Integer.class), Arrays.<Object>asList("foo", 0));
 
-    Assert.assertEquals("myInteger didn't match expected", (Integer) 0, testClass.myInteger);
-    Assert.assertEquals("myString didn't match expected", "foo", testClass.myString);
-  }
-
-  @Test
-  public void createClassThrowsProperErrorMsg() {
-    DefaultObjectFactory defaultObjectFactory = new DefaultObjectFactory();
-    try {
-      defaultObjectFactory.create(TestClass.class, Collections.<Class<?>>singletonList(String.class), Collections.<Object>singletonList("foo"));
-      Assert.fail("Should have thrown ReflectionException");
-    } catch (Exception e) {
-      Assert.assertTrue("Should be ReflectionException", e instanceof ReflectionException);
-      Assert.assertTrue("Should not have trailing commas in types list", e.getMessage().contains("(String)"));
-      Assert.assertTrue("Should not have trailing commas in values list", e.getMessage().contains("(foo)"));
+        Assert.assertEquals("myInteger didn't match expected", (Integer) 0, testClass.myInteger);
+        Assert.assertEquals("myString didn't match expected", "foo", testClass.myString);
     }
-  }
 
-  @Test
-  public void creatHashMap() throws  Exception{
-     DefaultObjectFactory defaultObjectFactory=new DefaultObjectFactory();
-     Map  map= defaultObjectFactory.create(Map.class,null,null);
-     Assert.assertTrue("Should be HashMap",map instanceof HashMap);
-  }
+    @Test
+    public void createClassThrowsProperErrorMsg() {
+        DefaultObjectFactory defaultObjectFactory = new DefaultObjectFactory();
+        try {
+            defaultObjectFactory.create(TestClass.class, Collections.<Class<?>>singletonList(String.class), Collections.<Object>singletonList("foo"));
+            Assert.fail("Should have thrown ReflectionException");
+        } catch (Exception e) {
+            Assert.assertTrue("Should be ReflectionException", e instanceof ReflectionException);
+            Assert.assertTrue("Should not have trailing commas in types list", e.getMessage().contains("(String)"));
+            Assert.assertTrue("Should not have trailing commas in values list", e.getMessage().contains("(foo)"));
+        }
+    }
 
-  @Test
-  public void createArrayList() throws Exception {
-    DefaultObjectFactory defaultObjectFactory = new DefaultObjectFactory();
-    List list = defaultObjectFactory.create(List.class);
-    Assert.assertTrue(" list should be ArrayList", list instanceof ArrayList);
+    @Test
+    public void creatHashMap() throws Exception {
+        DefaultObjectFactory defaultObjectFactory = new DefaultObjectFactory();
+        Map map = defaultObjectFactory.create(Map.class, null, null);
+        Assert.assertTrue("Should be HashMap", map instanceof HashMap);
+    }
 
-    Collection collection = defaultObjectFactory.create(Collection.class);
-    Assert.assertTrue(" collection should be ArrayList", collection instanceof ArrayList);
+    @Test
+    public void createArrayList() throws Exception {
+        DefaultObjectFactory defaultObjectFactory = new DefaultObjectFactory();
+        List list = defaultObjectFactory.create(List.class);
+        Assert.assertTrue(" list should be ArrayList", list instanceof ArrayList);
 
-    Iterable iterable = defaultObjectFactory.create(Iterable.class);
-    Assert.assertTrue(" iterable should be ArrayList", iterable instanceof ArrayList);
-  }
+        Collection collection = defaultObjectFactory.create(Collection.class);
+        Assert.assertTrue(" collection should be ArrayList", collection instanceof ArrayList);
 
-
-  @Test
-  public void createTreeSet() throws Exception {
-    DefaultObjectFactory defaultObjectFactory = new DefaultObjectFactory();
-    SortedSet sortedSet = defaultObjectFactory.create(SortedSet.class);
-    Assert.assertTrue(" sortedSet should be TreeSet", sortedSet instanceof TreeSet);
-  }
+        Iterable iterable = defaultObjectFactory.create(Iterable.class);
+        Assert.assertTrue(" iterable should be ArrayList", iterable instanceof ArrayList);
+    }
 
 
-  @Test
-  public void createHashSet() throws Exception {
-    DefaultObjectFactory defaultObjectFactory = new DefaultObjectFactory();
-    Set set = defaultObjectFactory.create(Set.class);
-    Assert.assertTrue(" set should be HashSet", set instanceof HashSet);
-  }
+    @Test
+    public void createTreeSet() throws Exception {
+        DefaultObjectFactory defaultObjectFactory = new DefaultObjectFactory();
+        SortedSet sortedSet = defaultObjectFactory.create(SortedSet.class);
+        Assert.assertTrue(" sortedSet should be TreeSet", sortedSet instanceof TreeSet);
+    }
+
+
+    @Test
+    public void createHashSet() throws Exception {
+        DefaultObjectFactory defaultObjectFactory = new DefaultObjectFactory();
+        Set set = defaultObjectFactory.create(Set.class);
+        Assert.assertTrue(" set should be HashSet", set instanceof HashSet);
+    }
 }

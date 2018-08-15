@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,20 +16,20 @@
 package org.apache.ibatis.reflection.typeparam;
 
 public class Calculator<T> {
-  protected T id;
+    protected T id;
 
-  private T fld;
+    private T fld;
 
-  protected T attribute;
+    protected T attribute;
 
-  public T getId() {
-    return id;
-  }
+    public T getId() {
+        return id;
+    }
 
-  public void setId(T id) {
-    this.id = id;
-  }
+    public void setId(T id) {
+        this.id = id;
+    }
 
-  public static class SubCalculator extends Calculator<String> {
-  }
+    public static class SubCalculator extends Calculator<String> {
+    }
 }

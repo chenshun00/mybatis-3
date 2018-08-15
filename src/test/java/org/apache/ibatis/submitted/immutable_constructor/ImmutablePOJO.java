@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,21 +19,21 @@ import java.io.Serializable;
 
 public class ImmutablePOJO implements Serializable {
 
-  private static final long serialVersionUID = -7086198701202598455L;
-  private final Integer immutableId;
-  private final String immutableDescription;
+    private static final long serialVersionUID = -7086198701202598455L;
+    private final Integer immutableId;
+    private final String immutableDescription;
 
-  public ImmutablePOJO(Integer immutableId, String immutableDescription) {
-    this.immutableId = immutableId;
-    this.immutableDescription = immutableDescription;
-  }
+    public ImmutablePOJO(Integer immutableId, String immutableDescription) {
+        this.immutableId = immutableId;
+        this.immutableDescription = immutableDescription;
+    }
 
-  public Integer getImmutableId() {
-    return immutableId;
-  }
+    public Integer getImmutableId() {
+        return immutableId;
+    }
 
-  public String getImmutableDescription() {
-    return immutableDescription;
-  }
+    public String getImmutableDescription() {
+        return immutableDescription;
+    }
 
 }

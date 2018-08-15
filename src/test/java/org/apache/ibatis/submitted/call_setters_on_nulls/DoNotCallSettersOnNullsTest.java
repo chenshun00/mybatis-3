@@ -29,45 +29,45 @@ import org.junit.Test;
 
 public class DoNotCallSettersOnNullsTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create a SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/call_setters_on_nulls/mybatis-config-2.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create a SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/call_setters_on_nulls/mybatis-config-2.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/call_setters_on_nulls/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/call_setters_on_nulls/CreateDB.sql");
-  }
-
-  @Test
-  public void shouldCallNullOnMappedProperty() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      User user = mapper.getUserMapped(1);
-      Assert.assertFalse(user.nullReceived);
+    @Test
+    public void shouldCallNullOnMappedProperty() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            User user = mapper.getUserMapped(1);
+            Assert.assertFalse(user.nullReceived);
+        }
     }
-  }
 
-  @Test
-  public void shouldCallNullOnAutomaticMapping() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      User user = mapper.getUserUnmapped(1);
-      Assert.assertFalse(user.nullReceived);
+    @Test
+    public void shouldCallNullOnAutomaticMapping() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            User user = mapper.getUserUnmapped(1);
+            Assert.assertFalse(user.nullReceived);
+        }
     }
-  }
 
-  @Test
-  public void shouldCallNullOnMap() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      Map user = mapper.getUserInMap(1);
-      Assert.assertFalse(user.containsKey("NAME"));
+    @Test
+    public void shouldCallNullOnMap() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            Map user = mapper.getUserInMap(1);
+            Assert.assertFalse(user.containsKey("NAME"));
+        }
     }
-  }
 
 }

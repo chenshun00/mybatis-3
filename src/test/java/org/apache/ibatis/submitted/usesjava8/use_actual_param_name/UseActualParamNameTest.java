@@ -31,55 +31,55 @@ import org.junit.Test;
 
 public class UseActualParamNameTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setUp() throws Exception {
-    // create an SqlSessionFactory
-    try (Reader reader = Resources.getResourceAsReader(
-        "org/apache/ibatis/submitted/usesjava8/use_actual_param_name/mybatis-config.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        // create an SqlSessionFactory
+        try (Reader reader = Resources.getResourceAsReader(
+                "org/apache/ibatis/submitted/usesjava8/use_actual_param_name/mybatis-config.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
+
+        // populate in-memory database
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/usesjava8/use_actual_param_name/CreateDB.sql");
     }
 
-    // populate in-memory database
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/usesjava8/use_actual_param_name/CreateDB.sql");
-  }
-
-  @Test
-  public void shouldSingleParamBeReferencedByAnyName() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      User user = mapper.getUserById(1);
-      assertNotNull(user);
+    @Test
+    public void shouldSingleParamBeReferencedByAnyName() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            User user = mapper.getUserById(1);
+            assertNotNull(user);
+        }
     }
-  }
 
-  @Test
-  public void shouldMultipleParamsBeReferencedByActualNames() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      User user = mapper.getUserByIdAndName(1, "User1");
-      assertNotNull(user);
+    @Test
+    public void shouldMultipleParamsBeReferencedByActualNames() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            User user = mapper.getUserByIdAndName(1, "User1");
+            assertNotNull(user);
+        }
     }
-  }
 
-  @Test
-  public void shouldSoleListParamBeReferencedByImplicitName() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      List<User> users = mapper.getUsersByIdList(Arrays.asList(1, 2));
-      assertEquals(2, users.size());
+    @Test
+    public void shouldSoleListParamBeReferencedByImplicitName() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            List<User> users = mapper.getUsersByIdList(Arrays.asList(1, 2));
+            assertEquals(2, users.size());
+        }
     }
-  }
 
-  @Test
-  public void shouldListParamBeReferencedByActualNameIfAnotherParamExists() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      Mapper mapper = sqlSession.getMapper(Mapper.class);
-      List<User> users = mapper.getUsersByIdListAndName(Arrays.asList(1, 2), null);
-      assertEquals(2, users.size());
+    @Test
+    public void shouldListParamBeReferencedByActualNameIfAnotherParamExists() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            Mapper mapper = sqlSession.getMapper(Mapper.class);
+            List<User> users = mapper.getUsersByIdListAndName(Arrays.asList(1, 2), null);
+            assertEquals(2, users.size());
+        }
     }
-  }
 
 }

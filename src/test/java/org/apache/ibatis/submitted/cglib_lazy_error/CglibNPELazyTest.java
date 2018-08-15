@@ -28,81 +28,81 @@ import org.junit.Test;
 
 public class CglibNPELazyTest {
 
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void initDatabase() throws Exception {
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/cglib_lazy_error/ibatisConfigLazy.xml")) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-      sqlSessionFactory.getConfiguration().setLazyLoadingEnabled(true);
-      sqlSessionFactory.getConfiguration().setAggressiveLazyLoading(false);
+    @BeforeClass
+    public static void initDatabase() throws Exception {
+        try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/submitted/cglib_lazy_error/ibatisConfigLazy.xml")) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+            sqlSessionFactory.getConfiguration().setLazyLoadingEnabled(true);
+            sqlSessionFactory.getConfiguration().setAggressiveLazyLoading(false);
+        }
+
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/cglib_lazy_error/CreateDB.sql");
     }
 
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/cglib_lazy_error/CreateDB.sql");
-  }
-
-  @Test
-  public void testNoParent() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
-      Person person = personMapper.selectById(1);
-      Assert.assertNotNull("Persons must not be null", person);
-      Person parent = person.getParent();
-      Assert.assertNull("Parent must be null", parent);
+    @Test
+    public void testNoParent() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
+            Person person = personMapper.selectById(1);
+            Assert.assertNotNull("Persons must not be null", person);
+            Person parent = person.getParent();
+            Assert.assertNull("Parent must be null", parent);
+        }
     }
-  }
 
-  @Test
-  public void testAncestorSelf() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
-      Person person = personMapper.selectById(1);
-      Assert.assertNotNull("Persons must not be null", person);
-      Person ancestor = person.getAncestor();
-      Assert.assertEquals("Ancestor must be John Smith sr.", person, ancestor);
+    @Test
+    public void testAncestorSelf() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
+            Person person = personMapper.selectById(1);
+            Assert.assertNotNull("Persons must not be null", person);
+            Person ancestor = person.getAncestor();
+            Assert.assertEquals("Ancestor must be John Smith sr.", person, ancestor);
+        }
     }
-  }
 
-  @Test
-  public void testAncestorAfterQueryingParents() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
-      Person expectedAncestor = personMapper.selectById(1);
-      Person person = personMapper.selectById(3);
-      // Load ancestor indirectly.
-      Assert.assertNotNull("Persons must not be null", person);
-      Assert.assertNotNull("Parent must not be null", person.getParent());
-      Assert.assertNotNull("Grandparent must not be null", person.getParent().getParent());
-      Assert.assertEquals("Ancestor must be John Smith sr.", expectedAncestor, person.getAncestor());
+    @Test
+    public void testAncestorAfterQueryingParents() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
+            Person expectedAncestor = personMapper.selectById(1);
+            Person person = personMapper.selectById(3);
+            // Load ancestor indirectly.
+            Assert.assertNotNull("Persons must not be null", person);
+            Assert.assertNotNull("Parent must not be null", person.getParent());
+            Assert.assertNotNull("Grandparent must not be null", person.getParent().getParent());
+            Assert.assertEquals("Ancestor must be John Smith sr.", expectedAncestor, person.getAncestor());
+        }
     }
-  }
 
-  @Test
-  public void testGrandParent() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
-      Person expectedParent = personMapper.selectById(2);
-      Person expectedGrandParent = personMapper.selectById(1);
-      Person person = personMapper.selectById(3);
-      Assert.assertNotNull("Persons must not be null", person);
-      final Person actualParent = person.getParent();
-      final Person actualGrandParent = person.getParent().getParent();
-      Assert.assertEquals(expectedParent, actualParent);
-      Assert.assertEquals(expectedGrandParent, actualGrandParent);
+    @Test
+    public void testGrandParent() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
+            Person expectedParent = personMapper.selectById(2);
+            Person expectedGrandParent = personMapper.selectById(1);
+            Person person = personMapper.selectById(3);
+            Assert.assertNotNull("Persons must not be null", person);
+            final Person actualParent = person.getParent();
+            final Person actualGrandParent = person.getParent().getParent();
+            Assert.assertEquals(expectedParent, actualParent);
+            Assert.assertEquals(expectedGrandParent, actualGrandParent);
+        }
     }
-  }
 
-  @Test
-  public void testAncestor() {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
-      Person expectedAncestor = personMapper.selectById(1);
-      Person person = personMapper.selectById(3);
-      Assert.assertNotNull("Persons must not be null", person);
-      final Person actualAncestor = person.getAncestor();
-      Assert.assertEquals(expectedAncestor, actualAncestor);
+    @Test
+    public void testAncestor() {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            PersonMapper personMapper = sqlSession.getMapper(PersonMapper.class);
+            Person expectedAncestor = personMapper.selectById(1);
+            Person person = personMapper.selectById(3);
+            Assert.assertNotNull("Persons must not be null", person);
+            final Person actualAncestor = person.getAncestor();
+            Assert.assertEquals(expectedAncestor, actualAncestor);
+        }
     }
-  }
 
 }

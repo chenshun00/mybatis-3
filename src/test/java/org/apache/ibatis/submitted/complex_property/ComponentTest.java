@@ -29,38 +29,38 @@ import java.io.Reader;
 import java.util.Calendar;
 
 public class ComponentTest {
-  private static SqlSessionFactory sqlSessionFactory;
+    private static SqlSessionFactory sqlSessionFactory;
 
-  @BeforeClass
-  public static void setup() throws Exception {
-    String resource = "org/apache/ibatis/submitted/complex_property/Configuration.xml";
-    Reader reader = Resources.getResourceAsReader(resource);
-    sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    @BeforeClass
+    public static void setup() throws Exception {
+        String resource = "org/apache/ibatis/submitted/complex_property/Configuration.xml";
+        Reader reader = Resources.getResourceAsReader(resource);
+        sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/complex_property/db.sql");
-  }
-
-
-  @Test
-  public void shouldInsertNestedPasswordFieldOfComplexType() throws Exception {
-    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-      //Create User
-      User user = new User();
-      user.setId(500000L);
-      user.setPassword(new EncryptedString("secret"));
-      user.setUsername("johnny" + Calendar.getInstance().getTimeInMillis());//random
-      user.setAdministrator(true);
-
-      sqlSession.insert("User.insert", user);
-
-      //Retrieve User
-      user = (User) sqlSession.selectOne("User.find", user.getId());
-
-      assertNotNull(user.getId());
-
-      sqlSession.rollback();
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/complex_property/db.sql");
     }
-  }
+
+
+    @Test
+    public void shouldInsertNestedPasswordFieldOfComplexType() throws Exception {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            //Create User
+            User user = new User();
+            user.setId(500000L);
+            user.setPassword(new EncryptedString("secret"));
+            user.setUsername("johnny" + Calendar.getInstance().getTimeInMillis());//random
+            user.setAdministrator(true);
+
+            sqlSession.insert("User.insert", user);
+
+            //Retrieve User
+            user = (User) sqlSession.selectOne("User.find", user.getId());
+
+            assertNotNull(user.getId());
+
+            sqlSession.rollback();
+        }
+    }
 
 }

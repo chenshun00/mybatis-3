@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2017 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,30 +23,30 @@ import java.lang.reflect.Method;
  */
 public class Invocation {
 
-  private final Object target;
-  private final Method method;
-  private final Object[] args;
+    private final Object target;
+    private final Method method;
+    private final Object[] args;
 
-  public Invocation(Object target, Method method, Object[] args) {
-    this.target = target;
-    this.method = method;
-    this.args = args;
-  }
+    public Invocation(Object target, Method method, Object[] args) {
+        this.target = target;
+        this.method = method;
+        this.args = args;
+    }
 
-  public Object getTarget() {
-    return target;
-  }
+    public Object getTarget() {
+        return target;
+    }
 
-  public Method getMethod() {
-    return method;
-  }
+    public Method getMethod() {
+        return method;
+    }
 
-  public Object[] getArgs() {
-    return args;
-  }
+    public Object[] getArgs() {
+        return args;
+    }
 
-  public Object proceed() throws InvocationTargetException, IllegalAccessException {
-    return method.invoke(target, args);
-  }
+    public Object proceed() throws InvocationTargetException, IllegalAccessException {
+        return method.invoke(target, args);
+    }
 
 }

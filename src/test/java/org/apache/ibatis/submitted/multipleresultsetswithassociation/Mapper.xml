@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-       Copyright 2009-2016 the original author or authors.
+       Copyright 2009-2018 the original author or authors.
 
        Licensed under the Apache License, Version 2.0 (the "License");
        you may not use this file except in compliance with the License.
@@ -17,24 +17,27 @@
 
 -->
 <!DOCTYPE mapper
-    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.apache.ibatis.submitted.multipleresultsetswithassociation.Mapper">
-    
-    <select id="getOrderDetailsWithHeaders" resultSets="orderDetailResultSet,orderHeaderResultSet" resultMap="orderDetailResultMap" statementType="CALLABLE">
+
+    <select id="getOrderDetailsWithHeaders" resultSets="orderDetailResultSet,orderHeaderResultSet"
+            resultMap="orderDetailResultMap" statementType="CALLABLE">
         { call GetOrderDetailsAndHeaders() }
     </select>
 
-    <resultMap type="org.apache.ibatis.submitted.multipleresultsetswithassociation.OrderDetail" id="orderDetailResultMap">
+    <resultMap type="org.apache.ibatis.submitted.multipleresultsetswithassociation.OrderDetail"
+               id="orderDetailResultMap">
         <id property="orderId" column="order_id"/>
         <id property="lineNumber" column="line_number"/>
         <association property="orderHeader" column="order_id" foreignColumn="order_id"
-                     resultSet="orderHeaderResultSet" resultMap="orderHeaderResultMap" />
+                     resultSet="orderHeaderResultSet" resultMap="orderHeaderResultMap"/>
     </resultMap>
-	
-    <resultMap type="org.apache.ibatis.submitted.multipleresultsetswithassociation.OrderHeader" id="orderHeaderResultMap">
+
+    <resultMap type="org.apache.ibatis.submitted.multipleresultsetswithassociation.OrderHeader"
+               id="orderHeaderResultMap">
         <id property="orderId" column="order_id"/>
     </resultMap>
-	
+
 </mapper>

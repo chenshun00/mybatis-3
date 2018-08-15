@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,35 +19,35 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Person implements Serializable {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private Integer id;
+    private Integer id;
 
-  private String name;
+    private String name;
 
-  private List<Pet> pets;
+    private List<Pet> pets;
 
-  public Integer getId() {
-    return id;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public List<Pet> getPets() {
-    return pets;
-  }
+    public List<Pet> getPets() {
+        return pets;
+    }
 
-  public void setPets(List<Pet> pets) {
-    this.pets = pets;
-  }
+    public void setPets(List<Pet> pets) {
+        this.pets = pets;
+    }
 }

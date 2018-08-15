@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,11 +27,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({})
 public @interface Case {
-  String value();
+    String value();
 
-  Class<?> type();
+    Class<?> type();
 
-  Result[] results() default {};
+    Result[] results() default {};
 
-  Arg[] constructArgs() default {};
+    Arg[] constructArgs() default {};
 }

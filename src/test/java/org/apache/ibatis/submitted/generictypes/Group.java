@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2015 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,27 +19,32 @@ import java.util.List;
 
 public class Group {
 
-  private Integer id;
-  private User<String> owner;
-  private List<String> members;
+    private Integer id;
+    private User<String> owner;
+    private List<String> members;
 
-  public Integer getId() {
-    return id;
-  }
-  public void setId(Integer id) {
-    this.id = id;
-  }
-  public User<String> getOwner() {
-    return owner;
-  }
-  public void setOwner(User<String> owner) {
-    this.owner = owner;
-  }
-  public List<String> getMembers() {
-    return members;
-  }
-  public void setMembers(List<String> members) {
-    this.members = members;
-  }
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User<String> getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User<String> owner) {
+        this.owner = owner;
+    }
+
+    public List<String> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<String> members) {
+        this.members = members;
+    }
 
 }

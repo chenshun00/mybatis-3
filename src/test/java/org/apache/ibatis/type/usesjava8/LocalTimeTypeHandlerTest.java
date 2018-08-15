@@ -28,63 +28,63 @@ import org.junit.Test;
 
 public class LocalTimeTypeHandlerTest extends BaseTypeHandlerTest {
 
-  private static final TypeHandler<LocalTime> TYPE_HANDLER = new LocalTimeTypeHandler();
-  // java.sql.Time doesn't contain millis, so set nano to 0
-  private static final LocalTime LOCAL_TIME = LocalTime.now().withNano(0);
-  private static final Time TIME = Time.valueOf(LOCAL_TIME);
+    private static final TypeHandler<LocalTime> TYPE_HANDLER = new LocalTimeTypeHandler();
+    // java.sql.Time doesn't contain millis, so set nano to 0
+    private static final LocalTime LOCAL_TIME = LocalTime.now().withNano(0);
+    private static final Time TIME = Time.valueOf(LOCAL_TIME);
 
-  @Override
-  @Test
-  public void shouldSetParameter() throws Exception {
-    TYPE_HANDLER.setParameter(ps, 1, LOCAL_TIME, null);
-    verify(ps).setTime(1, TIME);
-  }
+    @Override
+    @Test
+    public void shouldSetParameter() throws Exception {
+        TYPE_HANDLER.setParameter(ps, 1, LOCAL_TIME, null);
+        verify(ps).setTime(1, TIME);
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultFromResultSetByName() throws Exception {
-    when(rs.getTime("column")).thenReturn(TIME);
-    assertEquals(LOCAL_TIME, TYPE_HANDLER.getResult(rs, "column"));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultFromResultSetByName() throws Exception {
+        when(rs.getTime("column")).thenReturn(TIME);
+        assertEquals(LOCAL_TIME, TYPE_HANDLER.getResult(rs, "column"));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultNullFromResultSetByName() throws Exception {
-    when(rs.getTime("column")).thenReturn(null);
-    assertNull(TYPE_HANDLER.getResult(rs, "column"));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultNullFromResultSetByName() throws Exception {
+        when(rs.getTime("column")).thenReturn(null);
+        assertNull(TYPE_HANDLER.getResult(rs, "column"));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultFromResultSetByPosition() throws Exception {
-    when(rs.getTime(1)).thenReturn(TIME);
-    assertEquals(LOCAL_TIME, TYPE_HANDLER.getResult(rs, 1));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultFromResultSetByPosition() throws Exception {
+        when(rs.getTime(1)).thenReturn(TIME);
+        assertEquals(LOCAL_TIME, TYPE_HANDLER.getResult(rs, 1));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultNullFromResultSetByPosition() throws Exception {
-    when(rs.getTime(1)).thenReturn(null);
-    assertNull(TYPE_HANDLER.getResult(rs, 1));
-    verify(rs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultNullFromResultSetByPosition() throws Exception {
+        when(rs.getTime(1)).thenReturn(null);
+        assertNull(TYPE_HANDLER.getResult(rs, 1));
+        verify(rs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultFromCallableStatement() throws Exception {
-    when(cs.getTime(1)).thenReturn(TIME);
-    assertEquals(LOCAL_TIME, TYPE_HANDLER.getResult(cs, 1));
-    verify(cs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultFromCallableStatement() throws Exception {
+        when(cs.getTime(1)).thenReturn(TIME);
+        assertEquals(LOCAL_TIME, TYPE_HANDLER.getResult(cs, 1));
+        verify(cs, never()).wasNull();
+    }
 
-  @Override
-  @Test
-  public void shouldGetResultNullFromCallableStatement() throws Exception {
-    when(cs.getTime(1)).thenReturn(null);
-    assertNull(TYPE_HANDLER.getResult(cs, 1));
-    verify(cs, never()).wasNull();
-  }
+    @Override
+    @Test
+    public void shouldGetResultNullFromCallableStatement() throws Exception {
+        when(cs.getTime(1)).thenReturn(null);
+        assertNull(TYPE_HANDLER.getResult(cs, 1));
+        verify(cs, never()).wasNull();
+    }
 }

@@ -30,75 +30,75 @@ import org.junit.Test;
 
 public class BlogTest {
 
-  protected SqlSessionFactory sqlSessionFactory;
+    protected SqlSessionFactory sqlSessionFactory;
 
-  protected String getConfigPath() {
-    return "org/apache/ibatis/submitted/parent_reference_3level/mybatis-config.xml";
-  }
-
-  @Before
-  public void setUp() throws Exception {
-    try (Reader reader = Resources.getResourceAsReader(getConfigPath())) {
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+    protected String getConfigPath() {
+        return "org/apache/ibatis/submitted/parent_reference_3level/mybatis-config.xml";
     }
 
-    BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
-            "org/apache/ibatis/submitted/parent_reference_3level/CreateDB.sql");
-  }
+    @Before
+    public void setUp() throws Exception {
+        try (Reader reader = Resources.getResourceAsReader(getConfigPath())) {
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
 
-  @Test
-  public void testSelectBlogWithPosts() {
-    try (SqlSession session = sqlSessionFactory.openSession()) {
-      Mapper mapper = session.getMapper(Mapper.class);
-      Blog result = mapper.selectBlogByPrimaryKey(1);
-      assertNotNull(result);
-      assertEquals("Blog with posts", result.getTitle());
-      Assert.assertEquals(2, result.getPosts().size());
-      Post firstPost = result.getPosts().get(0);
-      Assert.assertEquals(1, firstPost.getBlog().getId());
-      Assert.assertEquals(2, firstPost.getComments().size());
-      Post secondPost = result.getPosts().get(1);
-      Assert.assertEquals(1, secondPost.getComments().size());
-      Assert.assertEquals(2, secondPost.getComments().get(0).getPost().getId());
+        BaseDataTest.runScript(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(),
+                "org/apache/ibatis/submitted/parent_reference_3level/CreateDB.sql");
     }
-  }
 
-  @Test
-  public void testSelectBlogWithoutPosts() {
-    try (SqlSession session = sqlSessionFactory.openSession()) {
-      Mapper mapper = session.getMapper(Mapper.class);
-      Blog result = mapper.selectBlogByPrimaryKey(2);
-      assertNotNull(result);
-      assertEquals("Blog without posts", result.getTitle());
-      Assert.assertEquals(0, result.getPosts().size());
+    @Test
+    public void testSelectBlogWithPosts() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            Mapper mapper = session.getMapper(Mapper.class);
+            Blog result = mapper.selectBlogByPrimaryKey(1);
+            assertNotNull(result);
+            assertEquals("Blog with posts", result.getTitle());
+            Assert.assertEquals(2, result.getPosts().size());
+            Post firstPost = result.getPosts().get(0);
+            Assert.assertEquals(1, firstPost.getBlog().getId());
+            Assert.assertEquals(2, firstPost.getComments().size());
+            Post secondPost = result.getPosts().get(1);
+            Assert.assertEquals(1, secondPost.getComments().size());
+            Assert.assertEquals(2, secondPost.getComments().get(0).getPost().getId());
+        }
     }
-  }
 
-  @Test
-  public void testSelectBlogWithPostsColumnPrefix() {
-    try (SqlSession session = sqlSessionFactory.openSession()) {
-      Mapper mapper = session.getMapper(Mapper.class);
-      Blog result = mapper.selectBlogByPrimaryKeyColumnPrefix(1);
-      assertNotNull(result);
-      assertEquals("Blog with posts", result.getTitle());
-      Assert.assertEquals(2, result.getPosts().size());
-      Post firstPost = result.getPosts().get(0);
-      Assert.assertEquals(1, firstPost.getBlog().getId());
-      Assert.assertEquals(2, firstPost.getComments().size());
-      Post secondPost = result.getPosts().get(1);
-      Assert.assertEquals(1, secondPost.getComments().size());
-      Assert.assertEquals(2, secondPost.getComments().get(0).getPost().getId());
+    @Test
+    public void testSelectBlogWithoutPosts() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            Mapper mapper = session.getMapper(Mapper.class);
+            Blog result = mapper.selectBlogByPrimaryKey(2);
+            assertNotNull(result);
+            assertEquals("Blog without posts", result.getTitle());
+            Assert.assertEquals(0, result.getPosts().size());
+        }
     }
-  }
 
-  @Test
-  public void testSelectBlogWithoutPostsColumnPrefix() {
-    try (SqlSession session = sqlSessionFactory.openSession()) {
-      Mapper mapper = session.getMapper(Mapper.class);
-      Blog result = mapper.selectBlogByPrimaryKeyColumnPrefix(2);
-      assertNotNull(result);
-      assertEquals("Blog without posts", result.getTitle());
-      Assert.assertEquals(0, result.getPosts().size());
+    @Test
+    public void testSelectBlogWithPostsColumnPrefix() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            Mapper mapper = session.getMapper(Mapper.class);
+            Blog result = mapper.selectBlogByPrimaryKeyColumnPrefix(1);
+            assertNotNull(result);
+            assertEquals("Blog with posts", result.getTitle());
+            Assert.assertEquals(2, result.getPosts().size());
+            Post firstPost = result.getPosts().get(0);
+            Assert.assertEquals(1, firstPost.getBlog().getId());
+            Assert.assertEquals(2, firstPost.getComments().size());
+            Post secondPost = result.getPosts().get(1);
+            Assert.assertEquals(1, secondPost.getComments().size());
+            Assert.assertEquals(2, secondPost.getComments().get(0).getPost().getId());
+        }
     }
-  }
+
+    @Test
+    public void testSelectBlogWithoutPostsColumnPrefix() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            Mapper mapper = session.getMapper(Mapper.class);
+            Blog result = mapper.selectBlogByPrimaryKeyColumnPrefix(2);
+            assertNotNull(result);
+            assertEquals("Blog without posts", result.getTitle());
+            Assert.assertEquals(0, result.getPosts().size());
+        }
+    }
 }

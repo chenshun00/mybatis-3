@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2016 the original author or authors.
+ *    Copyright 2009-2018 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -33,33 +33,33 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ManagedTransactionFactoryTest extends BaseDataTest {
 
-  @Mock
-  private Connection conn;
+    @Mock
+    private Connection conn;
 
-  @Test
-  public void shouldEnsureThatCallsToManagedTransactionAPIDoNotForwardToManagedConnections() throws Exception {
-    TransactionFactory tf = new ManagedTransactionFactory();
-    tf.setProperties(new Properties());
-    Transaction tx = tf.newTransaction(conn);
-    assertEquals(conn, tx.getConnection());
-    tx.commit();
-    tx.rollback();
-    tx.close();
-    verify(conn).close();
-  }
+    @Test
+    public void shouldEnsureThatCallsToManagedTransactionAPIDoNotForwardToManagedConnections() throws Exception {
+        TransactionFactory tf = new ManagedTransactionFactory();
+        tf.setProperties(new Properties());
+        Transaction tx = tf.newTransaction(conn);
+        assertEquals(conn, tx.getConnection());
+        tx.commit();
+        tx.rollback();
+        tx.close();
+        verify(conn).close();
+    }
 
-  @Test
-  public void shouldEnsureThatCallsToManagedTransactionAPIDoNotForwardToManagedConnectionsAndDoesNotCloseConnection() throws Exception {
-    TransactionFactory tf = new ManagedTransactionFactory();
-    Properties props = new Properties();
-    props.setProperty("closeConnection", "false");
-    tf.setProperties(props);
-    Transaction tx = tf.newTransaction(conn);
-    assertEquals(conn, tx.getConnection());
-    tx.commit();
-    tx.rollback();
-    tx.close();
-    verifyNoMoreInteractions(conn);
-  }
+    @Test
+    public void shouldEnsureThatCallsToManagedTransactionAPIDoNotForwardToManagedConnectionsAndDoesNotCloseConnection() throws Exception {
+        TransactionFactory tf = new ManagedTransactionFactory();
+        Properties props = new Properties();
+        props.setProperty("closeConnection", "false");
+        tf.setProperties(props);
+        Transaction tx = tf.newTransaction(conn);
+        assertEquals(conn, tx.getConnection());
+        tx.commit();
+        tx.rollback();
+        tx.close();
+        verifyNoMoreInteractions(conn);
+    }
 
 }
