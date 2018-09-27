@@ -25,16 +25,15 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
- * Creates {@link ManagedTransaction} instances.
- *
- * @author Clinton Begin
- *
- * @see ManagedTransaction
+ * ManagedTransaction
  */
 public class ManagedTransactionFactory implements TransactionFactory {
 
     private boolean closeConnection = true;
 
+    /**
+     * 设置属性
+     */
     @Override
     public void setProperties(Properties props) {
         if (props != null) {
@@ -52,9 +51,7 @@ public class ManagedTransactionFactory implements TransactionFactory {
 
     @Override
     public Transaction newTransaction(DataSource ds, TransactionIsolationLevel level, boolean autoCommit) {
-        // Silently ignores autocommit and isolation level, as managed transactions are entirely
-        // controlled by an external manager.  It's silently ignored so that
-        // code remains portable between managed and unmanaged configurations.
+        //事务被外部的事务管理器
         return new ManagedTransaction(ds, level, closeConnection);
     }
 }

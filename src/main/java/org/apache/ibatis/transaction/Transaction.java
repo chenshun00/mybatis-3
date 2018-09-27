@@ -19,42 +19,23 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Wraps a database connection.
- * Handles the connection lifecycle that comprises: its creation, preparation, commit/rollback and close. 
+ * 包装一个java.sql.connection,处理connection的生命周期，创建，准备，提交，回滚，关闭
  *
  * @author Clinton Begin
  */
 public interface Transaction {
 
     /**
-     * Retrieve inner database connection
-     * @return DataBase connection
-     * @throws SQLException
+     * 获取一个链接，取决于datasource的实现
      */
     Connection getConnection() throws SQLException;
 
-    /**
-     * Commit inner database connection.
-     * @throws SQLException
-     */
     void commit() throws SQLException;
 
-    /**
-     * Rollback inner database connection.
-     * @throws SQLException
-     */
     void rollback() throws SQLException;
 
-    /**
-     * Close inner database connection.
-     * @throws SQLException
-     */
     void close() throws SQLException;
 
-    /**
-     * Get transaction timeout if set
-     * @throws SQLException
-     */
     Integer getTimeout() throws SQLException;
 
 }
