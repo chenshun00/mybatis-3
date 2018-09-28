@@ -34,6 +34,7 @@ import org.apache.ibatis.reflection.ExceptionUtil;
  */
 public class SqlSessionManager implements SqlSessionFactory, SqlSession {
 
+    //sqlSessionFactory 实例。factory是单例
     private final SqlSessionFactory sqlSessionFactory;
     private final SqlSession sqlSessionProxy;
 
@@ -41,6 +42,7 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
 
     private SqlSessionManager(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
+        //使用jdk代理
         this.sqlSessionProxy = (SqlSession) Proxy.newProxyInstance(
                 SqlSessionFactory.class.getClassLoader(),
                 new Class[]{SqlSession.class},
@@ -77,38 +79,6 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
 
     public void startManagedSession() {
         this.localSqlSession.set(openSession());
-    }
-
-    public void startManagedSession(boolean autoCommit) {
-        this.localSqlSession.set(openSession(autoCommit));
-    }
-
-    public void startManagedSession(Connection connection) {
-        this.localSqlSession.set(openSession(connection));
-    }
-
-    public void startManagedSession(TransactionIsolationLevel level) {
-        this.localSqlSession.set(openSession(level));
-    }
-
-    public void startManagedSession(ExecutorType execType) {
-        this.localSqlSession.set(openSession(execType));
-    }
-
-    public void startManagedSession(ExecutorType execType, boolean autoCommit) {
-        this.localSqlSession.set(openSession(execType, autoCommit));
-    }
-
-    public void startManagedSession(ExecutorType execType, TransactionIsolationLevel level) {
-        this.localSqlSession.set(openSession(execType, level));
-    }
-
-    public void startManagedSession(ExecutorType execType, Connection connection) {
-        this.localSqlSession.set(openSession(execType, connection));
-    }
-
-    public boolean isManagedSessionStarted() {
-        return this.localSqlSession.get() != null;
     }
 
     @Override
@@ -158,27 +128,27 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
 
     @Override
     public <T> T selectOne(String statement) {
-        return sqlSessionProxy.<T>selectOne(statement);
+        return sqlSessionProxy.selectOne(statement);
     }
 
     @Override
     public <T> T selectOne(String statement, Object parameter) {
-        return sqlSessionProxy.<T>selectOne(statement, parameter);
+        return sqlSessionProxy.selectOne(statement, parameter);
     }
 
     @Override
     public <K, V> Map<K, V> selectMap(String statement, String mapKey) {
-        return sqlSessionProxy.<K, V>selectMap(statement, mapKey);
+        return sqlSessionProxy.selectMap(statement, mapKey);
     }
 
     @Override
     public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey) {
-        return sqlSessionProxy.<K, V>selectMap(statement, parameter, mapKey);
+        return sqlSessionProxy.selectMap(statement, parameter, mapKey);
     }
 
     @Override
     public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey, RowBounds rowBounds) {
-        return sqlSessionProxy.<K, V>selectMap(statement, parameter, mapKey, rowBounds);
+        return sqlSessionProxy.selectMap(statement, parameter, mapKey, rowBounds);
     }
 
     @Override
@@ -337,14 +307,17 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
         }
     }
 
+    /**
+     * jdk 动态代理，先执行这里，在执行后续的方法
+     */
     private class SqlSessionInterceptor implements InvocationHandler {
         public SqlSessionInterceptor() {
-            // Prevent Synthetic Access
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             final SqlSession sqlSession = SqlSessionManager.this.localSqlSession.get();
+            //session 已经存在的情况
             if (sqlSession != null) {
                 try {
                     return method.invoke(sqlSession, args);
@@ -352,6 +325,7 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
                     throw ExceptionUtil.unwrapThrowable(t);
                 }
             } else {
+                //session 不存在的情况 ，1、获取SqlSession
                 final SqlSession autoSqlSession = openSession();
                 try {
                     final Object result = method.invoke(autoSqlSession, args);

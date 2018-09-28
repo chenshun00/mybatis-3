@@ -16,7 +16,7 @@
 package org.apache.ibatis.parsing;
 
 /**
- * @author Clinton Begin
+ * 占位符如何处理
  */
 public interface TokenHandler {
     String handleToken(String content);

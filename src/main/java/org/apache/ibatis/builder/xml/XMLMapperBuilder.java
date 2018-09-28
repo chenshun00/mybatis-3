@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.builder.xml;
 
@@ -88,10 +88,13 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     public void parse() {
+        //查看是不是已经被加载过了
         if (!configuration.isResourceLoaded(resource)) {
-            //mapper 节点
+            //解析mapper 节点
             configurationElement(parser.evalNode("/mapper"));
+            //添加到loadedResources中，set结合
             configuration.addLoadedResource(resource);
+            //搭建命名空间
             bindMapperForNamespace();
         }
 
@@ -106,17 +109,24 @@ public class XMLMapperBuilder extends BaseBuilder {
 
     private void configurationElement(XNode context) {
         try {
-            //获取namespace属性
+            //获取namespace属性 ， namespace 不能为null的，也不能为empty的
             String namespace = context.getStringAttribute("namespace");
             if (namespace == null || namespace.equals("")) {
                 throw new BuilderException("Mapper's namespace cannot be empty");
             }
+            // 节点 cache-ref | cache | resultMap* | parameterMap* | sql* | insert* | update* | delete* | select*
             builderAssistant.setCurrentNamespace(namespace);
+            //缓存引用，和cache两个节点使用的都不多，可以说基本没有
             cacheRefElement(context.evalNode("cache-ref"));
+            //缓存
             cacheElement(context.evalNode("cache"));
+            //主要使用的不多，目前见到的是少部分使用场景，1、获取parameterMap节点群，不止1个节点哦，2、解析节点
             parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+            //必须
             resultMapElements(context.evalNodes("/mapper/resultMap"));
+            //sql，必须
             sqlElement(context.evalNodes("/mapper/sql"));
+            //curd 4个节点，必须
             buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
         } catch (Exception e) {
             throw new BuilderException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);
@@ -213,14 +223,20 @@ public class XMLMapperBuilder extends BaseBuilder {
         }
     }
 
-    private void parameterMapElement(List<XNode> list) throws Exception {
+    //解析parameterMapNode
+    private void parameterMapElement(List<XNode> list) {
         for (XNode parameterMapNode : list) {
+            //id type
             String id = parameterMapNode.getStringAttribute("id");
             String type = parameterMapNode.getStringAttribute("type");
+            //type 的类型
             Class<?> parameterClass = resolveClass(type);
+            //所有的parameter子节点
             List<XNode> parameterNodes = parameterMapNode.evalNodes("parameter");
             List<ParameterMapping> parameterMappings = new ArrayList<>();
+            //字节点的各个类型
             for (XNode parameterNode : parameterNodes) {
+                //属性 java类型 jdbc类型 结果集 模式 类型处理器
                 String property = parameterNode.getStringAttribute("property");
                 String javaType = parameterNode.getStringAttribute("javaType");
                 String jdbcType = parameterNode.getStringAttribute("jdbcType");
@@ -232,10 +248,12 @@ public class XMLMapperBuilder extends BaseBuilder {
                 Class<?> javaTypeClass = resolveClass(javaType);
                 JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
                 @SuppressWarnings("unchecked")
-                Class<? extends TypeHandler<?>> typeHandlerClass = (Class<? extends TypeHandler<?>>) resolveClass(typeHandler);
+                Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
+                //构建ParameterMapping
                 ParameterMapping parameterMapping = builderAssistant.buildParameterMapping(parameterClass, property, javaTypeClass, jdbcTypeEnum, resultMap, modeEnum, typeHandlerClass, numericScale);
                 parameterMappings.add(parameterMapping);
             }
+            //添加到这个state中去
             builderAssistant.addParameterMap(id, parameterClass, parameterMappings);
         }
     }
@@ -255,10 +273,15 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     private ResultMap resultMapElement(XNode resultMapNode, List<ResultMapping> additionalResultMappings) throws Exception {
+        //正在解析那个mapper文件
         ErrorContext.instance().activity("processing " + resultMapNode.getValueBasedIdentifier());
+        //resultMap 没有id会自动产生一个，强烈建议设置一个
         String id = resultMapNode.getStringAttribute("id", resultMapNode.getValueBasedIdentifier());
+        //后续的是默认值
         String type = resultMapNode.getStringAttribute("type", resultMapNode.getStringAttribute("ofType", resultMapNode.getStringAttribute("resultType", resultMapNode.getStringAttribute("javaType"))));
+        //是否继承了那个resultMap,复用
         String extend = resultMapNode.getStringAttribute("extends");
+        //是否自动映射
         Boolean autoMapping = resultMapNode.getBooleanAttribute("autoMapping");
 
         Class<?> typeClass = resolveClass(type);
@@ -268,17 +291,22 @@ public class XMLMapperBuilder extends BaseBuilder {
 
         //所有字节点
         List<XNode> resultChildren = resultMapNode.getChildren();
-
+        //constructor?,id*,result*,association*,collection*, discriminator?
         for (XNode resultChild : resultChildren) {
+            //构造器
             if ("constructor".equals(resultChild.getName())) {
                 processConstructorElement(resultChild, typeClass, resultMappings);
-            } else if ("discriminator".equals(resultChild.getName())) {
+            }
+            //discriminator
+            else if ("discriminator".equals(resultChild.getName())) {
                 discriminator = processDiscriminatorElement(resultChild, typeClass, resultMappings);
             } else {
                 List<ResultFlag> flags = new ArrayList<>();
+                //id
                 if ("id".equals(resultChild.getName())) {
                     flags.add(ResultFlag.ID);
                 }
+                //剩下来的情况
                 resultMappings.add(buildResultMappingFromContext(resultChild, typeClass, flags));
             }
         }
@@ -380,7 +408,7 @@ public class XMLMapperBuilder extends BaseBuilder {
         boolean lazy = "lazy".equals(context.getStringAttribute("fetchType", configuration.isLazyLoadingEnabled() ? "lazy" : "eager"));
         Class<?> javaTypeClass = resolveClass(javaType);
         @SuppressWarnings("unchecked")
-        Class<? extends TypeHandler<?>> typeHandlerClass = (Class<? extends TypeHandler<?>>) resolveClass(typeHandler);
+        Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
         JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
         return builderAssistant.buildResultMapping(resultType, property, column, javaTypeClass, jdbcTypeEnum, nestedSelect, nestedResultMap, notNullColumn, columnPrefix, typeHandlerClass, flags, resultSet, foreignColumn, lazy);
     }

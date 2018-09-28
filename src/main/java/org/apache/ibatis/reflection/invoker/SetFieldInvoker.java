@@ -19,7 +19,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * @author Clinton Begin
+ * 字段的set方法
  */
 public class SetFieldInvoker implements Invoker {
     private final Field field;

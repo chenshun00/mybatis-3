@@ -29,19 +29,16 @@ import org.apache.ibatis.logging.LogFactory;
 
 /**
  * Provides a very simple API for accessing resources within an application server.
+ * 其实就是利用了 ClassLoader
  *
  * @author Ben Gunter
  */
 public abstract class VFS {
-    private static final Log log = LogFactory.getLog(VFS.class);
 
-    /** The built-in implementations. */
     public static final Class<?>[] IMPLEMENTATIONS = {JBoss6VFS.class, DefaultVFS.class};
 
-    /** The list to which implementations are added by {@link #addImplClass(Class)}. */
     public static final List<Class<? extends VFS>> USER_IMPLEMENTATIONS = new ArrayList<>();
 
-    /** Singleton instance holder. */
     private static class VFSHolder {
         static final VFS INSTANCE = createVFS();
 
@@ -58,80 +55,39 @@ public abstract class VFS {
                 Class<? extends VFS> impl = impls.get(i);
                 try {
                     vfs = impl.newInstance();
-                    if (vfs == null || !vfs.isValid()) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("VFS implementation " + impl.getName() +
-                                    " is not valid in this environment.");
-                        }
-                    }
-                } catch (InstantiationException e) {
-                    log.error("Failed to instantiate " + impl, e);
-                    return null;
-                } catch (IllegalAccessException e) {
-                    log.error("Failed to instantiate " + impl, e);
+                } catch (InstantiationException | IllegalAccessException e) {
                     return null;
                 }
             }
-
-            if (log.isDebugEnabled()) {
-                log.debug("Using VFS adapter " + vfs.getClass().getName());
-            }
-
             return vfs;
         }
     }
 
-    /**
-     * Get the singleton {@link VFS} instance. If no {@link VFS} implementation can be found for the
-     * current environment, then this method returns null.
-     */
     public static VFS getInstance() {
         return VFSHolder.INSTANCE;
     }
 
-    /**
-     * Adds the specified class to the list of {@link VFS} implementations. Classes added in this
-     * manner are tried in the order they are added and before any of the built-in implementations.
-     *
-     * @param clazz The {@link VFS} implementation class to add.
-     */
     public static void addImplClass(Class<? extends VFS> clazz) {
         if (clazz != null) {
             USER_IMPLEMENTATIONS.add(clazz);
         }
     }
 
-    /** Get a class by name. If the class is not found then return null. */
     protected static Class<?> getClass(String className) {
         try {
             return Thread.currentThread().getContextClassLoader().loadClass(className);
-//      return ReflectUtil.findClass(className);
         } catch (ClassNotFoundException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Class not found: " + className);
-            }
             return null;
         }
     }
 
-    /**
-     * Get a method by name and parameter types. If the method is not found then return null.
-     *
-     * @param clazz The class to which the method belongs.
-     * @param methodName The name of the method.
-     * @param parameterTypes The types of the parameters accepted by the method.
-     */
     protected static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
         if (clazz == null) {
             return null;
         }
         try {
             return clazz.getMethod(methodName, parameterTypes);
-        } catch (SecurityException e) {
-            log.error("Security exception looking for method " + clazz.getName() + "." + methodName + ".  Cause: " + e);
-            return null;
-        } catch (NoSuchMethodException e) {
-            log.error("Method not found " + clazz.getName() + "." + methodName + "." + methodName + ".  Cause: " + e);
+        } catch (SecurityException | NoSuchMethodException e) {
             return null;
         }
     }

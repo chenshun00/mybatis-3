@@ -17,7 +17,7 @@ package org.apache.ibatis.session;
 
 /**
  *
- * <>相比代表的应该是数据行了</>
+ * 返回的数据行，我没有用过，一般都是直接在sql中写limit了
  * @author Clinton Begin
  */
 public class RowBounds {

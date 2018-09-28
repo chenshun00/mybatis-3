@@ -23,15 +23,16 @@ import java.lang.reflect.Field;
 public final class PropertyCopier {
 
     private PropertyCopier() {
-        // Prevent Instantiation of Static Class
     }
 
     public static void copyBeanProperties(Class<?> type, Object sourceBean, Object destinationBean) {
         Class<?> parent = type;
         while (parent != null) {
+            //获取到字段
             final Field[] fields = parent.getDeclaredFields();
             for (Field field : fields) {
                 try {
+                    //从源对象中查找到该字段到值，设置到目标bean中，然后获取父类的字段，递归
                     field.setAccessible(true);
                     field.set(destinationBean, field.get(sourceBean));
                 } catch (Exception e) {

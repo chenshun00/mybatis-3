@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.parsing;
 
@@ -50,66 +50,6 @@ public class XPathParser {
     private Properties variables;
     private XPath xpath;
 
-    public XPathParser(String xml) {
-        commonConstructor(false, null, null);
-        this.document = createDocument(new InputSource(new StringReader(xml)));
-    }
-
-    public XPathParser(Reader reader) {
-        commonConstructor(false, null, null);
-        this.document = createDocument(new InputSource(reader));
-    }
-
-    public XPathParser(InputStream inputStream) {
-        commonConstructor(false, null, null);
-        this.document = createDocument(new InputSource(inputStream));
-    }
-
-    public XPathParser(Document document) {
-        commonConstructor(false, null, null);
-        this.document = document;
-    }
-
-    public XPathParser(String xml, boolean validation) {
-        commonConstructor(validation, null, null);
-        this.document = createDocument(new InputSource(new StringReader(xml)));
-    }
-
-    public XPathParser(Reader reader, boolean validation) {
-        commonConstructor(validation, null, null);
-        this.document = createDocument(new InputSource(reader));
-    }
-
-    public XPathParser(InputStream inputStream, boolean validation) {
-        commonConstructor(validation, null, null);
-        this.document = createDocument(new InputSource(inputStream));
-    }
-
-    public XPathParser(Document document, boolean validation) {
-        commonConstructor(validation, null, null);
-        this.document = document;
-    }
-
-    public XPathParser(String xml, boolean validation, Properties variables) {
-        commonConstructor(validation, variables, null);
-        this.document = createDocument(new InputSource(new StringReader(xml)));
-    }
-
-    public XPathParser(Reader reader, boolean validation, Properties variables) {
-        commonConstructor(validation, variables, null);
-        this.document = createDocument(new InputSource(reader));
-    }
-
-    public XPathParser(InputStream inputStream, boolean validation, Properties variables) {
-        commonConstructor(validation, variables, null);
-        this.document = createDocument(new InputSource(inputStream));
-    }
-
-    public XPathParser(Document document, boolean validation, Properties variables) {
-        commonConstructor(validation, variables, null);
-        this.document = document;
-    }
-
     public XPathParser(String xml, boolean validation, Properties variables, EntityResolver entityResolver) {
         commonConstructor(validation, variables, entityResolver);
         this.document = createDocument(new InputSource(new StringReader(xml)));
@@ -123,11 +63,6 @@ public class XPathParser {
     public XPathParser(InputStream inputStream, boolean validation, Properties variables, EntityResolver entityResolver) {
         commonConstructor(validation, variables, entityResolver);
         this.document = createDocument(new InputSource(inputStream));
-    }
-
-    public XPathParser(Document document, boolean validation, Properties variables, EntityResolver entityResolver) {
-        commonConstructor(validation, variables, entityResolver);
-        this.document = document;
     }
 
     public void setVariables(Properties variables) {
@@ -205,11 +140,15 @@ public class XPathParser {
         return xnodes;
     }
 
+    /**
+     * @param expression 节点内容
+     */
     public XNode evalNode(String expression) {
         return evalNode(document, expression);
     }
 
     public XNode evalNode(Object root, String expression) {
+        //
         Node node = (Node) evaluate(expression, root, XPathConstants.NODE);
         if (node == null) {
             return null;

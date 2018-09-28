@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
  */
 public class MethodInvoker implements Invoker {
 
-    private final Class<?> type;
+    private final Class<?> type;//返回类型
     private final Method method;
 
     public MethodInvoker(Method method) {

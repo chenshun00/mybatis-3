@@ -18,7 +18,7 @@ package org.apache.ibatis.reflection.invoker;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * @author Clinton Begin
+ * method.invoke(target,args),标准的反射调用
  */
 public interface Invoker {
     Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException;

@@ -41,8 +41,7 @@ import org.apache.ibatis.session.SqlSession;
 
 /**
  *
- * The default implementation for {@link SqlSession}.
- * Note that this class is not Thread-Safe.
+ *默认实现，非线程安全
  *
  * @author Clinton Begin
  */
@@ -62,13 +61,9 @@ public class DefaultSqlSession implements SqlSession {
         this.autoCommit = autoCommit;
     }
 
-    public DefaultSqlSession(Configuration configuration, Executor executor) {
-        this(configuration, executor, false);
-    }
-
     @Override
     public <T> T selectOne(String statement) {
-        return this.<T>selectOne(statement, null);
+        return this.selectOne(statement, null);
     }
 
     @Override

@@ -92,6 +92,8 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 配置文件，核心,主要有 mappedStatements
+ * 配置文件的设置全都在这里提现出来
  * @author Clinton Begin
  */
 public class Configuration {
@@ -556,7 +558,7 @@ public class Configuration {
 
     public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
         StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
-        statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
+//        statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
         return statementHandler;
     }
 

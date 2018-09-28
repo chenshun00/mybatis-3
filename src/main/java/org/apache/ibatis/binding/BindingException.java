@@ -24,10 +24,6 @@ public class BindingException extends PersistenceException {
 
     private static final long serialVersionUID = 4300802238789381562L;
 
-    public BindingException() {
-        super();
-    }
-
     public BindingException(String message) {
         super(message);
     }
@@ -36,7 +32,4 @@ public class BindingException extends PersistenceException {
         super(message, cause);
     }
 
-    public BindingException(Throwable cause) {
-        super(cause);
-    }
 }

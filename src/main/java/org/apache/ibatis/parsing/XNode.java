@@ -63,7 +63,7 @@ public class XNode {
     public String getPath() {
         StringBuilder builder = new StringBuilder();
         Node current = node;
-        while (current != null && current instanceof Element) {
+        while (current instanceof Element) {
             if (current != node) {
                 builder.insert(0, "/");
             }

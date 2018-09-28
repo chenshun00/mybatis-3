@@ -18,7 +18,7 @@ package org.apache.ibatis.parsing;
 import java.util.Properties;
 
 /**
- * @author Clinton Begin
+ * 使用${}的模式去解析
  * @author Kazuki Shimizu
  */
 public class PropertyParser {
@@ -47,7 +47,6 @@ public class PropertyParser {
     private static final String DEFAULT_VALUE_SEPARATOR = ":";
 
     private PropertyParser() {
-        // Prevent Instantiation
     }
 
     public static String parse(String string, Properties variables) {

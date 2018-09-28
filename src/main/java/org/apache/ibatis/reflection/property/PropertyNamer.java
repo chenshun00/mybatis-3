@@ -25,9 +25,11 @@ import org.apache.ibatis.reflection.ReflectionException;
 public final class PropertyNamer {
 
     private PropertyNamer() {
-        // Prevent Instantiation of Static Class
     }
 
+    /**
+     * 获取名字
+     */
     public static String methodToProperty(String name) {
         if (name.startsWith("is")) {
             name = name.substring(2);
@@ -44,6 +46,9 @@ public final class PropertyNamer {
         return name;
     }
 
+    /**
+     * 判断是不是类的字段
+     */
     public static boolean isProperty(String name) {
         return name.startsWith("get") || name.startsWith("set") || name.startsWith("is");
     }

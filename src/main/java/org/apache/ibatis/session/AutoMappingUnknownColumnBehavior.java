@@ -20,15 +20,13 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
 
 /**
- * Specify the behavior when detects an unknown column (or unknown property type) of automatic mapping target.
- *
- * @since 3.4.0
+ * 自动映射目标对象的时候检测到一个未知的列column或者未知的属性类型如何处理
  * @author Kazuki Shimizu
  */
 public enum AutoMappingUnknownColumnBehavior {
 
     /**
-     * Do nothing (Default).
+     * 啥都不敢
      */
     NONE {
         @Override
@@ -38,8 +36,7 @@ public enum AutoMappingUnknownColumnBehavior {
     },
 
     /**
-     * Output warning log.
-     * Note: The log level of {@code 'org.apache.ibatis.session.AutoMappingUnknownColumnBehavior'} must be set to {@code WARN}.
+     * 警告日志，但是 AutoMappingUnknownColumnBehavior 必须设置到 warn 级别
      */
     WARNING {
         @Override
@@ -49,8 +46,7 @@ public enum AutoMappingUnknownColumnBehavior {
     },
 
     /**
-     * Fail mapping.
-     * Note: throw {@link SqlSessionException}.
+     * 映射失败，抛出SqlSessionException异常
      */
     FAILING {
         @Override
@@ -64,13 +60,6 @@ public enum AutoMappingUnknownColumnBehavior {
      */
     private static final Log log = LogFactory.getLog(AutoMappingUnknownColumnBehavior.class);
 
-    /**
-     * Perform the action when detects an unknown column (or unknown property type) of automatic mapping target.
-     * @param mappedStatement current mapped statement
-     * @param columnName column name for mapping target
-     * @param propertyName property name for mapping target
-     * @param propertyType property type for mapping target (If this argument is not null, {@link org.apache.ibatis.type.TypeHandler} for property type is not registered)
-     */
     public abstract void doAction(MappedStatement mappedStatement, String columnName, String propertyName, Class<?> propertyType);
 
     /**

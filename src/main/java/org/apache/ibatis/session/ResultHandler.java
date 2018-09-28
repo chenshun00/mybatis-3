@@ -16,6 +16,7 @@
 package org.apache.ibatis.session;
 
 /**
+ * 处理结果集，此时sql执行并且返回了结果
  * @author Clinton Begin
  */
 public interface ResultHandler<T> {

@@ -31,7 +31,7 @@ import java.util.TreeSet;
 import org.apache.ibatis.reflection.ReflectionException;
 
 /**
- * @author Clinton Begin
+ * 默认实现
  */
 public class DefaultObjectFactory implements ObjectFactory, Serializable {
 
@@ -45,31 +45,34 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
+        //解析类型
         Class<?> classToCreate = resolveInterface(type);
-        // we know types are assignable
+        // 实例化
         return (T) instantiateClass(classToCreate, constructorArgTypes, constructorArgs);
     }
 
     @Override
     public void setProperties(Properties properties) {
-        // no props for default
+       //啥都没有
     }
 
     private <T> T instantiateClass(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
         try {
             Constructor<T> constructor;
             if (constructorArgTypes == null || constructorArgs == null) {
+                //使用默认的构造函数
                 constructor = type.getDeclaredConstructor();
                 if (!constructor.isAccessible()) {
                     constructor.setAccessible(true);
                 }
                 return constructor.newInstance();
             }
-            constructor = type.getDeclaredConstructor(constructorArgTypes.toArray(new Class[constructorArgTypes.size()]));
+            //根据参数类型选择构造器
+            constructor = type.getDeclaredConstructor(constructorArgTypes.toArray(new Class[0]));
             if (!constructor.isAccessible()) {
                 constructor.setAccessible(true);
             }
-            return constructor.newInstance(constructorArgs.toArray(new Object[constructorArgs.size()]));
+            return constructor.newInstance(constructorArgs.toArray(new Object[0]));
         } catch (Exception e) {
             StringBuilder argTypes = new StringBuilder();
             if (constructorArgTypes != null && !constructorArgTypes.isEmpty()) {

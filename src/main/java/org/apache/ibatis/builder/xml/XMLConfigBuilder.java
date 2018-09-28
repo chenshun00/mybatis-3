@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.builder.xml;
 
@@ -54,7 +54,7 @@ import org.apache.ibatis.type.TypeHandler;
 public class XMLConfigBuilder extends BaseBuilder {
 
     private boolean parsed;
-    private final XPathParser parser;
+    private XPathParser parser;
     private String environment;
     private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
 
@@ -62,11 +62,8 @@ public class XMLConfigBuilder extends BaseBuilder {
         this(reader, null, null);
     }
 
-    public XMLConfigBuilder(Reader reader, String environment) {
-        this(reader, environment, null);
-    }
-
     public XMLConfigBuilder(Reader reader, String environment, Properties props) {
+        //获取XPathParser解析器，解析xml文件
         this(new XPathParser(reader, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
@@ -74,48 +71,62 @@ public class XMLConfigBuilder extends BaseBuilder {
         this(inputStream, null, null);
     }
 
-    public XMLConfigBuilder(InputStream inputStream, String environment) {
-        this(inputStream, environment, null);
-    }
-
     public XMLConfigBuilder(InputStream inputStream, String environment, Properties props) {
         this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
     private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
+        //新建全局configuration
         super(new Configuration());
+        //设置开始解析Configuration文件，如果解析过程出现异常，这个实例的content将会抛出
         ErrorContext.instance().resource("SQL Mapper Configuration");
+        //配置文件的内容，一般不需要去设置
         this.configuration.setVariables(props);
+        //标志变量，还灭也开始解析
         this.parsed = false;
+        //
         this.environment = environment;
+        //解析器
         this.parser = parser;
     }
 
     public Configuration parse() {
+        //解析标志
         if (parsed) {
             throw new BuilderException("Each XMLConfigBuilder can only be used once.");
         }
         parsed = true;
-        parseConfiguration(parser.evalNode("/configuration"));
+        //解析configuration节点，是configuration.xml的主要节点，这里主要设计xpath的使用，跟基本的sax和dom使用应该差不多
+        XNode xNode = parser.evalNode("/configuration");
+        //开始解析
+        parseConfiguration(xNode);
         return configuration;
     }
 
     private void parseConfiguration(XNode root) {
         try {
-            //issue #117 read properties first
+            //issue117,先解析properties文件,和Spring整合之后我还没有看到使用的，我司主要使用xbatis/mysql
             propertiesElement(root.evalNode("properties"));
+            //解析settings配置
             Properties settings = settingsAsProperties(root.evalNode("settings"));
+            //加载
             loadCustomVfs(settings);
+            //别名，这个是需要的，简化后续的statement
             typeAliasesElement(root.evalNode("typeAliases"));
+            //插件
             pluginElement(root.evalNode("plugins"));
+            //加载objectFactory，一般没有使用
             objectFactoryElement(root.evalNode("objectFactory"));
+            //一般没有好似哦那个
             objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+            //没有使用，默认
             reflectorFactoryElement(root.evalNode("reflectorFactory"));
             settingsElement(settings);
             // read it after objectFactory and objectWrapperFactory issue #631
             environmentsElement(root.evalNode("environments"));
             databaseIdProviderElement(root.evalNode("databaseIdProvider"));
             typeHandlerElement(root.evalNode("typeHandlers"));
+            //解析mappers节点，mybatis核心
             mapperElement(root.evalNode("mappers"));
         } catch (Exception e) {
             throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -214,6 +225,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     private void propertiesElement(XNode context) throws Exception {
+        //context != null，这个节点有可能为null，即没有设置
         if (context != null) {
             Properties defaults = context.getChildrenAsProperties();
             String resource = context.getStringAttribute("resource");
@@ -254,7 +266,7 @@ public class XMLConfigBuilder extends BaseBuilder {
         configuration.setJdbcTypeForNull(JdbcType.valueOf(props.getProperty("jdbcTypeForNull", "OTHER")));
         configuration.setLazyLoadTriggerMethods(stringSetValueOf(props.getProperty("lazyLoadTriggerMethods"), "equals,clone,hashCode,toString"));
         configuration.setSafeResultHandlerEnabled(booleanValueOf(props.getProperty("safeResultHandlerEnabled"), true));
-        configuration.setDefaultScriptingLanguage(resolveClass(props.getProperty("defaultScriptingLanguage")));
+//        configuration.setDefaultScriptingLanguage(resolveClass(props.getProperty("defaultScriptingLanguage")));
         @SuppressWarnings("unchecked")
         Class<? extends TypeHandler> typeHandler = (Class<? extends TypeHandler>) resolveClass(props.getProperty("defaultEnumTypeHandler"));
         configuration.setDefaultEnumTypeHandler(typeHandler);
@@ -358,12 +370,14 @@ public class XMLConfigBuilder extends BaseBuilder {
 
     private void mapperElement(XNode parent) throws Exception {
         if (parent != null) {
+            //获取所有字节点，mapper支持resource ，class和url CDATA #IMPLIED
             for (XNode child : parent.getChildren()) {
+                //package的形式，
                 if ("package".equals(child.getName())) {
                     String mapperPackage = child.getStringAttribute("name");
                     configuration.addMappers(mapperPackage);
                 } else {
-                    //          resource   =   mapper/abc.xml
+                    //resource=mapper/abc.xml，只能同时存在一个
                     String resource = child.getStringAttribute("resource");
                     String url = child.getStringAttribute("url");
                     String mapperClass = child.getStringAttribute("class");
@@ -371,6 +385,7 @@ public class XMLConfigBuilder extends BaseBuilder {
                         ErrorContext.instance().resource(resource);
                         InputStream inputStream = Resources.getResourceAsStream(resource);
                         XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
+                        //解析xxx/mapper.xml
                         mapperParser.parse();
                     } else if (resource == null && url != null && mapperClass == null) {
                         ErrorContext.instance().resource(url);
@@ -379,6 +394,7 @@ public class XMLConfigBuilder extends BaseBuilder {
                         mapperParser.parse();
                     } else if (resource == null && url == null && mapperClass != null) {
                         Class<?> mapperInterface = Resources.classForName(mapperClass);
+                        //使用接口的模式，xxxMapper
                         configuration.addMapper(mapperInterface);
                     } else {
                         throw new BuilderException("A mapper element may only specify a url, resource or class, but not more than one.");
