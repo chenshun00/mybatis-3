@@ -15,22 +15,15 @@
  */
 package org.apache.ibatis.mapping;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.builder.BuilderException;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.Jdk;
 import org.apache.ibatis.reflection.ParamNameUtil;
 import org.apache.ibatis.session.Configuration;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.util.*;
 
 /**
  * 解析resultMap标签时干活
@@ -56,7 +49,6 @@ public class ResultMap {
     }
 
     public static class Builder {
-        private static final Log log = LogFactory.getLog(Builder.class);
 
         private ResultMap resultMap = new ResultMap();
 
@@ -168,13 +160,6 @@ public class ResultMap {
                 Class<?> actualType = paramTypes[paramNames.indexOf(constructorArgNames.get(i))];
                 Class<?> specifiedType = resultMap.constructorResultMappings.get(i).getJavaType();
                 if (!actualType.equals(specifiedType)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("While building result map '" + resultMap.id
-                                + "', found a constructor with arg names " + constructorArgNames
-                                + ", but the type of '" + constructorArgNames.get(i)
-                                + "' did not match. Specified: [" + specifiedType.getName() + "] Declared: ["
-                                + actualType.getName() + "]");
-                    }
                     return false;
                 }
             }

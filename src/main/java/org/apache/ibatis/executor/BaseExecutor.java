@@ -15,26 +15,11 @@
  */
 package org.apache.ibatis.executor;
 
-import static org.apache.ibatis.executor.ExecutionPlaceholder.EXECUTION_PLACEHOLDER;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.statement.StatementUtil;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.logging.jdbc.ConnectionLogger;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.mapping.ParameterMode;
-import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.session.Configuration;
@@ -44,12 +29,19 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import static org.apache.ibatis.executor.ExecutionPlaceholder.EXECUTION_PLACEHOLDER;
+
 /**
  * @author Clinton Begin
  */
 public abstract class BaseExecutor implements Executor {
 
-    private static final Log log = LogFactory.getLog(BaseExecutor.class);
 
     protected Transaction transaction;
     protected Executor wrapper;
@@ -92,7 +84,6 @@ public abstract class BaseExecutor implements Executor {
             }
         } catch (SQLException e) {
             // Ignore.  There's nothing that can be done at this point.
-            log.warn("Unexpected exception on closing transaction.  Cause: " + e);
         } finally {
             transaction = null;
             deferredLoads = null;
@@ -299,10 +290,11 @@ public abstract class BaseExecutor implements Executor {
 
     /**
      * Apply a transaction timeout.
+     *
      * @param statement a current statement
      * @throws SQLException if a database access error occurs, this method is called on a closed <code>Statement</code>
-     * @since 3.4.0
      * @see StatementUtil#applyTransactionTimeout(Statement, Integer, Integer)
+     * @since 3.4.0
      */
     protected void applyTransactionTimeout(Statement statement) throws SQLException {
         StatementUtil.applyTransactionTimeout(statement, statement.getQueryTimeout(), transaction.getTimeout());
@@ -343,13 +335,8 @@ public abstract class BaseExecutor implements Executor {
         return list;
     }
 
-    protected Connection getConnection(Log statementLog) throws SQLException {
-        Connection connection = transaction.getConnection();
-        if (statementLog.isDebugEnabled()) {
-            return ConnectionLogger.newInstance(connection, statementLog, queryStack);
-        } else {
-            return connection;
-        }
+    protected Connection getConnection(Object object) throws SQLException {
+        return transaction.getConnection();
     }
 
     @Override

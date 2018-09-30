@@ -63,8 +63,8 @@ public class Reflector {
         addGetMethods(clazz);
         addSetMethods(clazz);
         addFields(clazz);
-        readablePropertyNames = getMethods.keySet().toArray(new String[getMethods.keySet().size()]);
-        writeablePropertyNames = setMethods.keySet().toArray(new String[setMethods.keySet().size()]);
+        readablePropertyNames = getMethods.keySet().toArray(new String[0]);
+        writeablePropertyNames = setMethods.keySet().toArray(new String[0]);
         for (String propName : readablePropertyNames) {
             caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
         }
@@ -324,7 +324,7 @@ public class Reflector {
 
         Collection<Method> methods = uniqueMethods.values();
 
-        return methods.toArray(new Method[methods.size()]);
+        return methods.toArray(new Method[0]);
     }
 
     private void addUniqueMethods(Map<String, Method> uniqueMethods, Method[] methods) {

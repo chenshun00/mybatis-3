@@ -15,24 +15,19 @@
  */
 package org.apache.ibatis.mapping;
 
+import org.apache.ibatis.builder.InitializingObject;
+import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.cache.CacheException;
+import org.apache.ibatis.cache.decorators.*;
+import org.apache.ibatis.cache.impl.PerpetualCache;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.cache.CacheException;
-import org.apache.ibatis.builder.InitializingObject;
-import org.apache.ibatis.cache.decorators.BlockingCache;
-import org.apache.ibatis.cache.decorators.LoggingCache;
-import org.apache.ibatis.cache.decorators.LruCache;
-import org.apache.ibatis.cache.decorators.ScheduledCache;
-import org.apache.ibatis.cache.decorators.SerializedCache;
-import org.apache.ibatis.cache.decorators.SynchronizedCache;
-import org.apache.ibatis.cache.impl.PerpetualCache;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
  * @author Clinton Begin
@@ -100,8 +95,6 @@ public class CacheBuilder {
                 setCacheProperties(cache);
             }
             cache = setStandardDecorators(cache);
-        } else if (!LoggingCache.class.isAssignableFrom(cache.getClass())) {
-            cache = new LoggingCache(cache);
         }
         return cache;
     }
@@ -128,7 +121,6 @@ public class CacheBuilder {
             if (readWrite) {
                 cache = new SerializedCache(cache);
             }
-            cache = new LoggingCache(cache);
             cache = new SynchronizedCache(cache);
             if (blocking) {
                 cache = new BlockingCache(cache);

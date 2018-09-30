@@ -34,8 +34,9 @@ public class GenericTokenParser {
         if (text == null || text.isEmpty()) {
             return "";
         }
-        // search open token
+        // ${ 查找未知
         int start = text.indexOf(openToken, 0);
+        //没有直接返回
         if (start == -1) {
             return text;
         }
@@ -45,7 +46,7 @@ public class GenericTokenParser {
         StringBuilder expression = null;
         while (start > -1) {
             if (start > 0 && src[start - 1] == '\\') {
-                // this open token is escaped. remove the backslash and continue.
+                // ethis open token is escaped. rmove the backslash and continue.
                 builder.append(src, offset, start - offset - 1).append(openToken);
                 offset = start + openToken.length();
             } else {
@@ -66,7 +67,6 @@ public class GenericTokenParser {
                         end = text.indexOf(closeToken, offset);
                     } else {
                         expression.append(src, offset, end - offset);
-                        offset = end + closeToken.length();
                         break;
                     }
                 }

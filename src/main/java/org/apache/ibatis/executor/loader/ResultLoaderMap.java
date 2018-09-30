@@ -15,6 +15,17 @@
  */
 package org.apache.ibatis.executor.loader;
 
+import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.executor.BaseExecutor;
+import org.apache.ibatis.executor.BatchResult;
+import org.apache.ibatis.executor.ExecutorException;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ResultHandler;
+import org.apache.ibatis.session.RowBounds;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -22,24 +33,7 @@ import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.ibatis.cursor.Cursor;
-import org.apache.ibatis.executor.BaseExecutor;
-import org.apache.ibatis.executor.BatchResult;
-import org.apache.ibatis.executor.ExecutorException;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.RowBounds;
+import java.util.*;
 
 /**
  * @author Clinton Begin
@@ -124,10 +118,6 @@ public class ResultLoaderMap {
          */
         private transient ResultLoader resultLoader;
         /**
-         * Wow, logger.
-         */
-        private transient Log log;
-        /**
          * Factory class through which we get database connection.
          */
         private Class<?> configurationFactory;
@@ -160,13 +150,6 @@ public class ResultLoaderMap {
 
                     this.configurationFactory = resultLoader.configuration.getConfigurationFactory();
                 } else {
-                    Log log = this.getLogger();
-                    if (log.isDebugEnabled()) {
-                        log.debug("Property [" + this.property + "] of ["
-                                + metaResultObject.getOriginalObject().getClass() + "] cannot be loaded "
-                                + "after deserialization. Make sure it's loaded before serializing "
-                                + "forenamed object.");
-                    }
                 }
             }
         }
@@ -272,13 +255,6 @@ public class ResultLoaderMap {
             }
 
             return Configuration.class.cast(configurationObject);
-        }
-
-        private Log getLogger() {
-            if (this.log == null) {
-                this.log = LogFactory.getLog(this.getClass());
-            }
-            return this.log;
         }
     }
 

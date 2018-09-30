@@ -28,7 +28,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
- * @author Clinton Begin
+ * 实际对接口执行者，SqlSession委托Executor执行sql
  */
 public interface Executor {
 

@@ -32,7 +32,7 @@ public class ClassLoaderWrapper {
         try {
             systemClassLoader = ClassLoader.getSystemClassLoader();
         } catch (SecurityException ignored) {
-            // AccessControlException on Google App Engine
+            // AccessControlException on Google top.huzhurong.App Engine
         }
     }
 

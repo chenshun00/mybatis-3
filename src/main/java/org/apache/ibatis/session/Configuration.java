@@ -15,16 +15,6 @@
  */
 package org.apache.ibatis.session;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.CacheRefResolver;
 import org.apache.ibatis.builder.ResultMapResolver;
@@ -39,11 +29,7 @@ import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.datasource.jndi.JndiDataSourceFactory;
 import org.apache.ibatis.datasource.pooled.PooledDataSourceFactory;
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSourceFactory;
-import org.apache.ibatis.executor.BatchExecutor;
-import org.apache.ibatis.executor.CachingExecutor;
-import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.executor.ReuseExecutor;
-import org.apache.ibatis.executor.SimpleExecutor;
+import org.apache.ibatis.executor.*;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.loader.ProxyFactory;
 import org.apache.ibatis.executor.loader.cglib.CglibProxyFactory;
@@ -54,21 +40,7 @@ import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.io.VFS;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.logging.commons.JakartaCommonsLoggingImpl;
-import org.apache.ibatis.logging.jdk14.Jdk14LoggingImpl;
-import org.apache.ibatis.logging.log4j.Log4jImpl;
-import org.apache.ibatis.logging.log4j2.Log4j2Impl;
-import org.apache.ibatis.logging.nologging.NoLoggingImpl;
-import org.apache.ibatis.logging.slf4j.Slf4jImpl;
-import org.apache.ibatis.logging.stdout.StdOutImpl;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMap;
-import org.apache.ibatis.mapping.ResultMap;
-import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.InterceptorChain;
@@ -91,20 +63,23 @@ import org.apache.ibatis.type.TypeAliasRegistry;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
+import java.util.*;
+
 /**
  * 配置文件，核心,主要有 mappedStatements
  * 配置文件的设置全都在这里提现出来
+ *
  * @author Clinton Begin
  */
 public class Configuration {
 
     protected Environment environment;
 
-    protected boolean safeRowBoundsEnabled;
-    protected boolean safeResultHandlerEnabled = true;
-    protected boolean mapUnderscoreToCamelCase;
-    protected boolean aggressiveLazyLoading;
-    protected boolean multipleResultSetsEnabled = true;
+    protected boolean safeRowBoundsEnabled;//不懂
+    protected boolean safeResultHandlerEnabled = true;//不懂
+    protected boolean mapUnderscoreToCamelCase;//驼峰
+    protected boolean aggressiveLazyLoading;//懒加载
+    protected boolean multipleResultSetsEnabled = true;//多结果集
     protected boolean useGeneratedKeys;
     protected boolean useColumnLabel = true;
     protected boolean cacheEnabled = true;
@@ -113,11 +88,11 @@ public class Configuration {
     protected boolean returnInstanceForEmptyRow;
 
     protected String logPrefix;
-    protected Class<? extends Log> logImpl;
     protected Class<? extends VFS> vfsImpl;
     protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
     protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
     protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
+    //
     protected Integer defaultStatementTimeout;
     protected Integer defaultFetchSize;
     protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
@@ -142,8 +117,10 @@ public class Configuration {
     protected Class<?> configurationFactory;
 
     protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
+    //抓到plugins的开头
     protected final InterceptorChain interceptorChain = new InterceptorChain();
     protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+    //我猜测内部应该是一个map映射
     protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
     protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
@@ -153,6 +130,7 @@ public class Configuration {
     protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
     protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
 
+    //set 集合记录已经加载过的mapper
     protected final Set<String> loadedResources = new HashSet<>();
     protected final Map<String, XNode> sqlFragments = new StrictMap<>("XML fragments parsed from previous mappers");
 
@@ -174,6 +152,7 @@ public class Configuration {
     }
 
     public Configuration() {
+        //类型别名注册，后续我们终端用户定义的type我猜测也是注册到这里 --> typeAliasRegistry
         typeAliasRegistry.registerAlias("JDBC", JdbcTransactionFactory.class);
         typeAliasRegistry.registerAlias("MANAGED", ManagedTransactionFactory.class);
 
@@ -192,17 +171,12 @@ public class Configuration {
         typeAliasRegistry.registerAlias("XML", XMLLanguageDriver.class);
         typeAliasRegistry.registerAlias("RAW", RawLanguageDriver.class);
 
-        typeAliasRegistry.registerAlias("SLF4J", Slf4jImpl.class);
-        typeAliasRegistry.registerAlias("COMMONS_LOGGING", JakartaCommonsLoggingImpl.class);
-        typeAliasRegistry.registerAlias("LOG4J", Log4jImpl.class);
-        typeAliasRegistry.registerAlias("LOG4J2", Log4j2Impl.class);
-        typeAliasRegistry.registerAlias("JDK_LOGGING", Jdk14LoggingImpl.class);
-        typeAliasRegistry.registerAlias("STDOUT_LOGGING", StdOutImpl.class);
-        typeAliasRegistry.registerAlias("NO_LOGGING", NoLoggingImpl.class);
 
         typeAliasRegistry.registerAlias("CGLIB", CglibProxyFactory.class);
         typeAliasRegistry.registerAlias("JAVASSIST", JavassistProxyFactory.class);
+        //---------
 
+        //这个用来干啥目前我还不知道
         languageRegistry.setDefaultDriverClass(XMLLanguageDriver.class);
         languageRegistry.register(RawLanguageDriver.class);
     }
@@ -213,17 +187,6 @@ public class Configuration {
 
     public void setLogPrefix(String logPrefix) {
         this.logPrefix = logPrefix;
-    }
-
-    public Class<? extends Log> getLogImpl() {
-        return logImpl;
-    }
-
-    public void setLogImpl(Class<? extends Log> logImpl) {
-        if (logImpl != null) {
-            this.logImpl = logImpl;
-            LogFactory.useCustomLogging(this.logImpl);
-        }
     }
 
     public Class<? extends VFS> getVfsImpl() {
@@ -467,6 +430,7 @@ public class Configuration {
     /**
      * Set a default {@link TypeHandler} class for {@link Enum}.
      * A default {@link TypeHandler} is {@link org.apache.ibatis.type.EnumTypeHandler}.
+     *
      * @param typeHandler a type handler class for {@link Enum}
      * @since 3.4.5
      */
@@ -533,7 +497,9 @@ public class Configuration {
         return languageRegistry.getDefaultDriver();
     }
 
-    /** @deprecated Use {@link #getDefaultScriptingLanguageInstance()} */
+    /**
+     * @deprecated Use {@link #getDefaultScriptingLanguageInstance()}
+     */
     @Deprecated
     public LanguageDriver getDefaultScriptingLanuageInstance() {
         return getDefaultScriptingLanguageInstance();

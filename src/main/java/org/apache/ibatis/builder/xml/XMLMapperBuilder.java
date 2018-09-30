@@ -81,6 +81,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 
     private XMLMapperBuilder(XPathParser parser, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
         super(configuration);
+        //一个mapper文件或者mapper接口对一个MapperBuilderAssistant变量
         this.builderAssistant = new MapperBuilderAssistant(configuration, resource);
         this.parser = parser;
         this.sqlFragments = sqlFragments;
@@ -90,9 +91,9 @@ public class XMLMapperBuilder extends BaseBuilder {
     public void parse() {
         //查看是不是已经被加载过了
         if (!configuration.isResourceLoaded(resource)) {
-            //解析mapper 节点
+            //解析mapper root节点，以/开头
             configurationElement(parser.evalNode("/mapper"));
-            //添加到loadedResources中，set结合
+            //添加到loadedResources中，set集合
             configuration.addLoadedResource(resource);
             //搭建命名空间
             bindMapperForNamespace();
@@ -107,6 +108,9 @@ public class XMLMapperBuilder extends BaseBuilder {
         return sqlFragments.get(refid);
     }
 
+    /**
+     * 解析过程还是和configuration差不多，获取一个节点解析一个节点
+     */
     private void configurationElement(XNode context) {
         try {
             //获取namespace属性 ， namespace 不能为null的，也不能为empty的
@@ -115,8 +119,9 @@ public class XMLMapperBuilder extends BaseBuilder {
                 throw new BuilderException("Mapper's namespace cannot be empty");
             }
             // 节点 cache-ref | cache | resultMap* | parameterMap* | sql* | insert* | update* | delete* | select*
+            //当前mapper设置namespace
             builderAssistant.setCurrentNamespace(namespace);
-            //缓存引用，和cache两个节点使用的都不多，可以说基本没有
+            //缓存引用，和cache两个节点使用的都不多，可以说基本没用过
             cacheRefElement(context.evalNode("cache-ref"));
             //缓存
             cacheElement(context.evalNode("cache"));

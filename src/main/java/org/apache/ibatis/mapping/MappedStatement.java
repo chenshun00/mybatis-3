@@ -15,18 +15,16 @@
  */
 package org.apache.ibatis.mapping;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <p>
@@ -59,7 +57,6 @@ public final class MappedStatement {
     private String[] keyColumns;//resultMap里边的column
     private boolean hasNestedResultMaps;//嵌套map
     private String databaseId;//数据库
-    private Log statementLog;//日志
     private LanguageDriver lang;//
     private String[] resultSets;
 
@@ -83,7 +80,6 @@ public final class MappedStatement {
             if (configuration.getLogPrefix() != null) {
                 logId = configuration.getLogPrefix() + id;
             }
-            mappedStatement.statementLog = LogFactory.getLog(logId);
             mappedStatement.lang = configuration.getDefaultScriptingLanguageInstance();
         }
 
@@ -274,10 +270,6 @@ public final class MappedStatement {
 
     public String[] getKeyColumns() {
         return keyColumns;
-    }
-
-    public Log getStatementLog() {
-        return statementLog;
     }
 
     public LanguageDriver getLang() {

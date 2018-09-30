@@ -22,16 +22,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
 /**
  * A {@link VFS} implementation that works with the VFS API provided by JBoss 6.
  *
  * @author Ben Gunter
  */
 public class JBoss6VFS extends VFS {
-    private static final Log log = LogFactory.getLog(JBoss6VFS.class);
 
     /** A class that mimics a tiny subset of the JBoss VirtualFile class. */
     static class VirtualFile {
@@ -49,7 +45,6 @@ public class JBoss6VFS extends VFS {
                 return invoke(getPathNameRelativeTo, virtualFile, parent.virtualFile);
             } catch (IOException e) {
                 // This exception is not thrown by the called method
-                log.error("This should not be possible. VirtualFile.getPathNameRelativeTo() threw IOException.");
                 return null;
             }
         }
@@ -129,9 +124,6 @@ public class JBoss6VFS extends VFS {
      */
     protected static void checkReturnType(Method method, Class<?> expected) {
         if (method != null && !expected.isAssignableFrom(method.getReturnType())) {
-            log.error("Method " + method.getClass().getName() + "." + method.getName()
-                    + "(..) should return " + expected.getName() + " but returns "
-                    + method.getReturnType().getName() + " instead.");
             setInvalid();
         }
     }
@@ -139,7 +131,6 @@ public class JBoss6VFS extends VFS {
     /** Mark this {@link VFS} as invalid for the current environment. */
     protected static void setInvalid() {
         if (JBoss6VFS.valid == Boolean.TRUE) {
-            log.debug("JBoss 6 VFS API is not available in this environment.");
             JBoss6VFS.valid = Boolean.FALSE;
         }
     }

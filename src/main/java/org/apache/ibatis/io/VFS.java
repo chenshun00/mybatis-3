@@ -24,9 +24,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
 /**
  * Provides a very simple API for accessing resources within an application server.
  * 其实就是利用了 ClassLoader

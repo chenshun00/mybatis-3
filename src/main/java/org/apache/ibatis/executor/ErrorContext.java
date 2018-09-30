@@ -104,11 +104,6 @@ public class ErrorContext {
     @Override
     public String toString() {
         StringBuilder description = new StringBuilder();
-        /**
-         *
-         * ### error query database
-         * ### the error may exist in
-         */
         // message
         if (this.message != null) {
             description.append(LINE_SEPARATOR);

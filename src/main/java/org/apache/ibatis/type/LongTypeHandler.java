@@ -39,8 +39,7 @@ public class LongTypeHandler extends BaseTypeHandler<Long> {
     }
 
     @Override
-    public Long getNullableResult(ResultSet rs, int columnIndex)
-            throws SQLException {
+    public Long getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         long result = rs.getLong(columnIndex);
         return (result == 0 && rs.wasNull()) ? null : result;
     }

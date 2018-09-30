@@ -15,11 +15,6 @@
  */
 package org.apache.ibatis.builder.xml;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
-import javax.sql.DataSource;
-
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.datasource.DataSourceFactory;
@@ -27,7 +22,6 @@ import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.loader.ProxyFactory;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.io.VFS;
-import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.parsing.XNode;
@@ -38,14 +32,15 @@ import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
-import org.apache.ibatis.session.AutoMappingBehavior;
-import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.LocalCacheScope;
+import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
+
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
 
 /**
  * @author Clinton Begin
@@ -80,9 +75,9 @@ public class XMLConfigBuilder extends BaseBuilder {
         super(new Configuration());
         //设置开始解析Configuration文件，如果解析过程出现异常，这个实例的content将会抛出
         ErrorContext.instance().resource("SQL Mapper Configuration");
-        //配置文件的内容，一般不需要去设置
+        //配置文件的内容，一般不需要去设置，java代码设置
         this.configuration.setVariables(props);
-        //标志变量，还灭也开始解析
+        //标志变量，还没有开始解析
         this.parsed = false;
         //
         this.environment = environment;
@@ -106,14 +101,15 @@ public class XMLConfigBuilder extends BaseBuilder {
     private void parseConfiguration(XNode root) {
         try {
             //issue117,先解析properties文件,和Spring整合之后我还没有看到使用的，我司主要使用xbatis/mysql
+            //基本不用，maven的穿透更加使用
             propertiesElement(root.evalNode("properties"));
-            //解析settings配置
+            //解析settings配置，难点以及重点
             Properties settings = settingsAsProperties(root.evalNode("settings"));
-            //加载
+            //加载我们终端使用用户自定义的vfs，暂时我还不知道vfs是什么
             loadCustomVfs(settings);
-            //别名，这个是需要的，简化后续的statement
+            //别名，这个是需要的，简化后续的statement，简单
             typeAliasesElement(root.evalNode("typeAliases"));
-            //插件
+            //插件，简单
             pluginElement(root.evalNode("plugins"));
             //加载objectFactory，一般没有使用
             objectFactoryElement(root.evalNode("objectFactory"));
@@ -133,6 +129,10 @@ public class XMLConfigBuilder extends BaseBuilder {
         }
     }
 
+    /**
+     * settings 节点解析，之所以有set节点的判断是因为这些配置都是mybatis固定好的，你自定义的配置默认
+     * 是不行的，除非你修改源代码
+     */
     private Properties settingsAsProperties(XNode context) {
         if (context == null) {
             return new Properties();
@@ -140,6 +140,7 @@ public class XMLConfigBuilder extends BaseBuilder {
         Properties props = context.getChildrenAsProperties();
         // Check that all settings are known to the configuration class
         MetaClass metaConfig = MetaClass.forClass(Configuration.class, localReflectorFactory);
+        //为什么需要set方法呢，我还不知道
         for (Object key : props.keySet()) {
             if (!metaConfig.hasSetter(String.valueOf(key))) {
                 throw new BuilderException("The setting " + key + " is not known.  Make sure you spelled it correctly (case sensitive).");
@@ -149,6 +150,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     private void loadCustomVfs(Properties props) throws ClassNotFoundException {
+        //看你自定义了vfs没有
         String value = props.getProperty("vfsImpl");
         if (value != null) {
             String[] clazzes = value.split(",");
@@ -225,7 +227,6 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     private void propertiesElement(XNode context) throws Exception {
-        //context != null，这个节点有可能为null，即没有设置
         if (context != null) {
             Properties defaults = context.getChildrenAsProperties();
             String resource = context.getStringAttribute("resource");
@@ -248,35 +249,49 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     private void settingsElement(Properties props) throws Exception {
+        //自动映射，默认半映射
         configuration.setAutoMappingBehavior(AutoMappingBehavior.valueOf(props.getProperty("autoMappingBehavior", "PARTIAL")));
+        //检测到不知明列的时候啥反应
         configuration.setAutoMappingUnknownColumnBehavior(AutoMappingUnknownColumnBehavior.valueOf(props.getProperty("autoMappingUnknownColumnBehavior", "NONE")));
+        //开启缓存
         configuration.setCacheEnabled(booleanValueOf(props.getProperty("cacheEnabled"), true));
+        //设置代理工厂
         configuration.setProxyFactory((ProxyFactory) createInstance(props.getProperty("proxyFactory")));
+        //懒加载。默认false
         configuration.setLazyLoadingEnabled(booleanValueOf(props.getProperty("lazyLoadingEnabled"), false));
+        //
         configuration.setAggressiveLazyLoading(booleanValueOf(props.getProperty("aggressiveLazyLoading"), false));
+        //多结果集
         configuration.setMultipleResultSetsEnabled(booleanValueOf(props.getProperty("multipleResultSetsEnabled"), true));
+        //未知，等待探索
         configuration.setUseColumnLabel(booleanValueOf(props.getProperty("useColumnLabel"), true));
+        //生成key，默认false，非必须业务，不推荐使用
         configuration.setUseGeneratedKeys(booleanValueOf(props.getProperty("useGeneratedKeys"), false));
+        //默认执行模式，simple，每次都生成预编译对象
         configuration.setDefaultExecutorType(ExecutorType.valueOf(props.getProperty("defaultExecutorType", "SIMPLE")));
+        //超时时间
         configuration.setDefaultStatementTimeout(integerValueOf(props.getProperty("defaultStatementTimeout"), null));
+        //fetch 多少，游标使用，从未使用过
         configuration.setDefaultFetchSize(integerValueOf(props.getProperty("defaultFetchSize"), null));
+        //
         configuration.setMapUnderscoreToCamelCase(booleanValueOf(props.getProperty("mapUnderscoreToCamelCase"), false));
+        //
         configuration.setSafeRowBoundsEnabled(booleanValueOf(props.getProperty("safeRowBoundsEnabled"), false));
+        //
         configuration.setLocalCacheScope(LocalCacheScope.valueOf(props.getProperty("localCacheScope", "SESSION")));
+        //
         configuration.setJdbcTypeForNull(JdbcType.valueOf(props.getProperty("jdbcTypeForNull", "OTHER")));
+        //
         configuration.setLazyLoadTriggerMethods(stringSetValueOf(props.getProperty("lazyLoadTriggerMethods"), "equals,clone,hashCode,toString"));
+        //
         configuration.setSafeResultHandlerEnabled(booleanValueOf(props.getProperty("safeResultHandlerEnabled"), true));
 //        configuration.setDefaultScriptingLanguage(resolveClass(props.getProperty("defaultScriptingLanguage")));
         @SuppressWarnings("unchecked")
-        Class<? extends TypeHandler> typeHandler = (Class<? extends TypeHandler>) resolveClass(props.getProperty("defaultEnumTypeHandler"));
+        Class<? extends TypeHandler> typeHandler = resolveClass(props.getProperty("defaultEnumTypeHandler"));
         configuration.setDefaultEnumTypeHandler(typeHandler);
         configuration.setCallSettersOnNulls(booleanValueOf(props.getProperty("callSettersOnNulls"), false));
         configuration.setUseActualParamName(booleanValueOf(props.getProperty("useActualParamName"), true));
         configuration.setReturnInstanceForEmptyRow(booleanValueOf(props.getProperty("returnInstanceForEmptyRow"), false));
-        configuration.setLogPrefix(props.getProperty("logPrefix"));
-        @SuppressWarnings("unchecked")
-        Class<? extends Log> logImpl = (Class<? extends Log>) resolveClass(props.getProperty("logImpl"));
-        configuration.setLogImpl(logImpl);
         configuration.setConfigurationFactory(resolveClass(props.getProperty("configurationFactory")));
     }
 
@@ -383,6 +398,7 @@ public class XMLConfigBuilder extends BaseBuilder {
                     String mapperClass = child.getStringAttribute("class");
                     if (resource != null && url == null && mapperClass == null) {
                         ErrorContext.instance().resource(resource);
+                        //读取xx_mapper.xml
                         InputStream inputStream = Resources.getResourceAsStream(resource);
                         XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
                         //解析xxx/mapper.xml

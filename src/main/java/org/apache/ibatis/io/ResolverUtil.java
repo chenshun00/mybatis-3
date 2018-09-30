@@ -21,9 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
 /**
  * <p>ResolverUtil is used to locate classes that are available in the/a class path and meet
  * arbitrary conditions. The two most common conditions are that a class implements/extends
@@ -60,8 +57,6 @@ public class ResolverUtil<T> {
     /*
      * An instance of Log to use for logging in this class.
      */
-    private static final Log log = LogFactory.getLog(ResolverUtil.class);
-
     /**
      * A simple interface that specifies how to test classes to determine if they
      * are to be included in the results produced by the ResolverUtil.
@@ -224,7 +219,6 @@ public class ResolverUtil<T> {
                 }
             }
         } catch (IOException ioe) {
-            log.error("Could not read package: " + packageName, ioe);
         }
 
         return this;
@@ -252,17 +246,12 @@ public class ResolverUtil<T> {
         try {
             String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');
             ClassLoader loader = getClassLoader();
-            if (log.isDebugEnabled()) {
-                log.debug("Checking to see if class " + externalName + " matches criteria [" + test + "]");
-            }
 
             Class<?> type = loader.loadClass(externalName);
             if (test.matches(type)) {
                 matches.add((Class<T>) type);
             }
         } catch (Throwable t) {
-            log.warn("Could not examine class '" + fqn + "'" + " due to a " +
-                    t.getClass().getName() + " with message: " + t.getMessage());
         }
     }
 }

@@ -15,16 +15,12 @@
  */
 package org.apache.ibatis.mapping;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.sql.DataSource;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 
 /**
  * Vendor DatabaseId provider
@@ -39,8 +35,6 @@ import org.apache.ibatis.logging.LogFactory;
  */
 public class VendorDatabaseIdProvider implements DatabaseIdProvider {
 
-    private static final Log log = LogFactory.getLog(VendorDatabaseIdProvider.class);
-
     private Properties properties;
 
     @Override
@@ -51,7 +45,6 @@ public class VendorDatabaseIdProvider implements DatabaseIdProvider {
         try {
             return getDatabaseName(dataSource);
         } catch (Exception e) {
-            log.error("Could not get a databaseId from dataSource", e);
         }
         return null;
     }
