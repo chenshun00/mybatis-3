@@ -23,6 +23,9 @@ import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 
+/**
+ * 解析xml
+ */
 public interface LanguageDriver {
 
     /**
@@ -38,6 +41,7 @@ public interface LanguageDriver {
     ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql);
 
     /**
+     * xml 写的sql语句
      * Creates an {@link SqlSource} that will hold the statement read from a mapper xml file.
      * It is called during startup, when the mapped statement is read from a class or an xml file.
      *
@@ -49,6 +53,7 @@ public interface LanguageDriver {
     SqlSource createSqlSource(Configuration configuration, XNode script, Class<?> parameterType);
 
     /**
+     * annotation写的sql语句
      * Creates an {@link SqlSource} that will hold the statement read from an annotation.
      * It is called during startup, when the mapped statement is read from a class or an xml file.
      *

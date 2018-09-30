@@ -32,8 +32,7 @@ import javax.sql.DataSource;
 import org.apache.ibatis.io.Resources;
 
 /**
- * @author Clinton Begin
- * @author Eduardo Macarron
+ * dataSource 的简单实现
  */
 public class UnpooledDataSource implements DataSource {
 
@@ -50,6 +49,7 @@ public class UnpooledDataSource implements DataSource {
     private Integer defaultTransactionIsolationLevel;
 
     static {
+        //内部 pi 机制
         Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
             Driver driver = drivers.nextElement();

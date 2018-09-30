@@ -41,11 +41,10 @@ import java.util.Map;
  */
 public class App {
     public static void main(String[] args) throws IOException {
+        System.out.println(System.getProperty("jdbc.drivers"));
         String resource = "config.xml";
         InputStream inputStream = Resources.getResourceAsStream(resource);
-
         PerformDataDao performDataDao = new PerformDataDaoImpl(inputStream);
-        System.out.println(1);
         System.out.println(JSONObject.toJSONString(performDataDao.selectPerformDataByKey(1154080)));
     }
 }

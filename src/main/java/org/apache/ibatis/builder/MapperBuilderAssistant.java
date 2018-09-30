@@ -18,7 +18,6 @@ package org.apache.ibatis.builder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -144,11 +143,10 @@ public class MapperBuilderAssistant extends BaseBuilder {
         return cache;
     }
 
-    public ParameterMap addParameterMap(String id, Class<?> parameterClass, List<ParameterMapping> parameterMappings) {
+    public void addParameterMap(String id, Class<?> parameterClass, List<ParameterMapping> parameterMappings) {
         id = applyCurrentNamespace(id, false);
         ParameterMap parameterMap = new ParameterMap.Builder(configuration, id, parameterClass, parameterMappings).build();
         configuration.addParameterMap(parameterMap);
-        return parameterMap;
     }
 
     public ParameterMapping buildParameterMapping(
@@ -201,12 +199,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
                 }
             }
             if (declaresConstructor) {
-                Iterator<ResultMapping> extendedResultMappingsIter = extendedResultMappings.iterator();
-                while (extendedResultMappingsIter.hasNext()) {
-                    if (extendedResultMappingsIter.next().getFlags().contains(ResultFlag.CONSTRUCTOR)) {
-                        extendedResultMappingsIter.remove();
-                    }
-                }
+                extendedResultMappings.removeIf(resultMapping -> resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR));
             }
             resultMappings.addAll(extendedResultMappings);
         }

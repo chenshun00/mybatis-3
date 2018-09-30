@@ -29,11 +29,6 @@
         <typeAlias alias="PerformDataQuery" type="top.huzhurong.cmdb.bean.query.PerformDataQuery"/>
     </typeAliases>
 
-
-    <plugins>
-        <plugin interceptor="top.huzhurong.In"/>
-    </plugins>
-
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>

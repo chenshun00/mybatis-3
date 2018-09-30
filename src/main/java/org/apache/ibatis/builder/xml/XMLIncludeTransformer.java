@@ -46,6 +46,7 @@ public class XMLIncludeTransformer {
         Properties variablesContext = new Properties();
         Properties configurationVariables = configuration.getVariables();
         if (configurationVariables != null) {
+            //好像没有什么东西
             variablesContext.putAll(configurationVariables);
         }
         applyIncludes(source, variablesContext, false);
@@ -57,6 +58,7 @@ public class XMLIncludeTransformer {
      * @param variablesContext Current context for static variables with values
      */
     private void applyIncludes(Node source, final Properties variablesContext, boolean included) {
+        // include 节点
         if (source.getNodeName().equals("include")) {
             Node toInclude = findSqlFragment(getStringAttribute(source, "refid"), variablesContext);
             Properties toIncludeContext = getVariablesContext(source, variablesContext);

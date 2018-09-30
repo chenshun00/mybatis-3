@@ -88,6 +88,7 @@ public class XMLStatementBuilder extends BaseBuilder {
         String nodeName = context.getNode().getNodeName();
         SqlCommandType sqlCommandType = SqlCommandType.valueOf(nodeName.toUpperCase(Locale.ENGLISH));
         boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+        //是否刷新缓存 是否使用缓存
         boolean flushCache = context.getBooleanAttribute("flushCache", !isSelect);
         boolean useCache = context.getBooleanAttribute("useCache", isSelect);
         boolean resultOrdered = context.getBooleanAttribute("resultOrdered", false);
@@ -95,17 +96,21 @@ public class XMLStatementBuilder extends BaseBuilder {
 
         //----------------解析前先处理include子节点
         XMLIncludeTransformer includeParser = new XMLIncludeTransformer(configuration, builderAssistant);
+        //Node
         includeParser.applyIncludes(context.getNode());
 
 
         //解析 selectKey节点
         processSelectKeyNodes(id, parameterTypeClass, langDriver);
 
-        //解析sql
+        //解析 xml/annotation 获取sql
         SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
+        //-----结果集
         String resultSets = context.getStringAttribute("resultSets");
         String keyProperty = context.getStringAttribute("keyProperty");
         String keyColumn = context.getStringAttribute("keyColumn");
+        //-----结束
+
         KeyGenerator keyGenerator;
         String keyStatementId = id + SelectKeyGenerator.SELECT_KEY_SUFFIX;
         keyStatementId = builderAssistant.applyCurrentNamespace(keyStatementId, true);
@@ -125,9 +130,6 @@ public class XMLStatementBuilder extends BaseBuilder {
 
     private void processSelectKeyNodes(String id, Class<?> parameterTypeClass, LanguageDriver langDriver) {
         List<XNode> selectKeyNodes = context.evalNodes("selectKey");
-        if (configuration.getDatabaseId() != null) {
-            parseSelectKeyNodes(id, selectKeyNodes, parameterTypeClass, langDriver, configuration.getDatabaseId());
-        }
         parseSelectKeyNodes(id, selectKeyNodes, parameterTypeClass, langDriver, null);
         removeSelectKeyNodes(selectKeyNodes);
     }
@@ -194,9 +196,7 @@ public class XMLStatementBuilder extends BaseBuilder {
             id = builderAssistant.applyCurrentNamespace(id, false);
             if (this.configuration.hasStatement(id, false)) {
                 MappedStatement previous = this.configuration.getMappedStatement(id, false); // issue #2
-                if (previous.getDatabaseId() != null) {
-                    return false;
-                }
+                return previous.getDatabaseId() == null;
             }
         }
         return true;

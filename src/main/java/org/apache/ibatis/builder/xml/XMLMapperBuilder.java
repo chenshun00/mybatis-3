@@ -140,9 +140,6 @@ public class XMLMapperBuilder extends BaseBuilder {
 
     private void buildStatementFromContext(List<XNode> list) {
         //这里依旧是null
-        if (configuration.getDatabaseId() != null) {
-            buildStatementFromContext(list, configuration.getDatabaseId());
-        }
         buildStatementFromContext(list, null);
     }
 

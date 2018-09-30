@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.builder;
 
@@ -69,33 +69,21 @@ public abstract class BaseBuilder {
         if (alias == null) {
             return null;
         }
-        try {
-            return JdbcType.valueOf(alias);
-        } catch (IllegalArgumentException e) {
-            throw new BuilderException("Error resolving JdbcType. Cause: " + e, e);
-        }
+        return JdbcType.valueOf(alias);
     }
 
     protected ResultSetType resolveResultSetType(String alias) {
         if (alias == null) {
             return null;
         }
-        try {
-            return ResultSetType.valueOf(alias);
-        } catch (IllegalArgumentException e) {
-            throw new BuilderException("Error resolving ResultSetType. Cause: " + e, e);
-        }
+        return ResultSetType.valueOf(alias);
     }
 
     protected ParameterMode resolveParameterMode(String alias) {
         if (alias == null) {
             return null;
         }
-        try {
-            return ParameterMode.valueOf(alias);
-        } catch (IllegalArgumentException e) {
-            throw new BuilderException("Error resolving ParameterMode. Cause: " + e, e);
-        }
+        return ParameterMode.valueOf(alias);
     }
 
     protected Object createInstance(String alias) {
@@ -114,11 +102,7 @@ public abstract class BaseBuilder {
         if (alias == null) {
             return null;
         }
-        try {
-            return resolveAlias(alias);
-        } catch (Exception e) {
-            throw new BuilderException("Error resolving class. Cause: " + e, e);
-        }
+        return resolveAlias(alias);
     }
 
     protected TypeHandler<?> resolveTypeHandler(Class<?> javaType, String typeHandlerAlias) {
