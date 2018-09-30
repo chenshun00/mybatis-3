@@ -118,7 +118,7 @@ public class XMLMapperBuilder extends BaseBuilder {
             if (namespace == null || namespace.equals("")) {
                 throw new BuilderException("Mapper's namespace cannot be empty");
             }
-            // 节点 cache-ref | cache | resultMap* | parameterMap* | sql* | insert* | update* | delete* | select*
+            // 节点 cache-ref | cache | resultMap* | parameterMap* | sql* | insert* | update* | delete* | select*,+*表示可多个
             //当前mapper设置namespace
             builderAssistant.setCurrentNamespace(namespace);
             //缓存引用，和cache两个节点使用的都不多，可以说基本没用过
@@ -127,7 +127,7 @@ public class XMLMapperBuilder extends BaseBuilder {
             cacheElement(context.evalNode("cache"));
             //主要使用的不多，目前见到的是少部分使用场景，1、获取parameterMap节点群，不止1个节点哦，2、解析节点
             parameterMapElement(context.evalNodes("/mapper/parameterMap"));
-            //必须
+            //用的最多，也是mybatis的核心
             resultMapElements(context.evalNodes("/mapper/resultMap"));
             //sql，必须
             sqlElement(context.evalNodes("/mapper/sql"));
@@ -139,6 +139,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     private void buildStatementFromContext(List<XNode> list) {
+        //这里依旧是null
         if (configuration.getDatabaseId() != null) {
             buildStatementFromContext(list, configuration.getDatabaseId());
         }
@@ -147,6 +148,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 
     private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
         for (XNode context : list) {
+            //一次是xmlConfigBulder，xmlMapperBuilder，xmlStatementBuilder
             final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
             try {
                 statementParser.parseStatementNode();
@@ -201,18 +203,27 @@ public class XMLMapperBuilder extends BaseBuilder {
         }
     }
 
+    //默认只有一个节点，鉴于基本没有使用，就没有是深入了解了
     private void cacheRefElement(XNode context) {
         if (context != null) {
-            configuration.addCacheRef(builderAssistant.getCurrentNamespace(), context.getStringAttribute("namespace"));
-            CacheRefResolver cacheRefResolver = new CacheRefResolver(builderAssistant, context.getStringAttribute("namespace"));
+            //当前命名空间
+            String currentNamespace = builderAssistant.getCurrentNamespace();
+            //引用命名空间
+            String namespace = context.getStringAttribute("namespace");
+            configuration.addCacheRef(currentNamespace, namespace);
+            //引用解析
+            CacheRefResolver cacheRefResolver = new CacheRefResolver(builderAssistant, namespace);
             try {
+                //解析
                 cacheRefResolver.resolveCacheRef();
             } catch (IncompleteElementException e) {
+                //解析失败
                 configuration.addIncompleteCacheRef(cacheRefResolver);
             }
         }
     }
 
+    //默认也是一个节点
     private void cacheElement(XNode context) throws Exception {
         if (context != null) {
             String type = context.getStringAttribute("type", "PERPETUAL");
@@ -228,15 +239,15 @@ public class XMLMapperBuilder extends BaseBuilder {
         }
     }
 
-    //解析parameterMapNode
+    //解析parameterMapNode，如果节点不止一个都是很明确的list节点，而cache-ref 和 cache节点就没有，说明是单节点
     private void parameterMapElement(List<XNode> list) {
         for (XNode parameterMapNode : list) {
-            //id type
+            //id 唯一，用于后边简化的 type，代表的类型,这两个是必须的
             String id = parameterMapNode.getStringAttribute("id");
             String type = parameterMapNode.getStringAttribute("type");
             //type 的类型
             Class<?> parameterClass = resolveClass(type);
-            //所有的parameter子节点
+            //所有的parameter子节点，每一个直接点有7个属性，property是必须的
             List<XNode> parameterNodes = parameterMapNode.evalNodes("parameter");
             List<ParameterMapping> parameterMappings = new ArrayList<>();
             //字节点的各个类型
@@ -248,17 +259,21 @@ public class XMLMapperBuilder extends BaseBuilder {
                 String resultMap = parameterNode.getStringAttribute("resultMap");
                 String mode = parameterNode.getStringAttribute("mode");
                 String typeHandler = parameterNode.getStringAttribute("typeHandler");
-                Integer numericScale = parameterNode.getIntAttribute("numericScale");
+                Integer numericScale = parameterNode.getIntAttribute("scale");
+                //in out INOUT ,作用目前还不清楚
                 ParameterMode modeEnum = resolveParameterMode(mode);
+                //解析java类
                 Class<?> javaTypeClass = resolveClass(javaType);
+                //枚举，本身类型就不多
                 JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
+                //解析类型处理器
                 @SuppressWarnings("unchecked")
                 Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
                 //构建ParameterMapping
                 ParameterMapping parameterMapping = builderAssistant.buildParameterMapping(parameterClass, property, javaTypeClass, jdbcTypeEnum, resultMap, modeEnum, typeHandlerClass, numericScale);
                 parameterMappings.add(parameterMapping);
             }
-            //添加到这个state中去
+            // 到这一步，一个完整的parameterMapping就搭建完成了，和我们日常业务开发的步骤一致，我猜测内部应该是map<string/*id*/,parameterMapping>
             builderAssistant.addParameterMap(id, parameterClass, parameterMappings);
         }
     }
@@ -266,6 +281,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     private void resultMapElements(List<XNode> list) throws Exception {
         for (XNode resultMapNode : list) {
             try {
+                //一个节点一个节点的解析
                 resultMapElement(resultMapNode);
             } catch (IncompleteElementException e) {
                 // ignore, it will be retried
@@ -278,11 +294,11 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     private ResultMap resultMapElement(XNode resultMapNode, List<ResultMapping> additionalResultMappings) throws Exception {
-        //正在解析那个mapper文件
+        //正在解析那个mapper文件，如果发生异常，将抛出这个ErrorContext中的内容，这个思路值得我去学习
         ErrorContext.instance().activity("processing " + resultMapNode.getValueBasedIdentifier());
-        //resultMap 没有id会自动产生一个，强烈建议设置一个
+        //resultMap 没有id会自动产生一个，强烈建议设置一个,dtd文件的验证一般都是有id属性的，确保万无一失，xbatis团队还是加了这个
         String id = resultMapNode.getStringAttribute("id", resultMapNode.getValueBasedIdentifier());
-        //后续的是默认值
+        //type类型是必须的，应该是dtd改了，为了兼容以前的情况加上了这套逻辑
         String type = resultMapNode.getStringAttribute("type", resultMapNode.getStringAttribute("ofType", resultMapNode.getStringAttribute("resultType", resultMapNode.getStringAttribute("javaType"))));
         //是否继承了那个resultMap,复用
         String extend = resultMapNode.getStringAttribute("extends");
@@ -311,10 +327,12 @@ public class XMLMapperBuilder extends BaseBuilder {
                 if ("id".equals(resultChild.getName())) {
                     flags.add(ResultFlag.ID);
                 }
-                //剩下来的情况
-                resultMappings.add(buildResultMappingFromContext(resultChild, typeClass, flags));
+                //核心还是搭建ResultMapping，一个resultMapping的节点 对应了 一个ResultMapping的实例
+                ResultMapping resultMapping = buildResultMappingFromContext(resultChild, typeClass, flags);
+                resultMappings.add(resultMapping);
             }
         }
+        //一个完整的 resultMapping 就搭建完成了
         ResultMapResolver resultMapResolver = new ResultMapResolver(builderAssistant, id, typeClass, extend, discriminator, resultMappings, autoMapping);
         try {
             return resultMapResolver.resolve();
@@ -355,18 +373,28 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     private void sqlElement(List<XNode> list) throws Exception {
+        //基本上 configuration.getDatabaseId() == null ---> true
         if (configuration.getDatabaseId() != null) {
             sqlElement(list, configuration.getDatabaseId());
         }
         sqlElement(list, null);
     }
 
+    /**
+     * //sql 节点，动态sql比定使用
+     *
+     * @param requiredDatabaseId null
+     */
     private void sqlElement(List<XNode> list, String requiredDatabaseId) throws Exception {
         for (XNode context : list) {
+            //databaseId == null
             String databaseId = context.getStringAttribute("databaseId");
+            //id 必须，dtd也要验证这里
             String id = context.getStringAttribute("id");
+            //id = namespace + "." + id
             id = builderAssistant.applyCurrentNamespace(id, false);
             if (databaseIdMatchesCurrent(id, databaseId, requiredDatabaseId)) {
+                //放置节点，等待后期映射，同一个id会被覆盖掉，需要严格控制id的唯一性
                 sqlFragments.put(id, context);
             }
         }
@@ -392,13 +420,22 @@ public class XMLMapperBuilder extends BaseBuilder {
         return true;
     }
 
+
+    /**
+     * @param context    resultMapping 字节点，
+     * @param resultType resultMapping 对应的类型，这个类型一般都是简化过的
+     * @param flags      flags
+     */
     private ResultMapping buildResultMappingFromContext(XNode context, Class<?> resultType, List<ResultFlag> flags) throws Exception {
         String property;
+        //有没有构造器，目前从我司的角度来看，几乎没有使用到构造器的地方，不排除什么场景下会使用
         if (flags.contains(ResultFlag.CONSTRUCTOR)) {
             property = context.getStringAttribute("name");
         } else {
+            //property 节点
             property = context.getStringAttribute("property");
         }
+        //改属性对应的类名，获取所有的属性
         String column = context.getStringAttribute("column");
         String javaType = context.getStringAttribute("javaType");
         String jdbcType = context.getStringAttribute("jdbcType");
@@ -415,6 +452,8 @@ public class XMLMapperBuilder extends BaseBuilder {
         @SuppressWarnings("unchecked")
         Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
         JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
+        //搭建一个resultMapping，xbatis考虑的很全面，即使我们平时使用到的很好，例如类型处理器，xbatis的就已经够用了
+        //除非有什么特殊的不行的业务需求，才需要加入自定义的类型处理器
         return builderAssistant.buildResultMapping(resultType, property, column, javaTypeClass, jdbcTypeEnum, nestedSelect, nestedResultMap, notNullColumn, columnPrefix, typeHandlerClass, flags, resultSet, foreignColumn, lazy);
     }
 

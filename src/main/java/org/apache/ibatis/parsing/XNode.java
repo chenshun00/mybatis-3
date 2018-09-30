@@ -53,7 +53,7 @@ public class XNode {
 
     public XNode getParent() {
         Node parent = node.getParentNode();
-        if (parent == null || !(parent instanceof Element)) {
+        if (!(parent instanceof Element)) {
             return null;
         } else {
             return new XNode(xpathParser, parent, variables);
@@ -75,19 +75,21 @@ public class XNode {
 
     public String getValueBasedIdentifier() {
         StringBuilder builder = new StringBuilder();
+        //当前节点
         XNode current = this;
         while (current != null) {
             if (current != this) {
                 builder.insert(0, "_");
             }
+            //首先是id，其次是value，最后是property，迫不得已只能是null了
             String value = current.getStringAttribute("id",
                     current.getStringAttribute("value",
                             current.getStringAttribute("property", null)));
+            //不等于null的情况
             if (value != null) {
                 value = value.replace('.', '_');
                 builder.insert(0, "]");
-                builder.insert(0,
-                        value);
+                builder.insert(0, value);
                 builder.insert(0, "[");
             }
             builder.insert(0, current.getName());

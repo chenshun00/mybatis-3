@@ -109,7 +109,9 @@ public class MapperBuilderAssistant extends BaseBuilder {
         }
         try {
             unresolvedCacheRef = true;
+            //应该是一个Map<nameSpzce,Cache>
             Cache cache = configuration.getCache(namespace);
+            //这里有意思，如果a-->b的缓存，但是a先解析，b后解析岂不是抛出异常了
             if (cache == null) {
                 throw new IncompleteElementException("No cache for namespace '" + namespace + "' could be found.");
             }

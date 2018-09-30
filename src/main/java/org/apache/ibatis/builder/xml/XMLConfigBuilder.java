@@ -120,6 +120,7 @@ public class XMLConfigBuilder extends BaseBuilder {
             settingsElement(settings);
             // read it after objectFactory and objectWrapperFactory issue #631
             environmentsElement(root.evalNode("environments"));
+            //从未使用过
             databaseIdProviderElement(root.evalNode("databaseIdProvider"));
             typeHandlerElement(root.evalNode("typeHandlers"));
             //解析mappers节点，mybatis核心
