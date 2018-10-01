@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.session;
 
@@ -498,35 +498,28 @@ public class Configuration {
         return languageRegistry.getDefaultDriver();
     }
 
-    /**
-     * @deprecated Use {@link #getDefaultScriptingLanguageInstance()}
-     */
-    @Deprecated
-    public LanguageDriver getDefaultScriptingLanuageInstance() {
-        return getDefaultScriptingLanguageInstance();
-    }
-
     public MetaObject newMetaObject(Object object) {
         return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
     }
 
     public ParameterHandler newParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
-        ParameterHandler parameterHandler = mappedStatement.getLang().createParameterHandler(mappedStatement, parameterObject, boundSql);
-        parameterHandler = (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
-        return parameterHandler;
+        LanguageDriver lang = getDefaultScriptingLanguageInstance();
+        ParameterHandler parameterHandler = lang.createParameterHandler(mappedStatement, parameterObject, boundSql);
+        //执行前处理一下ParameterHandler
+        return (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
     }
 
-    public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds, ParameterHandler parameterHandler,
-                                                ResultHandler resultHandler, BoundSql boundSql) {
+    public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds,
+                                                ParameterHandler parameterHandler, ResultHandler resultHandler, BoundSql boundSql) {
+
         ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
-        resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
-        return resultSetHandler;
+
+        return (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
     }
 
-    public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-        StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
-//        statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
-        return statementHandler;
+    public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject,
+                                                RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+        return new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
     }
 
     public Executor newExecutor(Transaction transaction) {

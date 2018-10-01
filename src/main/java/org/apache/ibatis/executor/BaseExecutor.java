@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.executor;
 
@@ -43,23 +43,24 @@ import static org.apache.ibatis.executor.ExecutionPlaceholder.EXECUTION_PLACEHOL
 public abstract class BaseExecutor implements Executor {
 
 
+    //事务
     protected Transaction transaction;
+    //
     protected Executor wrapper;
 
-    protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
-    protected PerpetualCache localCache;
-    protected PerpetualCache localOutputParameterCache;
+    //
+    protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads = new ConcurrentLinkedQueue<>();
+    //缓存
+    protected PerpetualCache localCache = new PerpetualCache("LocalCache");
+    protected PerpetualCache localOutputParameterCache = new PerpetualCache("LocalOutputParameterCache");
+    //配置文件
     protected Configuration configuration;
 
     protected int queryStack;
-    private boolean closed;
+    private boolean closed = false;
 
     protected BaseExecutor(Configuration configuration, Transaction transaction) {
         this.transaction = transaction;
-        this.deferredLoads = new ConcurrentLinkedQueue<>();
-        this.localCache = new PerpetualCache("LocalCache");
-        this.localOutputParameterCache = new PerpetualCache("LocalOutputParameterCache");
-        this.closed = false;
         this.configuration = configuration;
         this.wrapper = this;
     }
@@ -82,8 +83,7 @@ public abstract class BaseExecutor implements Executor {
                     transaction.close();
                 }
             }
-        } catch (SQLException e) {
-            // Ignore.  There's nothing that can be done at this point.
+        } catch (SQLException ignore) {
         } finally {
             transaction = null;
             deferredLoads = null;
@@ -98,12 +98,14 @@ public abstract class BaseExecutor implements Executor {
         return closed;
     }
 
+    //执行更新语句
     @Override
     public int update(MappedStatement ms, Object parameter) throws SQLException {
         ErrorContext.instance().resource(ms.getResource()).activity("executing an update").object(ms.getId());
         if (closed) {
             throw new ExecutorException("Executor was closed.");
         }
+        //清空本地缓存
         clearLocalCache();
         return doUpdate(ms, parameter);
     }
@@ -120,13 +122,17 @@ public abstract class BaseExecutor implements Executor {
         return doFlushStatements(isRollBack);
     }
 
+    /**
+     *
+     * @param resultHandler null 参数
+     */
     @Override
     public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
         //获取绑定的sql
         BoundSql boundSql = ms.getBoundSql(parameter);
         //cache
         CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
-        return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
+        return query(ms, parameter, rowBounds, null, key, boundSql);
     }
 
     @SuppressWarnings("unchecked")
@@ -149,7 +155,7 @@ public abstract class BaseExecutor implements Executor {
                 handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
             } else {
                 //走db，⚠️:可以学习的点，这个缓存的设计可以学习啊
-                list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
+                list = queryFromDatabase(ms, parameter, rowBounds, null, key, boundSql);
             }
         } finally {
             queryStack--;

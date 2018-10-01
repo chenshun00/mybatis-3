@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.executor.statement;
 
@@ -65,9 +65,10 @@ public abstract class BaseStatementHandler implements StatementHandler {
         }
 
         this.boundSql = boundSql;
-
-        this.parameterHandler = configuration.newParameterHandler(mappedStatement, parameterObject, boundSql);
-        this.resultSetHandler = configuration.newResultSetHandler(executor, mappedStatement, rowBounds, parameterHandler, resultHandler, boundSql);
+        //这里才是实际的核心
+        this.parameterHandler = this.configuration.newParameterHandler(mappedStatement, parameterObject, boundSql);
+        //
+        this.resultSetHandler = this.configuration.newResultSetHandler(executor, mappedStatement, rowBounds, parameterHandler, resultHandler, boundSql);
     }
 
     @Override
@@ -83,18 +84,10 @@ public abstract class BaseStatementHandler implements StatementHandler {
     @Override
     public Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException {
         ErrorContext.instance().sql(boundSql.getSql());
-        Statement statement = null;
-        try {
-            statement = instantiateStatement(connection);
+        try (Statement statement = instantiateStatement(connection)) {
             setStatementTimeout(statement, transactionTimeout);
             setFetchSize(statement);
             return statement;
-        } catch (SQLException e) {
-            closeStatement(statement);
-            throw e;
-        } catch (Exception e) {
-            closeStatement(statement);
-            throw new ExecutorException("Error preparing statement.  Cause: " + e, e);
         }
     }
 

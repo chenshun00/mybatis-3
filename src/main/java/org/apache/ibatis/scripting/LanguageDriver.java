@@ -29,14 +29,11 @@ import org.apache.ibatis.session.Configuration;
 public interface LanguageDriver {
 
     /**
-     * Creates a {@link ParameterHandler} that passes the actual parameters to the the JDBC statement.
+     * 处理实际的参数到jdbc
      *
      * @param mappedStatement The mapped statement that is being executed
      * @param parameterObject The input parameter object (can be null)
      * @param boundSql The resulting SQL once the dynamic language has been executed.
-     * @return
-     * @author Frank D. Martinez [mnesarco]
-     * @see DefaultParameterHandler
      */
     ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql);
 
