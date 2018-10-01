@@ -84,11 +84,11 @@ public abstract class BaseStatementHandler implements StatementHandler {
     @Override
     public Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException {
         ErrorContext.instance().sql(boundSql.getSql());
-        try (Statement statement = instantiateStatement(connection)) {
-            setStatementTimeout(statement, transactionTimeout);
-            setFetchSize(statement);
-            return statement;
-        }
+        //不能使用try(resource){}的形式，因为statement被close掉了
+        Statement statement = instantiateStatement(connection);
+        setStatementTimeout(statement, transactionTimeout);
+        setFetchSize(statement);
+        return statement;
     }
 
     protected abstract Statement instantiateStatement(Connection connection) throws SQLException;

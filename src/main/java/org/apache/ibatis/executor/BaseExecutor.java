@@ -132,7 +132,7 @@ public abstract class BaseExecutor implements Executor {
         BoundSql boundSql = ms.getBoundSql(parameter);
         //cache
         CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
-        return query(ms, parameter, rowBounds, null, key, boundSql);
+        return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
     }
 
     @SuppressWarnings("unchecked")
@@ -155,7 +155,7 @@ public abstract class BaseExecutor implements Executor {
                 handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
             } else {
                 //走db，⚠️:可以学习的点，这个缓存的设计可以学习啊
-                list = queryFromDatabase(ms, parameter, rowBounds, null, key, boundSql);
+                list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
             }
         } finally {
             queryStack--;

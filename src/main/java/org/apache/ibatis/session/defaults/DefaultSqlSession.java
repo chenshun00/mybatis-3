@@ -145,7 +145,7 @@ public class DefaultSqlSession implements SqlSession {
         try {
             MappedStatement ms = configuration.getMappedStatement(statement);
             //wrapCollection(parameter) 包装成一个map对象
-            return executor.query(ms, wrapCollection(parameter), rowBounds, null);
+            return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
         } finally {

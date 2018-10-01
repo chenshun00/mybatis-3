@@ -56,10 +56,10 @@ public class SimpleExecutor extends BaseExecutor {
         Statement stmt = null;
         try {
             //根据情况选择合适的StatementHandler
-            StatementHandler handler = this.configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, null, boundSql);
+            StatementHandler handler = this.configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
             //预编译
             stmt = prepareStatement(handler);
-            return handler.query(stmt, null);
+            return handler.query(stmt, resultHandler);
         } finally {
             closeStatement(stmt);
         }
@@ -70,7 +70,7 @@ public class SimpleExecutor extends BaseExecutor {
         Configuration configuration = ms.getConfiguration();
         StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, null, boundSql);
         Statement stmt = prepareStatement(handler);
-        return handler.<E>queryCursor(stmt);
+        return handler.queryCursor(stmt);
     }
 
     @Override
