@@ -26,9 +26,7 @@ import java.sql.Statement;
  */
 public class StatementUtil {
 
-    private StatementUtil() {
-        // NOP
-    }
+    private StatementUtil() {}
 
     /**
      * Apply a transaction timeout.

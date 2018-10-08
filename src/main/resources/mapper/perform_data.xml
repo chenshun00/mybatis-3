@@ -79,6 +79,7 @@
     </select>
 
 
+
     <insert id="insertPerformData" parameterType="PerformData">
         INSERT INTO perform_data
         <trim prefix="(" suffix=")" suffixOverrides=",">

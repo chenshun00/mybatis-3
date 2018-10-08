@@ -28,7 +28,7 @@ import java.util.Map;
 */
 public interface PerformDataDao{
 
-    PerformData selectPerformDataByKey(Integer key);
+    List<PerformData> selectPerformDataByKey(Integer key);
 
     Integer addPerformData(PerformData performData);
 

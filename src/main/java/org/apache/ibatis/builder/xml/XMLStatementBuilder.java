@@ -69,6 +69,7 @@ public class XMLStatementBuilder extends BaseBuilder {
         Integer timeout = context.getIntAttribute("timeout");
         //parameterMap parameterType 这两个我用起来一直不知道他们的区别是什么
         String parameterMap = context.getStringAttribute("parameterMap");
+        //map 已经被移除了，但是type还是用的比较多的，例如常用的hashmap，map，list，array
         String parameterType = context.getStringAttribute("parameterType");
         Class<?> parameterTypeClass = resolveClass(parameterType);
         //同理还有这两个，区分度要大一些，但是新人还是会迷糊，虽然xbatis的文档不错
@@ -76,6 +77,7 @@ public class XMLStatementBuilder extends BaseBuilder {
         String resultType = context.getStringAttribute("resultType");
 
         String lang = context.getStringAttribute("lang");
+        //
         LanguageDriver langDriver = getLanguageDriver(lang);
 
         Class<?> resultTypeClass = resolveClass(resultType);

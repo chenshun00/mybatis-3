@@ -46,9 +46,9 @@ public class PerformDataDaoImpl implements PerformDataDao {
         return sqlSessionFactory.openSession(true);
     }
 
-    public PerformData selectPerformDataByKey(Integer key) {
+    public List<PerformData> selectPerformDataByKey(Integer key) {
         try (SqlSession sqlSessionTemplate = this.getSqlSessionTemplate()) {
-            return sqlSessionTemplate.selectOne("PerformData.selectPerformDataByKey", key);
+            return sqlSessionTemplate.selectList("PerformData.selectPerformDataByKey", key);
         }
     }
 

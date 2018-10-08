@@ -130,7 +130,7 @@ public class ScriptRunner {
         } catch (Exception e) {
             String message = "Error executing: " + script + ".  Cause: " + e;
             printlnError(message);
-            throw new RuntimeSqlException(message, e);
+            throw new RuntimeException(message, e);
         }
     }
 
@@ -147,7 +147,7 @@ public class ScriptRunner {
         } catch (Exception e) {
             String message = "Error executing: " + command + ".  Cause: " + e;
             printlnError(message);
-            throw new RuntimeSqlException(message, e);
+            throw new RuntimeException(message, e);
         }
     }
 
@@ -165,7 +165,7 @@ public class ScriptRunner {
                 connection.setAutoCommit(autoCommit);
             }
         } catch (Throwable t) {
-            throw new RuntimeSqlException("Could not set AutoCommit to " + autoCommit + ". Cause: " + t, t);
+            throw new RuntimeException("Could not set AutoCommit to " + autoCommit + ". Cause: " + t, t);
         }
     }
 
@@ -175,7 +175,7 @@ public class ScriptRunner {
                 connection.commit();
             }
         } catch (Throwable t) {
-            throw new RuntimeSqlException("Could not commit transaction. Cause: " + t, t);
+            throw new RuntimeException("Could not commit transaction. Cause: " + t, t);
         }
     }
 
@@ -191,7 +191,7 @@ public class ScriptRunner {
 
     private void checkForMissingLineTerminator(StringBuilder command) {
         if (command != null && command.toString().trim().length() > 0) {
-            throw new RuntimeSqlException("Line missing end-of-line terminator (" + delimiter + ") => " + command);
+            throw new RuntimeException("Line missing end-of-line terminator (" + delimiter + ") => " + command);
         }
     }
 

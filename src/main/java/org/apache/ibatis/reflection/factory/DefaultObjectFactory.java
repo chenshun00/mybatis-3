@@ -15,25 +15,15 @@
  */
 package org.apache.ibatis.reflection.factory;
 
-import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.apache.ibatis.reflection.ReflectionException;
+
+import java.lang.reflect.Constructor;
+import java.util.*;
 
 /**
  * 默认实现
  */
-public class DefaultObjectFactory implements ObjectFactory, Serializable {
+public class DefaultObjectFactory implements ObjectFactory {
 
     private static final long serialVersionUID = -8855120656740914948L;
 

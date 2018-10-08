@@ -72,7 +72,7 @@ public enum Null {
     private TypeHandler<?> typeHandler;
     private JdbcType jdbcType;
 
-    private Null(TypeHandler<?> typeHandler, JdbcType jdbcType) {
+    Null(TypeHandler<?> typeHandler, JdbcType jdbcType) {
         this.typeHandler = typeHandler;
         this.jdbcType = jdbcType;
     }

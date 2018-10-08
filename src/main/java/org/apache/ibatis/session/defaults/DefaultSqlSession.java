@@ -40,7 +40,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 /**
- * 默认实现，非线程安全
+ * 默认实现，非线程安全,在spring-mybatis当中会被jdk代理重新代理一次
  *
  * @author Clinton Begin
  */

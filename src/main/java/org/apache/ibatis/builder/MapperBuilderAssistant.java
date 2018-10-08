@@ -266,7 +266,6 @@ public class MapperBuilderAssistant extends BaseBuilder {
         if (unresolvedCacheRef) {
             throw new IncompleteElementException("Cache-ref not yet resolved");
         }
-
         id = applyCurrentNamespace(id, false);
         boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
 
@@ -292,7 +291,8 @@ public class MapperBuilderAssistant extends BaseBuilder {
         if (statementParameterMap != null) {
             statementBuilder.parameterMap(statementParameterMap);
         }
-        configuration.addMappedStatement(statementBuilder.build());
+        MappedStatement build = statementBuilder.build();
+        configuration.addMappedStatement(build);
         return statementBuilder.build();
     }
 

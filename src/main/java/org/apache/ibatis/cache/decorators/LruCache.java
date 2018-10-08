@@ -28,7 +28,9 @@ import org.apache.ibatis.cache.Cache;
  */
 public class LruCache implements Cache {
 
+    //委托(被装饰)
     private final Cache delegate;
+    //容器
     private Map<Object, Object> keyMap;
     private Object eldestKey;
 
@@ -48,9 +50,10 @@ public class LruCache implements Cache {
     }
 
     public void setSize(final int size) {
+        //有序的map对象
         keyMap = new LinkedHashMap<Object, Object>(size, .75F, true) {
             private static final long serialVersionUID = 4267176411845948333L;
-
+            //移除最老的
             @Override
             protected boolean removeEldestEntry(Map.Entry<Object, Object> eldest) {
                 boolean tooBig = size() > size;

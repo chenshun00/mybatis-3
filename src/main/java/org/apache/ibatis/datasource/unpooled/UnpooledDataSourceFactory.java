@@ -30,7 +30,6 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 public class UnpooledDataSourceFactory implements DataSourceFactory {
 
     private static final String DRIVER_PROPERTY_PREFIX = "driver.";
-    private static final int DRIVER_PROPERTY_PREFIX_LENGTH = 7;
 
     protected DataSource dataSource;
 
@@ -41,13 +40,17 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
     @Override
     public void setProperties(Properties properties) {
         Properties driverProperties = new Properties();
+
         MetaObject metaDataSource = SystemMetaObject.forObject(dataSource);
+
         for (Object key : properties.keySet()) {
             String propertyName = (String) key;
             if (propertyName.startsWith(DRIVER_PROPERTY_PREFIX)) {
                 String value = properties.getProperty(propertyName);
-                driverProperties.setProperty(propertyName.substring(DRIVER_PROPERTY_PREFIX_LENGTH), value);
-            } else if (metaDataSource.hasSetter(propertyName)) {
+                driverProperties.setProperty(propertyName.substring(7), value);
+            }
+            //set 方法
+            else if (metaDataSource.hasSetter(propertyName)) {
                 String value = (String) properties.get(propertyName);
                 Object convertedValue = convertValue(metaDataSource, propertyName, value);
                 metaDataSource.setValue(propertyName, convertedValue);

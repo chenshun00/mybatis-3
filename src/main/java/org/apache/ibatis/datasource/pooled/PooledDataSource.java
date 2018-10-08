@@ -26,17 +26,19 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
- * This is a simple, synchronous, thread-safe database connection pool.
+ * 可以理解一下链接池的简单实现，这里可以说明一些道理的
  *
  * @author Clinton Begin
  */
 public class PooledDataSource implements DataSource {
 
+    //数据库链接池的状态
     private final PoolState state = new PoolState(this);
 
+    //数据源
     private final UnpooledDataSource dataSource;
 
-    // OPTIONAL CONFIGURATION FIELDS
+    // 可选字段 最大激活链接10个 最多休眠链接5个 最大检查时间20000 等待时间20000
     protected int poolMaximumActiveConnections = 10;
     protected int poolMaximumIdleConnections = 5;
     protected int poolMaximumCheckoutTime = 20000;
@@ -52,40 +54,20 @@ public class PooledDataSource implements DataSource {
         dataSource = new UnpooledDataSource();
     }
 
-    public PooledDataSource(UnpooledDataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public PooledDataSource(String driver, String url, String username, String password) {
-        dataSource = new UnpooledDataSource(driver, url, username, password);
-        expectedConnectionTypeCode = assembleConnectionTypeCode(dataSource.getUrl(), dataSource.getUsername(), dataSource.getPassword());
-    }
-
-    public PooledDataSource(String driver, String url, Properties driverProperties) {
-        dataSource = new UnpooledDataSource(driver, url, driverProperties);
-        expectedConnectionTypeCode = assembleConnectionTypeCode(dataSource.getUrl(), dataSource.getUsername(), dataSource.getPassword());
-    }
-
-    public PooledDataSource(ClassLoader driverClassLoader, String driver, String url, String username, String password) {
-        dataSource = new UnpooledDataSource(driverClassLoader, driver, url, username, password);
-        expectedConnectionTypeCode = assembleConnectionTypeCode(dataSource.getUrl(), dataSource.getUsername(), dataSource.getPassword());
-    }
-
-    public PooledDataSource(ClassLoader driverClassLoader, String driver, String url, Properties driverProperties) {
-        dataSource = new UnpooledDataSource(driverClassLoader, driver, url, driverProperties);
-        expectedConnectionTypeCode = assembleConnectionTypeCode(dataSource.getUrl(), dataSource.getUsername(), dataSource.getPassword());
-    }
-
     @Override
     public Connection getConnection() throws SQLException {
-        return popConnection(dataSource.getUsername(), dataSource.getPassword()).getProxyConnection();
+        //弹出一个链接
+        PooledConnection pooledConnection = popConnection(dataSource.getUsername(), dataSource.getPassword());
+        return pooledConnection.getProxyConnection();
     }
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        return popConnection(username, password).getProxyConnection();
+        PooledConnection pooledConnection = popConnection(username, password);
+        return pooledConnection.getProxyConnection();
     }
 
+    //登录超时
     @Override
     public void setLoginTimeout(int loginTimeout) throws SQLException {
         DriverManager.setLoginTimeout(loginTimeout);
@@ -95,7 +77,9 @@ public class PooledDataSource implements DataSource {
     public int getLoginTimeout() throws SQLException {
         return DriverManager.getLoginTimeout();
     }
+    //-------
 
+    //-----
     @Override
     public void setLogWriter(PrintWriter logWriter) throws SQLException {
         DriverManager.setLogWriter(logWriter);
@@ -105,6 +89,7 @@ public class PooledDataSource implements DataSource {
     public PrintWriter getLogWriter() throws SQLException {
         return DriverManager.getLogWriter();
     }
+    //-----
 
     public void setDriver(String driver) {
         dataSource.setDriver(driver);
@@ -216,7 +201,7 @@ public class PooledDataSource implements DataSource {
         forceCloseAll();
     }
 
-    /*
+    /**
      * If a connection has not been used in this many milliseconds, ping the
      * database to make sure the connection is still good.
      *
@@ -287,12 +272,14 @@ public class PooledDataSource implements DataSource {
         return poolPingConnectionsNotUsedFor;
     }
 
-    /*
-     * Closes all active and idle connections in the pool
+    /**
+     * Closes all active and idle connections in the pool，
+     * 重新调整
      */
     public void forceCloseAll() {
         synchronized (state) {
             expectedConnectionTypeCode = assembleConnectionTypeCode(dataSource.getUrl(), dataSource.getUsername(), dataSource.getPassword());
+            //------ 激活的
             for (int i = state.activeConnections.size(); i > 0; i--) {
                 try {
                     PooledConnection conn = state.activeConnections.remove(i - 1);
@@ -307,6 +294,7 @@ public class PooledDataSource implements DataSource {
                     // ignore
                 }
             }
+            //------- 空闲的
             for (int i = state.idleConnections.size(); i > 0; i--) {
                 try {
                     PooledConnection conn = state.idleConnections.remove(i - 1);
@@ -332,6 +320,7 @@ public class PooledDataSource implements DataSource {
         return ("" + url + username + password).hashCode();
     }
 
+    //弹出这个connection，可以理解为不要这个链接了，close
     protected void pushConnection(PooledConnection conn) throws SQLException {
 
         synchronized (state) {
@@ -454,14 +443,14 @@ public class PooledDataSource implements DataSource {
         return conn;
     }
 
-    /*
+    /**
      * Method to check to see if a connection is still usable
      *
      * @param conn - the connection to check
      * @return True if the connection is still usable
      */
     protected boolean pingConnection(PooledConnection conn) {
-        boolean result = true;
+        boolean result;
 
         try {
             result = !conn.getRealConnection().isClosed();
@@ -496,7 +485,7 @@ public class PooledDataSource implements DataSource {
         return result;
     }
 
-    /*
+    /**
      * Unwraps a pooled connection to get to the 'real' connection
      *
      * @param conn - the pooled connection to unwrap

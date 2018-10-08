@@ -49,7 +49,7 @@ public class UnpooledDataSource implements DataSource {
     private Integer defaultTransactionIsolationLevel;
 
     static {
-        //内部 pi 机制
+        //内部 spi 机制
         Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
             Driver driver = drivers.nextElement();
@@ -285,9 +285,7 @@ public class UnpooledDataSource implements DataSource {
         return false;
     }
 
-    // @Override only valid jdk7+
     public Logger getParentLogger() {
-        // requires JDK version 1.6
         return Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     }
 

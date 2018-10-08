@@ -41,7 +41,7 @@ public class SqlRunner {
 
     private final Connection connection;
     private final TypeHandlerRegistry typeHandlerRegistry;
-    private boolean useGeneratedKeySupport;
+    private boolean useGeneratedKeySupport = false;
 
     public SqlRunner(Connection connection) {
         this.connection = connection;
@@ -52,7 +52,7 @@ public class SqlRunner {
         this.useGeneratedKeySupport = useGeneratedKeySupport;
     }
 
-    /*
+    /**
      * Executes a SELECT statement that returns one row.
      *
      * @param sql  The SQL
@@ -68,7 +68,7 @@ public class SqlRunner {
         return results.get(0);
     }
 
-    /*
+    /**
      * Executes a SELECT statement that returns multiple rows.
      *
      * @param sql  The SQL
@@ -91,7 +91,7 @@ public class SqlRunner {
         }
     }
 
-    /*
+    /**
      * Executes an INSERT statement.
      *
      * @param sql  The SQL
@@ -137,7 +137,7 @@ public class SqlRunner {
         }
     }
 
-    /*
+    /**
      * Executes an UPDATE statement.
      *
      * @param sql  The SQL
@@ -159,7 +159,7 @@ public class SqlRunner {
         }
     }
 
-    /*
+    /**
      * Executes a DELETE statement.
      *
      * @param sql  The SQL
@@ -171,7 +171,7 @@ public class SqlRunner {
         return update(sql, args);
     }
 
-    /*
+    /**
      * Executes any string as a JDBC Statement.
      * Good for DDL
      *
@@ -199,10 +199,11 @@ public class SqlRunner {
         }
     }
 
+    //这里就被后来引申到resultHandler那边去了啊，很美滋滋
     private void setParameters(PreparedStatement ps, Object... args) throws SQLException {
         for (int i = 0, n = args.length; i < n; i++) {
             if (args[i] == null) {
-                throw new SQLException("SqlRunner requires an instance of Null to represent typed null values for JDBC compatibility");
+                throw new SQLException();
             } else if (args[i] instanceof Null) {
                 ((Null) args[i]).getTypeHandler().setParameter(ps, i + 1, null, ((Null) args[i]).getJdbcType());
             } else {
@@ -216,16 +217,24 @@ public class SqlRunner {
         }
     }
 
+    //获取结果集合
     private List<Map<String, Object>> getResults(ResultSet rs) throws SQLException {
         try {
+            //容器
             List<Map<String, Object>> list = new ArrayList<>();
+            //列名
             List<String> columns = new ArrayList<>();
+            //类型处理器
             List<TypeHandler<?>> typeHandlers = new ArrayList<>();
+            //metaData
             ResultSetMetaData rsmd = rs.getMetaData();
+            //--------------获取类型处理器
             for (int i = 0, n = rsmd.getColumnCount(); i < n; i++) {
                 columns.add(rsmd.getColumnLabel(i + 1));
                 try {
+                    //获取类型处理器
                     Class<?> type = Resources.classForName(rsmd.getColumnClassName(i + 1));
+                    //
                     TypeHandler<?> typeHandler = typeHandlerRegistry.getTypeHandler(type);
                     if (typeHandler == null) {
                         typeHandler = typeHandlerRegistry.getTypeHandler(Object.class);
@@ -235,11 +244,16 @@ public class SqlRunner {
                     typeHandlers.add(typeHandlerRegistry.getTypeHandler(Object.class));
                 }
             }
+
+            //-------------二次处理
             while (rs.next()) {
                 Map<String, Object> row = new HashMap<>();
                 for (int i = 0, n = columns.size(); i < n; i++) {
+                    //列名
                     String name = columns.get(i);
+                    //获取类型处理器，这个是一一对应的，注意上边的类型处理器
                     TypeHandler<?> handler = typeHandlers.get(i);
+                    //
                     row.put(name.toUpperCase(Locale.ENGLISH), handler.getResult(rs, name));
                 }
                 list.add(row);

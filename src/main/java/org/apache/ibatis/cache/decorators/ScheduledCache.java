@@ -20,7 +20,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.apache.ibatis.cache.Cache;
 
 /**
- * @author Clinton Begin
+ * 定时缓存,定时清理一次，并不是设置定时任务，而是每次插入数据都去检查一次
  */
 public class ScheduledCache implements Cache {
 

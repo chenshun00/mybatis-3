@@ -45,10 +45,10 @@ public abstract class BaseExecutor implements Executor {
 
     //事务
     protected Transaction transaction;
-    //
+    //执行器
     protected Executor wrapper;
 
-    //
+    //不知道啥东西
     protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads = new ConcurrentLinkedQueue<>();
     //缓存
     protected PerpetualCache localCache = new PerpetualCache("LocalCache");

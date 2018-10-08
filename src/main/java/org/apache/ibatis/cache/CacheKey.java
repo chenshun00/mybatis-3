@@ -15,16 +15,15 @@
  */
 package org.apache.ibatis.cache;
 
-import java.io.Serializable;
+import org.apache.ibatis.reflection.ArrayUtil;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.ibatis.reflection.ArrayUtil;
 
 /**
  * @author Clinton Begin
  */
-public class CacheKey implements Cloneable, Serializable {
+public class CacheKey implements Cloneable {
 
     private static final long serialVersionUID = 1146682552656046210L;
 
@@ -37,7 +36,7 @@ public class CacheKey implements Cloneable, Serializable {
     private int hashcode;
     private long checksum;
     private int count;
-    // 8/21/2017 - Sonarlint flags this as needing to be marked transient.  While true if content is not serializable, this is not always true and thus should not be marked transient.
+
     private List<Object> updateList;
 
     public CacheKey() {
@@ -45,11 +44,6 @@ public class CacheKey implements Cloneable, Serializable {
         this.multiplier = DEFAULT_MULTIPLYER;
         this.count = 0;
         this.updateList = new ArrayList<>();
-    }
-
-    public CacheKey(Object[] objects) {
-        this();
-        updateAll(objects);
     }
 
     public int getUpdateCount() {
@@ -72,51 +66,6 @@ public class CacheKey implements Cloneable, Serializable {
         for (Object o : objects) {
             update(o);
         }
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (!(object instanceof CacheKey)) {
-            return false;
-        }
-
-        final CacheKey cacheKey = (CacheKey) object;
-
-        if (hashcode != cacheKey.hashcode) {
-            return false;
-        }
-        if (checksum != cacheKey.checksum) {
-            return false;
-        }
-        if (count != cacheKey.count) {
-            return false;
-        }
-
-        for (int i = 0; i < updateList.size(); i++) {
-            Object thisObject = updateList.get(i);
-            Object thatObject = cacheKey.updateList.get(i);
-            if (!ArrayUtil.equals(thisObject, thatObject)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return hashcode;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder returnValue = new StringBuilder().append(hashcode).append(':').append(checksum);
-        for (Object object : updateList) {
-            returnValue.append(':').append(ArrayUtil.toString(object));
-        }
-        return returnValue.toString();
     }
 
     @Override

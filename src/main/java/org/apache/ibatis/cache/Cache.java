@@ -17,44 +17,22 @@ package org.apache.ibatis.cache;
 
 import java.util.concurrent.locks.ReadWriteLock;
 
-/**
- * SPI for cache providers.
- *
- * One instance of cache will be created for each namespace.
- *
- * The cache implementation must have a constructor that receives the cache id as an String parameter.
- *
- * MyBatis will pass the namespace as id to the constructor.
- *
- * <pre>
- * public MyCache(final String id) {
- *  if (id == null) {
- *    throw new IllegalArgumentException("Cache instances require an ID");
- *  }
- *  this.id = id;
- *  initialize();
- * }
- * </pre>
- *
- * @author Clinton Begin
- */
-
 public interface Cache {
 
     /**
-     * @return The identifier of this cache
+     * ID , cache 的标识符
      */
     String getId();
 
     /**
-     * @param key Can be any object but usually it is a {@link CacheKey}
-     * @param value The result of a select.
+     * @param key 可以是任意对象，但是通常是一个cacheKey
+     * @param value value
      */
     void putObject(Object key, Object value);
 
     /**
-     * @param key The key
-     * @return The object stored in the cache.
+     * @param key 可以是任意对象，但是通常是一个cacheKey
+     * @return value
      */
     Object getObject(Object key);
 
@@ -79,11 +57,6 @@ public interface Cache {
      */
     void clear();
 
-    /**
-     * Optional. This method is not called by the core.
-     *
-     * @return The number of elements stored in the cache (not its capacity).
-     */
     int getSize();
 
     /**
