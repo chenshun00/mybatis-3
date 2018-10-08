@@ -34,14 +34,6 @@ public class MapperProxyFactory<T> {
         this.mapperInterface = mapperInterface;
     }
 
-    public Class<T> getMapperInterface() {
-        return mapperInterface;
-    }
-
-    public Map<Method, MapperMethod> getMethodCache() {
-        return methodCache;
-    }
-
     @SuppressWarnings("unchecked")
     protected T newInstance(MapperProxy<T> mapperProxy) {
         return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, mapperProxy);

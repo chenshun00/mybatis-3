@@ -3,14 +3,14 @@ MyBatis SQL Mapper Framework for Java
 #### mybatis学习完成部分
 
 *   [ ] annotation
-*   [ ] binding
+*   [x] binding
 *   [x] builder
-*   [ ] cache
+*   [x] cache
 *   [x] datasource
 *   [x] exceptions
 *   [ ] executor
-*   [x] io
-*   [ ] jdbc
+*   [ ] io
+*   [x] jdbc
 *   [x] lang 
 *   [ ] mapping
 *   [ ] parsing

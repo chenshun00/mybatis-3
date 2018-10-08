@@ -126,11 +126,15 @@ public class MapperAnnotationBuilder {
     public void parse() {
         String resource = type.toString();
         if (!configuration.isResourceLoaded(resource)) {
+            //万一出现了意外
             loadXmlResource();
+            //
             configuration.addLoadedResource(resource);
+            //
             assistant.setCurrentNamespace(type.getName());
             parseCache();
             parseCacheRef();
+
             Method[] methods = type.getMethods();
             for (Method method : methods) {
                 try {

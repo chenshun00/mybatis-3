@@ -59,15 +59,13 @@ public class MapperRegistry {
 
     public <T> void addMapper(Class<T> type) {
         if (type.isInterface()) {
+            //重复
             if (hasMapper(type)) {
                 throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
             }
             boolean loadCompleted = false;
             try {
-                knownMappers.put(type, new MapperProxyFactory<T>(type));
-                // It's important that the type is added before the parser is run
-                // otherwise the binding may automatically be attempted by the
-                // mapper parser. If the type is already known, it won't try.
+                knownMappers.put(type, new MapperProxyFactory<>(type));
                 MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
                 parser.parse();
                 loadCompleted = true;
@@ -90,7 +88,9 @@ public class MapperRegistry {
      * @since 3.2.2
      */
     public void addMappers(String packageName, Class<?> superType) {
+
         ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<>();
+
         resolverUtil.find(new ResolverUtil.IsA(superType), packageName);
         Set<Class<? extends Class<?>>> mapperSet = resolverUtil.getClasses();
         for (Class<?> mapperClass : mapperSet) {

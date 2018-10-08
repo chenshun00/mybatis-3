@@ -38,10 +38,8 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * @author Clinton Begin
- * @author Eduardo Macarron
- * @author Lasse Voss
- * @author Kazuki Shimizu
+ * 最终还是交给sqlSession去执行，selectXXX等等方法
+ * 看jdk代理的源代码直接看实现的 invocationHandler 即可
  */
 public class MapperMethod {
 

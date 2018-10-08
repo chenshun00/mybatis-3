@@ -36,55 +36,22 @@ public class ClassLoaderWrapper {
         }
     }
 
-    /*
-     * Get a resource as a URL using the current class path
-     *
-     * @param resource - the resource to locate
-     * @return the resource or null
-     */
     public URL getResourceAsURL(String resource) {
         return getResourceAsURL(resource, getClassLoaders(null));
     }
 
-    /*
-     * Get a resource from the classpath, starting with a specific class loader
-     *
-     * @param resource    - the resource to find
-     * @param classLoader - the first classloader to try
-     * @return the stream or null
-     */
     public URL getResourceAsURL(String resource, ClassLoader classLoader) {
         return getResourceAsURL(resource, getClassLoaders(classLoader));
     }
 
-    /*
-     * Get a resource from the classpath
-     *
-     * @param resource - the resource to find
-     * @return the stream or null
-     */
     public InputStream getResourceAsStream(String resource) {
         return getResourceAsStream(resource, getClassLoaders(null));
     }
 
-    /*
-     * Get a resource from the classpath, starting with a specific class loader
-     *
-     * @param resource    - the resource to find
-     * @param classLoader - the first class loader to try
-     * @return the stream or null
-     */
     public InputStream getResourceAsStream(String resource, ClassLoader classLoader) {
         return getResourceAsStream(resource, getClassLoaders(classLoader));
     }
 
-    /*
-     * Find a class on the classpath (or die trying)
-     *
-     * @param name - the class to look for
-     * @return - the class
-     * @throws ClassNotFoundException Duh.
-     */
     public Class<?> classForName(String name) throws ClassNotFoundException {
         return classForName(name, getClassLoaders(null));
     }
