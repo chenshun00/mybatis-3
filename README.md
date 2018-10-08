@@ -22,4 +22,4 @@ MyBatis SQL Mapper Framework for Java
 *   [x] type
 
 
-> 泗洪mybatis的注解虽然方便了，始终觉得没有xml那么灵活
+> 使用mybatis的注解虽然方便了，始终觉得没有xml那么灵活,本质还是一样的 `sqlSession` 执行
