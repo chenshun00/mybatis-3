@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.executor.keygen;
 
@@ -34,59 +34,37 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-/**
- * @author Clinton Begin
- * @author Kazuki Shimizu
- */
 public class Jdbc3KeyGenerator implements KeyGenerator {
 
-    /**
-     * A shared instance.
-     * @since 3.4.3
-     */
     public static final Jdbc3KeyGenerator INSTANCE = new Jdbc3KeyGenerator();
 
     @Override
-    public void processBefore(Executor executor, MappedStatement ms, Statement stmt, Object parameter) {
-        // do nothing
-    }
-
-    @Override
     public void processAfter(Executor executor, MappedStatement ms, Statement stmt, Object parameter) {
-        processBatch(ms, stmt, getParameters(parameter));
+        try {
+            processBatch(ms, stmt, getParameters(parameter));
+        } catch (SQLException ignore) {
+
+        }
     }
 
-    public void processBatch(MappedStatement ms, Statement stmt, Collection<Object> parameters) {
-        ResultSet rs = null;
-        try {
-            rs = stmt.getGeneratedKeys();
-            final Configuration configuration = ms.getConfiguration();
-            final TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-            final String[] keyProperties = ms.getKeyProperties();
-            final ResultSetMetaData rsmd = rs.getMetaData();
-            TypeHandler<?>[] typeHandlers = null;
-            if (keyProperties != null && rsmd.getColumnCount() >= keyProperties.length) {
-                for (Object parameter : parameters) {
-                    // there should be one row for each statement (also one for each parameter)
-                    if (!rs.next()) {
-                        break;
-                    }
-                    final MetaObject metaParam = configuration.newMetaObject(parameter);
-                    if (typeHandlers == null) {
-                        typeHandlers = getTypeHandlers(typeHandlerRegistry, metaParam, keyProperties, rsmd);
-                    }
-                    populateKeys(rs, metaParam, keyProperties, typeHandlers);
+    public void processBatch(MappedStatement ms, Statement stmt, Collection<Object> parameters) throws SQLException {
+        ResultSet rs = stmt.getGeneratedKeys();
+        Configuration configuration = ms.getConfiguration();
+        TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+        String[] keyProperties = ms.getKeyProperties();
+        ResultSetMetaData rsmd = rs.getMetaData();
+        TypeHandler<?>[] typeHandlers = null;
+        if (keyProperties != null && rsmd.getColumnCount() >= keyProperties.length) {
+            for (Object parameter : parameters) {
+                // there should be one row for each statement (also one for each parameter)
+                if (!rs.next()) {
+                    break;
                 }
-            }
-        } catch (Exception e) {
-            throw new ExecutorException("Error getting generated key or setting result to parameter object. Cause: " + e, e);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (Exception e) {
-                    // ignore
+                final MetaObject metaParam = configuration.newMetaObject(parameter);
+                if (typeHandlers == null) {
+                    typeHandlers = getTypeHandlers(typeHandlerRegistry, metaParam, keyProperties, rsmd);
                 }
+                populateKeys(rs, metaParam, keyProperties, typeHandlers);
             }
         }
     }

@@ -29,11 +29,16 @@ import org.apache.ibatis.session.Configuration;
  */
 public class TrimSqlNode implements SqlNode {
 
+    //对于trim节点来说，这个节点其实是其他节点的集合
     private final SqlNode contents;
+    //前缀
     private final String prefix;
+    //后缀
     private final String suffix;
+    //重载
     private final List<String> prefixesToOverride;
     private final List<String> suffixesToOverride;
+
     private final Configuration configuration;
 
     public TrimSqlNode(Configuration configuration, SqlNode contents, String prefix, String prefixesToOverride, String suffix, String suffixesToOverride) {
@@ -57,6 +62,7 @@ public class TrimSqlNode implements SqlNode {
         return result;
     }
 
+    //解析
     private static List<String> parseOverrides(String overrides) {
         if (overrides != null) {
             final StringTokenizer parser = new StringTokenizer(overrides, "|", false);

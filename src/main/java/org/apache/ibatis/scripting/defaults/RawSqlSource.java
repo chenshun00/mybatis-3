@@ -35,7 +35,7 @@ public class RawSqlSource implements SqlSource {
     private final SqlSource sqlSource;
 
     public RawSqlSource(Configuration configuration, SqlNode rootSqlNode, Class<?> parameterType) {
-        this(configuration, getSql(configuration, rootSqlNode), parameterType);
+        this(configuration,getSql(configuration, rootSqlNode), parameterType);
     }
 
     public RawSqlSource(Configuration configuration, String sql, Class<?> parameterType) {

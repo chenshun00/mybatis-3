@@ -61,6 +61,7 @@ public class ResultSetWrapper {
         final int columnCount = metaData.getColumnCount();
         //分别是列名 jdbc类型 类名
         for (int i = 1; i <= columnCount; i++) {
+            //
             columnNames.add(configuration.isUseColumnLabel() ? metaData.getColumnLabel(i) : metaData.getColumnName(i));
             jdbcTypes.add(JdbcType.forCode(metaData.getColumnType(i)));
             classNames.add(metaData.getColumnClassName(i));

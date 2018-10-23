@@ -28,51 +28,39 @@
         <result property="addTime" column="add_time"/>
     </resultMap>
 
-    <resultMap id="PerformData1" type="PerformData">
-        <result property="context" column="context"/>
-        <result property="type" column="type"/>
-        <result property="metaId" column="meta_id"/>
-        <result property="addTime" column="add_time"/>
-    </resultMap>
-
     <sql id="selector">
         SELECT
         id,context,type,meta_id,add_time
         FROM perform_data
     </sql>
 
-    <sql id="where">
-        <trim prefix="WHERE" prefixOverrides="AND | OR">
-            <if test="id != null">AND id = #id#
-            </if>
-            <if test="context != null">AND context = #context#
-            </if>
-            <if test="type != null">AND type = #type#
-            </if>
-            <if test="metaId != null">AND meta_id = #metaId#
-            </if>
-            <if test="addTime != null">AND add_time = #addTime#
-            </if>
-        </trim>
-    </sql>
+    <!--<sql id="where">-->
+        <!--<trim prefix="WHERE" prefixOverrides="AND | OR">-->
+            <!--<if test="id != null">AND id = #id#</if>-->
+            <!--<if test="context != null">AND context = #context#</if>-->
+            <!--<if test="type != null">AND type = #type#</if>-->
+            <!--<if test="metaId != null">AND meta_id = #metaId#</if>-->
+            <!--<if test="addTime != null">AND add_time = #addTime#</if>-->
+        <!--</trim>-->
+    <!--</sql>-->
+<!--&lt;!&ndash;&ndash;&gt;-->
+    <!--<sql id="orderBy">-->
+        <!--<trim prefix="ORDER BY">-->
+            <!--<if test="OrderFileds != null">-->
+                <!--<foreach collection="OrderFileds" separator=",">-->
+                    <!--#orderBy# #desc#-->
+                <!--</foreach>-->
+            <!--</if>-->
+        <!--</trim>-->
+    <!--</sql>-->
+<!--&lt;!&ndash;&ndash;&gt;-->
+    <!--<sql id="limit">-->
+        <!--<trim prefix="LIMIT">-->
+            <!--<if test="startRow != null">#startRow#,#pageSize#</if>-->
+        <!--</trim>-->
+    <!--</sql>-->
+<!--&lt;!&ndash;&ndash;&gt;-->
 
-    <sql id="orderBy">
-        <trim prefix="ORDER BY">
-            <if test="OrderFileds != null">
-                <foreach collection="OrderFileds" separator=",">
-                    #orderBy# #desc#
-                </foreach>
-            </if>
-        </trim>
-    </sql>
-
-    <sql id="limit">
-        <trim prefix="LIMIT">
-            <if test="startRow != null">#startRow#,#pageSize#</if>
-        </trim>
-    </sql>
-
-    <!---->
     <select id="selectPerformDataByKey" resultMap="PerformData" parameterType="integer">
         <include refid="selector"/>
         WHERE id = #{id}
@@ -81,6 +69,9 @@
 
 
     <insert id="insertPerformData" parameterType="PerformData">
+        <selectKey>
+
+        </selectKey>
         INSERT INTO perform_data
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -98,22 +89,22 @@
             <if test="addTime != null">#{addTime},</if>
         </trim>
     </insert>
-
-    <!-- 默认的主键类型是integer -->
+<!--&lt;!&ndash;&ndash;&gt;-->
+    <!--&lt;!&ndash; 默认的主键类型是integer &ndash;&gt;-->
     <delete id="deletePerformDataByKey" parameterType="integer">
         delete from perform_data where id = #{key}
     </delete>
-
-    <update id="updatePerformDataByKey" parameterType="PerformData">
-        update perform_data
-        <trim prefix="SET" prefixOverrides=",">
-            <if test="id != null">id = #{id},</if>
-            <if test="context != null">context = #{context},</if>
-            <if test="type != null">type = #{type},</if>
-            <if test="metaId != null">meta_id = #{metaId},</if>
-            <if test="addTime != null">add_time = #{addTime},</if>
-        </trim>
-        WHERE
-        id = #{key}
-    </update>
+<!--&lt;!&ndash;&ndash;&gt;-->
+    <!--<update id="updatePerformDataByKey" parameterType="PerformData">-->
+        <!--update perform_data-->
+        <!--<trim prefix="SET" prefixOverrides=",">-->
+            <!--<if test="id != null">id = #{id},</if>-->
+            <!--<if test="context != null">context = #{context},</if>-->
+            <!--<if test="type != null">type = #{type},</if>-->
+            <!--<if test="metaId != null">meta_id = #{metaId},</if>-->
+            <!--<if test="addTime != null">add_time = #{addTime},</if>-->
+        <!--</trim>-->
+        <!--WHERE-->
+        <!--id = #{key}-->
+    <!--</update>-->
 </mapper>

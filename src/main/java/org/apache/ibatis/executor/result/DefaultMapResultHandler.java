@@ -15,8 +15,6 @@
  */
 package org.apache.ibatis.executor.result;
 
-import java.util.Map;
-
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
@@ -24,9 +22,8 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
 
-/**
- * @author Clinton Begin
- */
+import java.util.Map;
+
 public class DefaultMapResultHandler<K, V> implements ResultHandler<V> {
 
     private final Map<K, V> mappedResults;
@@ -44,11 +41,11 @@ public class DefaultMapResultHandler<K, V> implements ResultHandler<V> {
         this.mapKey = mapKey;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void handleResult(ResultContext<? extends V> context) {
         final V value = context.getResultObject();
         final MetaObject mo = MetaObject.forObject(value, objectFactory, objectWrapperFactory, reflectorFactory);
-        // TODO is that assignment always true?
         final K key = (K) mo.getValue(mapKey);
         mappedResults.put(key, value);
     }

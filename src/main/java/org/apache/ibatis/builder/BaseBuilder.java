@@ -87,6 +87,9 @@ public abstract class BaseBuilder {
     }
 
     protected Object createInstance(String alias) {
+        if (alias == null){
+            return null;
+        }
         Class<?> clazz = resolveClass(alias);
         if (clazz == null) {
             return null;
@@ -99,10 +102,7 @@ public abstract class BaseBuilder {
     }
 
     protected <T> Class<? extends T> resolveClass(String alias) {
-        if (alias == null) {
-            return null;
-        }
-        return resolveAlias(alias);
+        return typeAliasRegistry.resolveAlias(alias);
     }
 
     protected TypeHandler<?> resolveTypeHandler(Class<?> javaType, String typeHandlerAlias) {
@@ -129,9 +129,5 @@ public abstract class BaseBuilder {
             handler = typeHandlerRegistry.getInstance(javaType, typeHandlerType);
         }
         return handler;
-    }
-
-    protected <T> Class<? extends T> resolveAlias(String alias) {
-        return typeAliasRegistry.resolveAlias(alias);
     }
 }

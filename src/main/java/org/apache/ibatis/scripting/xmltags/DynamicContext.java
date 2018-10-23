@@ -43,6 +43,7 @@ public class DynamicContext {
     private int uniqueNumber = 0;
 
     public DynamicContext(Configuration configuration, Object parameterObject) {
+        //既不是空，也不是map对象的时候
         if (parameterObject != null && !(parameterObject instanceof Map)) {
             MetaObject metaObject = configuration.newMetaObject(parameterObject);
             bindings = new ContextMap(metaObject);
@@ -75,26 +76,20 @@ public class DynamicContext {
     }
 
     static class ContextMap extends HashMap<String, Object> {
-        private static final long serialVersionUID = 2977601501966151582L;
-
         private MetaObject parameterMetaObject;
 
         public ContextMap(MetaObject parameterMetaObject) {
             this.parameterMetaObject = parameterMetaObject;
         }
-
         @Override
         public Object get(Object key) {
             String strKey = (String) key;
             if (super.containsKey(strKey)) {
                 return super.get(strKey);
             }
-
             if (parameterMetaObject != null) {
-                // issue #61 do not modify the context when reading
                 return parameterMetaObject.getValue(strKey);
             }
-
             return null;
         }
     }
@@ -102,8 +97,7 @@ public class DynamicContext {
     static class ContextAccessor implements PropertyAccessor {
 
         @Override
-        public Object getProperty(Map context, Object target, Object name)
-                throws OgnlException {
+        public Object getProperty(Map context, Object target, Object name) {
             Map map = (Map) target;
 
             Object result = map.get(name);
@@ -120,8 +114,7 @@ public class DynamicContext {
         }
 
         @Override
-        public void setProperty(Map context, Object target, Object name, Object value)
-                throws OgnlException {
+        public void setProperty(Map context, Object target, Object name, Object value){
             Map<Object, Object> map = (Map<Object, Object>) target;
             map.put(name, value);
         }

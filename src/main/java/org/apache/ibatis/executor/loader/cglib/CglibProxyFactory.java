@@ -58,11 +58,6 @@ public class CglibProxyFactory implements ProxyFactory {
         return EnhancedDeserializationProxyImpl.createProxy(target, unloadedProperties, objectFactory, constructorArgTypes, constructorArgs);
     }
 
-    @Override
-    public void setProperties(Properties properties) {
-        // Not Implemented
-    }
-
     static Object crateProxy(Class<?> type, Callback callback, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
         Enhancer enhancer = new Enhancer();
         enhancer.setCallback(callback);

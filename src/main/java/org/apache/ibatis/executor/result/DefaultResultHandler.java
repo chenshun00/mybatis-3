@@ -15,12 +15,11 @@
  */
 package org.apache.ibatis.executor.result;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
+
+import java.util.List;
 
 /**
  * @author Clinton Begin
@@ -28,10 +27,6 @@ import org.apache.ibatis.session.ResultHandler;
 public class DefaultResultHandler implements ResultHandler<Object> {
 
     private final List<Object> list;
-
-    public DefaultResultHandler() {
-        list = new ArrayList<>();
-    }
 
     @SuppressWarnings("unchecked")
     public DefaultResultHandler(ObjectFactory objectFactory) {

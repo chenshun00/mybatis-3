@@ -25,8 +25,6 @@ import java.util.*;
  */
 public class DefaultObjectFactory implements ObjectFactory {
 
-    private static final long serialVersionUID = -8855120656740914948L;
-
     @Override
     public <T> T create(Class<T> type) {
         return create(type, null, null);
@@ -35,9 +33,7 @@ public class DefaultObjectFactory implements ObjectFactory {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
-        //解析类型
         Class<?> classToCreate = resolveInterface(type);
-        // 实例化
         return (T) instantiateClass(classToCreate, constructorArgTypes, constructorArgs);
     }
 

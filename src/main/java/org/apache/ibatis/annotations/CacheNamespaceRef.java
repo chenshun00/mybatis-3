@@ -22,12 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation that reference a cache.
- * <p>
- * If you use this annotation, should be specified either {@link #value()} or {@link #name()} attribute.
- * </p>
- * @author Clinton Begin
- * @author Kazuki Shimizu
+ * 引用缓存 ---> xml中的cacheRef，如果你使用了这个注解，你应设置 value 或者 name 属性的其中一个
+ *
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

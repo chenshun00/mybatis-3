@@ -15,8 +15,6 @@
  */
 package org.apache.ibatis.binding;
 
-import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
-import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
@@ -24,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Clinton Begin
@@ -57,26 +54,6 @@ public class MapperRegistry {
         return knownMappers.containsKey(type);
     }
 
-    public <T> void addMapper(Class<T> type) {
-        if (type.isInterface()) {
-            //重复
-            if (hasMapper(type)) {
-                throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
-            }
-            boolean loadCompleted = false;
-            try {
-                knownMappers.put(type, new MapperProxyFactory<>(type));
-                MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
-                parser.parse();
-                loadCompleted = true;
-            } finally {
-                if (!loadCompleted) {
-                    knownMappers.remove(type);
-                }
-            }
-        }
-    }
-
     /**
      * @since 3.2.2
      */
@@ -88,14 +65,6 @@ public class MapperRegistry {
      * @since 3.2.2
      */
     public void addMappers(String packageName, Class<?> superType) {
-
-        ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<>();
-
-        resolverUtil.find(new ResolverUtil.IsA(superType), packageName);
-        Set<Class<? extends Class<?>>> mapperSet = resolverUtil.getClasses();
-        for (Class<?> mapperClass : mapperSet) {
-            addMapper(mapperClass);
-        }
     }
 
     /**

@@ -42,10 +42,6 @@ public class XMLStatementBuilder extends BaseBuilder {
     private final XNode context;
     private final String requiredDatabaseId;
 
-    public XMLStatementBuilder(Configuration configuration, MapperBuilderAssistant builderAssistant, XNode context) {
-        this(configuration, builderAssistant, context, null);
-    }
-
     public XMLStatementBuilder(Configuration configuration, MapperBuilderAssistant builderAssistant, XNode context, String databaseId) {
         super(configuration);
         this.builderAssistant = builderAssistant;
@@ -55,57 +51,54 @@ public class XMLStatementBuilder extends BaseBuilder {
 
     //解析curd节点，属于解析当中最为复杂的部
     public void parseStatementNode() {
-        //获取节点id
         String id = context.getStringAttribute("id");
-        //数据库标示，99的情况是nul
-        String databaseId = context.getStringAttribute("databaseId");
-
-        if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {
-            return;
-        }
 
         //-----------------节点属性解析
         Integer fetchSize = context.getIntAttribute("fetchSize");
         Integer timeout = context.getIntAttribute("timeout");
+
         //parameterMap parameterType 这两个我用起来一直不知道他们的区别是什么
-        String parameterMap = context.getStringAttribute("parameterMap");
         //map 已经被移除了，但是type还是用的比较多的，例如常用的hashmap，map，list，array
+        String parameterMap = context.getStringAttribute("parameterMap");
         String parameterType = context.getStringAttribute("parameterType");
         Class<?> parameterTypeClass = resolveClass(parameterType);
+
         //同理还有这两个，区分度要大一些，但是新人还是会迷糊，虽然xbatis的文档不错
         String resultMap = context.getStringAttribute("resultMap");
         String resultType = context.getStringAttribute("resultType");
+        Class<?> resultTypeClass = resolveClass(resultType);
 
         String lang = context.getStringAttribute("lang");
-        //
         LanguageDriver langDriver = getLanguageDriver(lang);
 
-        Class<?> resultTypeClass = resolveClass(resultType);
+        //FORWARD_ONLY，SCROLL_SENSITIVE 或 SCROLL_INSENSITIVE 中的一个
         String resultSetType = context.getStringAttribute("resultSetType");
-        StatementType statementType = StatementType.valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));
         ResultSetType resultSetTypeEnum = resolveResultSetType(resultSetType);
+
+        StatementType statementType =StatementType.PREPARED;
         //----------------节点属性解析
 
         //---------------节点数据
         String nodeName = context.getNode().getNodeName();
         SqlCommandType sqlCommandType = SqlCommandType.valueOf(nodeName.toUpperCase(Locale.ENGLISH));
         boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+
         //是否刷新缓存 是否使用缓存
         boolean flushCache = context.getBooleanAttribute("flushCache", !isSelect);
         boolean useCache = context.getBooleanAttribute("useCache", isSelect);
         boolean resultOrdered = context.getBooleanAttribute("resultOrdered", false);
         //----------------
 
-        //----------------解析前先处理include子节点
+        //----------------解析前先处理include子节点  当前那个curd节点Node
         XMLIncludeTransformer includeParser = new XMLIncludeTransformer(configuration, builderAssistant);
-        //Node
         includeParser.applyIncludes(context.getNode());
 
 
-        //解析 selectKey节点
+        //解析 selectKey节点 , 首先 selectKey 是用来干什么的
         processSelectKeyNodes(id, parameterTypeClass, langDriver);
 
-        //解析 xml/annotation 获取sql
+        //解析 xml/annotation 获取sql XMLLanguageDriver  参数类型
+        //主要是将sql剥离出来，总得有个说法
         SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
         //-----结果集
         String resultSets = context.getStringAttribute("resultSets");
@@ -127,21 +120,21 @@ public class XMLStatementBuilder extends BaseBuilder {
         builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType,
                 fetchSize, timeout, parameterMap, parameterTypeClass, resultMap, resultTypeClass,
                 resultSetTypeEnum, flushCache, useCache, resultOrdered,
-                keyGenerator, keyProperty, keyColumn, databaseId, langDriver, resultSets);
+                keyGenerator, keyProperty, keyColumn, null, langDriver, resultSets);
     }
 
     private void processSelectKeyNodes(String id, Class<?> parameterTypeClass, LanguageDriver langDriver) {
         List<XNode> selectKeyNodes = context.evalNodes("selectKey");
-        parseSelectKeyNodes(id, selectKeyNodes, parameterTypeClass, langDriver, null);
+        parseSelectKeyNodes(id, selectKeyNodes, parameterTypeClass, langDriver);
         removeSelectKeyNodes(selectKeyNodes);
     }
 
-    private void parseSelectKeyNodes(String parentId, List<XNode> list, Class<?> parameterTypeClass, LanguageDriver langDriver, String skRequiredDatabaseId) {
+    private void parseSelectKeyNodes(String parentId, List<XNode> list, Class<?> parameterTypeClass, LanguageDriver langDriver) {
         for (XNode nodeToHandle : list) {
+            //
             String id = parentId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-            String databaseId = nodeToHandle.getStringAttribute("databaseId");
-            if (databaseIdMatchesCurrent(id, databaseId, skRequiredDatabaseId)) {
-                parseSelectKeyNode(id, nodeToHandle, parameterTypeClass, langDriver, databaseId);
+            if (databaseIdMatchesCurrent(id)) {
+                parseSelectKeyNode(id, nodeToHandle, parameterTypeClass, langDriver, null);
             }
         }
     }
@@ -185,21 +178,11 @@ public class XMLStatementBuilder extends BaseBuilder {
         }
     }
 
-    private boolean databaseIdMatchesCurrent(String id, String databaseId, String requiredDatabaseId) {
-        if (requiredDatabaseId != null) {
-            if (!requiredDatabaseId.equals(databaseId)) {
-                return false;
-            }
-        } else {
-            if (databaseId != null) {
-                return false;
-            }
-            // skip this statement if there is a previous one with a not null databaseId
-            id = builderAssistant.applyCurrentNamespace(id, false);
-            if (this.configuration.hasStatement(id, false)) {
-                MappedStatement previous = this.configuration.getMappedStatement(id, false); // issue #2
-                return previous.getDatabaseId() == null;
-            }
+    private boolean databaseIdMatchesCurrent(String id) {
+        id = builderAssistant.applyCurrentNamespace(id, false);
+        if (this.configuration.hasStatement(id, false)) {
+            MappedStatement previous = this.configuration.getMappedStatement(id, false); // issue #2
+            return previous.getDatabaseId() == null;
         }
         return true;
     }

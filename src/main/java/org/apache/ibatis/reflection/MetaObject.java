@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.reflection;
 
@@ -28,7 +28,7 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapper;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
 /**
- * @author Clinton Begin
+ * 元数据对象，终于出现了
  */
 public class MetaObject {
 
@@ -58,11 +58,7 @@ public class MetaObject {
     }
 
     public static MetaObject forObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {
-        if (object == null) {
-            return SystemMetaObject.NULL_META_OBJECT;
-        } else {
-            return new MetaObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
-        }
+        return new MetaObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
     }
 
     public ObjectFactory getObjectFactory() {
@@ -85,14 +81,6 @@ public class MetaObject {
         return objectWrapper.findProperty(propName, useCamelCaseMapping);
     }
 
-    public String[] getGetterNames() {
-        return objectWrapper.getGetterNames();
-    }
-
-    public String[] getSetterNames() {
-        return objectWrapper.getSetterNames();
-    }
-
     public Class<?> getSetterType(String name) {
         return objectWrapper.getSetterType(name);
     }
@@ -111,6 +99,7 @@ public class MetaObject {
 
     public Object getValue(String name) {
         PropertyTokenizer prop = new PropertyTokenizer(name);
+        //name 有没有点的区别
         if (prop.hasNext()) {
             MetaObject metaValue = metaObjectForProperty(prop.getIndexedName());
             if (metaValue == SystemMetaObject.NULL_META_OBJECT) {

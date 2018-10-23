@@ -24,10 +24,13 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
+import org.apache.ibatis.executor.resultset.DefaultResultSetHandler;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
+import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
@@ -50,12 +53,17 @@ public abstract class BaseStatementHandler implements StatementHandler {
 
     protected BoundSql boundSql;
 
+    /**
+     * 例子
+     * 1、pojo
+     * 2、integer/String
+     * 3、Map
+     */
     protected BaseStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-        this.configuration = mappedStatement.getConfiguration();
         this.executor = executor;
         this.mappedStatement = mappedStatement;
+        this.configuration = mappedStatement.getConfiguration();
         this.rowBounds = rowBounds;
-
         this.typeHandlerRegistry = configuration.getTypeHandlerRegistry();
         this.objectFactory = configuration.getObjectFactory();
 
@@ -65,10 +73,11 @@ public abstract class BaseStatementHandler implements StatementHandler {
         }
 
         this.boundSql = boundSql;
-        //这里才是实际的核心
-        this.parameterHandler = this.configuration.newParameterHandler(mappedStatement, parameterObject, boundSql);
-        //
-        this.resultSetHandler = this.configuration.newResultSetHandler(executor, mappedStatement, rowBounds, parameterHandler, resultHandler, boundSql);
+        //这里才是实际的核心，设置参数
+        this.parameterHandler = new DefaultParameterHandler(mappedStatement, parameterObject, boundSql);
+        this.resultSetHandler = new DefaultResultSetHandler(executor, mappedStatement, parameterHandler,
+                resultHandler, boundSql, rowBounds);
+
     }
 
     @Override
@@ -85,7 +94,9 @@ public abstract class BaseStatementHandler implements StatementHandler {
     public Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException {
         ErrorContext.instance().sql(boundSql.getSql());
         //不能使用try(resource){}的形式，因为statement被close掉了
+        //实例化
         Statement statement = instantiateStatement(connection);
+        //设置超时和fetch
         setStatementTimeout(statement, transactionTimeout);
         setFetchSize(statement);
         return statement;
@@ -97,8 +108,6 @@ public abstract class BaseStatementHandler implements StatementHandler {
         Integer queryTimeout = null;
         if (mappedStatement.getTimeout() != null) {
             queryTimeout = mappedStatement.getTimeout();
-        } else if (configuration.getDefaultStatementTimeout() != null) {
-            queryTimeout = configuration.getDefaultStatementTimeout();
         }
         if (queryTimeout != null) {
             stmt.setQueryTimeout(queryTimeout);
@@ -112,6 +121,7 @@ public abstract class BaseStatementHandler implements StatementHandler {
             stmt.setFetchSize(fetchSize);
             return;
         }
+        //容易设置null
         Integer defaultFetchSize = configuration.getDefaultFetchSize();
         if (defaultFetchSize != null) {
             stmt.setFetchSize(defaultFetchSize);

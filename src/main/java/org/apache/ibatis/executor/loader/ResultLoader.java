@@ -50,7 +50,6 @@ public class ResultLoader {
     protected final ResultExtractor resultExtractor;
     protected final long creatorThreadId;
 
-    protected boolean loaded;
     protected Object resultObject;
 
     public ResultLoader(Configuration config, Executor executor, MappedStatement mappedStatement, Object parameterObject, Class<?> targetType, CacheKey cacheKey, BoundSql boundSql) {
@@ -88,13 +87,7 @@ public class ResultLoader {
 
     private Executor newExecutor() {
         final Environment environment = configuration.getEnvironment();
-        if (environment == null) {
-            throw new ExecutorException("ResultLoader could not load lazily.  Environment was not configured.");
-        }
         final DataSource ds = environment.getDataSource();
-        if (ds == null) {
-            throw new ExecutorException("ResultLoader could not load lazily.  DataSource was not configured.");
-        }
         final TransactionFactory transactionFactory = environment.getTransactionFactory();
         final Transaction tx = transactionFactory.newTransaction(ds, null, false);
         return configuration.newExecutor(tx, ExecutorType.SIMPLE);

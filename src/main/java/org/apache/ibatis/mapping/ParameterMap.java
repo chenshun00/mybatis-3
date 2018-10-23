@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * @author Clinton Begin
+ * 我猜测应该是参数集合吧，每一个 ParameterMapping 都对应来一个参数，参数都名字，参数都jdbc类型，参数都java类型
  */
 public class ParameterMap {
 
@@ -35,7 +35,7 @@ public class ParameterMap {
     public static class Builder {
         private ParameterMap parameterMap = new ParameterMap();
 
-        public Builder(Configuration configuration, String id, Class<?> type, List<ParameterMapping> parameterMappings) {
+        public Builder(String id, Class<?> type, List<ParameterMapping> parameterMappings) {
             parameterMap.id = id;
             parameterMap.type = type;
             parameterMap.parameterMappings = parameterMappings;

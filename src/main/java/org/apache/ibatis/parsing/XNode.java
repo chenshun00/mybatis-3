@@ -98,18 +98,6 @@ public class XNode {
         return builder.toString();
     }
 
-    public String evalString(String expression) {
-        return xpathParser.evalString(node, expression);
-    }
-
-    public Boolean evalBoolean(String expression) {
-        return xpathParser.evalBoolean(node, expression);
-    }
-
-    public Double evalDouble(String expression) {
-        return xpathParser.evalDouble(node, expression);
-    }
-
     public List<XNode> evalNodes(String expression) {
         return xpathParser.evalNodes(node, expression);
     }

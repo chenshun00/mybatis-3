@@ -27,6 +27,7 @@ public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
     private final String children;
 
     public PropertyTokenizer(String fullname) {
+//        #{user.name} --> name = user & child = name
         int delim = fullname.indexOf('.');
         if (delim > -1) {
             name = fullname.substring(0, delim);

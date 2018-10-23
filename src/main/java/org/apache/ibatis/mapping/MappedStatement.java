@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.mapping;
 
@@ -28,29 +28,47 @@ import java.util.List;
 
 /**
  * <p>
- *     映射状态，包含了一些基本的数据把
- *     1、这个跟我们平时的有什么本质的区别吗？其实没有，我们平时是在业务，而我们业务的bean是对业务(所完成功能的一种抽象)，而mybatis的这个对象
- *     MappedStatement其实本质上是对sql语句的一个抽象，剥离了sql执行的种种逻辑，从而形成了这个对象，其实内在是抽象了我们的执行过程，而这个执行过程
- *     又是在mybatis制定的规则下，比如resultMap，再比如select，update，delete，insert，cache，include，都是一样的，其实抽象的对象不一样而已
+ * 映射状态，包含了一些基本的数据把
+ * 1、这个跟我们平时的有什么本质的区别吗？其实没有，我们平时是在业务，而我们业务的bean是对业务(所完成功能的一种抽象)，而mybatis的这个对象
+ * MappedStatement其实本质上是对sql语句的一个抽象，剥离了sql执行的种种逻辑，从而形成了这个对象，其实内在是抽象了我们的执行过程，而这个执行过程
+ * 又是在mybatis制定的规则下，比如resultMap，再比如select，update，delete，insert，cache，include，都是一样的，其实抽象的对象不一样而已
  * </p>
+ * <p>
+ * 一个sql语句，一个MappedStatement示例，且每一个Configuration虽然他们都示例对象(hashcode)是一致的，但是他们内部的key其实已经变换掉了
+ *
  * @author Clinton Begin
  */
 public final class MappedStatement {
 
-    private String resource;  //resource说明的是什么,xml配置文件或者mapper接口
-    private Configuration configuration;//全局配置文件
-    private String id;//定义id，<select id = "xx" ></select> 调用方式 = namespace + id
-    private Integer fetchSize; //不知道
-    private Integer timeout;//sql 超时时间
+    //resource说明的是什么,xml配置文件或者mapper接口
+    private String resource;
+    //全局配置文件
+    private Configuration configuration;
+    //定义id，<select id = "xx" ></select> 调用方式 = namespace + id
+    private String id;
+    //不知道 一次搞多少的意思
+    private Integer fetchSize;
+    //sql 超时时间
+    private Integer timeout;
+    //三种类型，RoutingStatementHandler判断使用
     private StatementType statementType;//执行类型 STATEMENT(直接类型x), PREPARED(预编译 √), CALLABLE(存储过程 位置)
+    //这里需要去了解
+    //todo
     private ResultSetType resultSetType;//(结果集设置位置)
+    //todo 我还没有了解的地方
     private SqlSource sqlSource;//sql语句from xml or annotation，there is static sql ， dy sql
+    //<cache/>打开的缓存
     private Cache cache;//cache
+
     private ParameterMap parameterMap;//参数映射
     private List<ResultMap> resultMaps;//返回的结果映射
+    //设置的
     private boolean flushCacheRequired;//是否刷新缓存
+    //使用缓存这样就和2级缓存干上了
     private boolean useCache;
+    //
     private boolean resultOrdered;
+    //命令类型，
     private SqlCommandType sqlCommandType;
     private KeyGenerator keyGenerator;//转
     private String[] keyProperties;//resultMap里边的属性
@@ -72,14 +90,12 @@ public final class MappedStatement {
             mappedStatement.id = id;
             mappedStatement.sqlSource = sqlSource;
             mappedStatement.statementType = StatementType.PREPARED;
-            mappedStatement.parameterMap = new ParameterMap.Builder(configuration, "defaultParameterMap", null, new ArrayList<>()).build();
+            //todo 了解一下啊
+            mappedStatement.parameterMap = new ParameterMap.Builder("defaultParameterMap", null, new ArrayList<>()).build();
             mappedStatement.resultMaps = new ArrayList<>();
             mappedStatement.sqlCommandType = sqlCommandType;
+            // NoKeyGenerator.INSTANCE;
             mappedStatement.keyGenerator = configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType) ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;
-            String logId = id;
-            if (configuration.getLogPrefix() != null) {
-                logId = configuration.getLogPrefix() + id;
-            }
             mappedStatement.lang = configuration.getDefaultScriptingLanguageInstance();
         }
 
@@ -175,7 +191,9 @@ public final class MappedStatement {
             return this;
         }
 
-        /** @deprecated Use {@link #resultSets} */
+        /**
+         * @deprecated Use {@link #resultSets}
+         */
         @Deprecated
         public Builder resulSets(String resultSet) {
             mappedStatement.resultSets = delimitedStringToArray(resultSet);
@@ -280,7 +298,9 @@ public final class MappedStatement {
         return resultSets;
     }
 
-    /** @deprecated Use {@link #getResultSets()} */
+    /**
+     * @deprecated Use {@link #getResultSets()}
+     */
     @Deprecated
     public String[] getResulSets() {
         return resultSets;

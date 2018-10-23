@@ -103,11 +103,13 @@ public class TypeAliasRegistry {
     @SuppressWarnings("unchecked")
     // throws class cast exception as well if types cannot be assigned
     public <T> Class<T> resolveAlias(String string) {
-        try {
-            if (string == null) {
+            if (string == null){
                 return null;
             }
-            // issue #748
+            if (string.equals("")){
+                return null;
+            }
+        try {
             String key = string.toLowerCase(Locale.ENGLISH);
             Class<T> value;
             if (TYPE_ALIASES.containsKey(key)) {
@@ -148,30 +150,12 @@ public class TypeAliasRegistry {
     }
 
     public void registerAlias(String alias, Class<?> value) {
-        if (alias == null) {
-            throw new TypeException("The parameter alias cannot be null");
-        }
         // issue #748
         String key = alias.toLowerCase(Locale.ENGLISH);
         if (TYPE_ALIASES.containsKey(key) && TYPE_ALIASES.get(key) != null && !TYPE_ALIASES.get(key).equals(value)) {
             throw new TypeException("The alias '" + alias + "' is already mapped to the value '" + TYPE_ALIASES.get(key).getName() + "'.");
         }
         TYPE_ALIASES.put(key, value);
-    }
-
-    public void registerAlias(String alias, String value) {
-        try {
-            registerAlias(alias, Resources.classForName(value));
-        } catch (ClassNotFoundException e) {
-            throw new TypeException("Error registering type alias " + alias + " for " + value + ". Cause: " + e, e);
-        }
-    }
-
-    /**
-     * @since 3.2.2
-     */
-    public Map<String, Class<?>> getTypeAliases() {
-        return Collections.unmodifiableMap(TYPE_ALIASES);
     }
 
 }

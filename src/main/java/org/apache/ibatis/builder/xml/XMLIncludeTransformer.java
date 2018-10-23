@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.builder.xml;
 
@@ -44,24 +44,20 @@ public class XMLIncludeTransformer {
 
     public void applyIncludes(Node source) {
         Properties variablesContext = new Properties();
-        Properties configurationVariables = configuration.getVariables();
-        if (configurationVariables != null) {
-            //好像没有什么东西
-            variablesContext.putAll(configurationVariables);
-        }
         applyIncludes(source, variablesContext, false);
     }
 
     /**
-     * Recursively apply includes through all SQL fragments.
-     * @param source Include node in DOM tree
-     * @param variablesContext Current context for static variables with values
      */
     private void applyIncludes(Node source, final Properties variablesContext, boolean included) {
         // include 节点
         if (source.getNodeName().equals("include")) {
-            Node toInclude = findSqlFragment(getStringAttribute(source, "refid"), variablesContext);
+            String refid = getStringAttribute(source, "refid");
+            //找到 refid 指向的节点
+            Node toInclude = findSqlFragment(refid, variablesContext);
+            //
             Properties toIncludeContext = getVariablesContext(source, variablesContext);
+            //sql 节点
             applyIncludes(toInclude, toIncludeContext, true);
             if (toInclude.getOwnerDocument() != source.getOwnerDocument()) {
                 toInclude = source.getOwnerDocument().importNode(toInclude, true);
@@ -84,34 +80,25 @@ public class XMLIncludeTransformer {
             for (int i = 0; i < children.getLength(); i++) {
                 applyIncludes(children.item(i), variablesContext, included);
             }
-        } else if (included && source.getNodeType() == Node.TEXT_NODE
-                && !variablesContext.isEmpty()) {
+        } else if (included && source.getNodeType() == Node.TEXT_NODE && !variablesContext.isEmpty()) {
             // replace variables in text node
             source.setNodeValue(PropertyParser.parse(source.getNodeValue(), variablesContext));
         }
     }
 
     private Node findSqlFragment(String refid, Properties variables) {
+        //selector
         refid = PropertyParser.parse(refid, variables);
+        //PerformData.selector
         refid = builderAssistant.applyCurrentNamespace(refid, true);
-        try {
-            XNode nodeToInclude = configuration.getSqlFragments().get(refid);
-            return nodeToInclude.getNode().cloneNode(true);
-        } catch (IllegalArgumentException e) {
-            throw new IncompleteElementException("Could not find SQL statement to include with refid '" + refid + "'", e);
-        }
+        XNode nodeToInclude = configuration.getSqlFragments().get(refid);
+        return nodeToInclude.getNode().cloneNode(true);
     }
 
     private String getStringAttribute(Node node, String name) {
         return node.getAttributes().getNamedItem(name).getNodeValue();
     }
 
-    /**
-     * Read placeholders and their values from include node definition.
-     * @param node Include node instance
-     * @param inheritedVariablesContext Current context used for replace variables in new variables values
-     * @return variables context from include instance (no inherited values)
-     */
     private Properties getVariablesContext(Node node, Properties inheritedVariablesContext) {
         Map<String, String> declaredProperties = null;
         NodeList children = node.getChildNodes();

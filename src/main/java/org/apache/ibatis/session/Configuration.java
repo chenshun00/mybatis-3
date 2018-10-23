@@ -18,7 +18,6 @@ package org.apache.ibatis.session;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.CacheRefResolver;
 import org.apache.ibatis.builder.ResultMapResolver;
-import org.apache.ibatis.builder.annotation.MethodResolver;
 import org.apache.ibatis.builder.xml.XMLStatementBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.decorators.FifoCache;
@@ -37,7 +36,7 @@ import org.apache.ibatis.executor.loader.javassist.JavassistProxyFactory;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.resultset.DefaultResultSetHandler;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
-import org.apache.ibatis.executor.statement.RoutingStatementHandler;
+import org.apache.ibatis.executor.statement.PreparedStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.io.VFS;
 import org.apache.ibatis.mapping.*;
@@ -76,35 +75,62 @@ public class Configuration {
     protected Environment environment;
 
     protected boolean safeRowBoundsEnabled;//不懂
+
+    public boolean isSafeRowBoundsEnabled() {
+        return safeRowBoundsEnabled;
+    }
+
+    public void setSafeRowBoundsEnabled(boolean safeRowBoundsEnabled) {
+        this.safeRowBoundsEnabled = safeRowBoundsEnabled;
+    }
+
     protected boolean safeResultHandlerEnabled = true;//不懂
+
     protected boolean mapUnderscoreToCamelCase;//驼峰
+
     protected boolean aggressiveLazyLoading;//懒加载
+
     protected boolean multipleResultSetsEnabled = true;//多结果集
+
     protected boolean useGeneratedKeys;
+
     protected boolean useColumnLabel = true;
+
     protected boolean cacheEnabled = true;
+
     protected boolean callSettersOnNulls;
+
     protected boolean useActualParamName = true;
+
     protected boolean returnInstanceForEmptyRow;
+
+    protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
 
     protected String logPrefix;
     protected Class<? extends VFS> vfsImpl;
-    protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
     protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
     protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
     //
     protected Integer defaultStatementTimeout;
+
     protected Integer defaultFetchSize;
+
     protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
+
     protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
+
     protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
     protected Properties variables = new Properties();
+
     protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+
     protected ObjectFactory objectFactory = new DefaultObjectFactory();
+
     protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
 
     protected boolean lazyLoadingEnabled = false;
+
     protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
 
     protected String databaseId;
@@ -127,6 +153,7 @@ public class Configuration {
     protected final Map<String, MappedStatement> mappedStatements = new StrictMap<>("Mapped Statements collection");
     protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
     protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
+    //参数集合
     protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
     //fuck key generator
     protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
@@ -138,7 +165,6 @@ public class Configuration {
     protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
     protected final Collection<CacheRefResolver> incompleteCacheRefs = new LinkedList<>();
     protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
-    protected final Collection<MethodResolver> incompleteMethods = new LinkedList<>();
 
     /*
      * A map holds cache-ref relationship. The key is the namespace that
@@ -180,18 +206,6 @@ public class Configuration {
         //这个用来干啥目前我还不知道
         languageRegistry.setDefaultDriverClass(XMLLanguageDriver.class);
         languageRegistry.register(RawLanguageDriver.class);
-    }
-
-    public String getLogPrefix() {
-        return logPrefix;
-    }
-
-    public void setLogPrefix(String logPrefix) {
-        this.logPrefix = logPrefix;
-    }
-
-    public Class<? extends VFS> getVfsImpl() {
-        return this.vfsImpl;
     }
 
     public void setVfsImpl(Class<? extends VFS> vfsImpl) {
@@ -247,14 +261,6 @@ public class Configuration {
 
     public void setSafeResultHandlerEnabled(boolean safeResultHandlerEnabled) {
         this.safeResultHandlerEnabled = safeResultHandlerEnabled;
-    }
-
-    public boolean isSafeRowBoundsEnabled() {
-        return safeRowBoundsEnabled;
-    }
-
-    public void setSafeRowBoundsEnabled(boolean safeRowBoundsEnabled) {
-        this.safeRowBoundsEnabled = safeRowBoundsEnabled;
     }
 
     public boolean isMapUnderscoreToCamelCase() {
@@ -330,10 +336,6 @@ public class Configuration {
         this.aggressiveLazyLoading = aggressiveLazyLoading;
     }
 
-    public boolean isMultipleResultSetsEnabled() {
-        return multipleResultSetsEnabled;
-    }
-
     public void setMultipleResultSetsEnabled(boolean multipleResultSetsEnabled) {
         this.multipleResultSetsEnabled = multipleResultSetsEnabled;
     }
@@ -362,16 +364,8 @@ public class Configuration {
         this.defaultExecutorType = defaultExecutorType;
     }
 
-    public boolean isCacheEnabled() {
-        return cacheEnabled;
-    }
-
     public void setCacheEnabled(boolean cacheEnabled) {
         this.cacheEnabled = cacheEnabled;
-    }
-
-    public Integer getDefaultStatementTimeout() {
-        return defaultStatementTimeout;
     }
 
     public void setDefaultStatementTimeout(Integer defaultStatementTimeout) {
@@ -445,13 +439,6 @@ public class Configuration {
         return typeAliasRegistry;
     }
 
-    /**
-     * @since 3.2.2
-     */
-    public MapperRegistry getMapperRegistry() {
-        return mapperRegistry;
-    }
-
     public ReflectorFactory getReflectorFactory() {
         return reflectorFactory;
     }
@@ -476,22 +463,8 @@ public class Configuration {
         this.objectWrapperFactory = objectWrapperFactory;
     }
 
-    /**
-     * @since 3.2.2
-     */
-    public List<Interceptor> getInterceptors() {
-        return interceptorChain.getInterceptors();
-    }
-
     public LanguageDriverRegistry getLanguageRegistry() {
         return languageRegistry;
-    }
-
-    public void setDefaultScriptingLanguage(Class<? extends LanguageDriver> driver) {
-        if (driver == null) {
-            driver = XMLLanguageDriver.class;
-        }
-        getLanguageRegistry().setDefaultDriverClass(driver);
     }
 
     public LanguageDriver getDefaultScriptingLanguageInstance() {
@@ -502,58 +475,18 @@ public class Configuration {
         return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
     }
 
-    public ParameterHandler newParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
-        LanguageDriver lang = getDefaultScriptingLanguageInstance();
-        ParameterHandler parameterHandler = lang.createParameterHandler(mappedStatement, parameterObject, boundSql);
-        //执行前处理一下ParameterHandler
-        return (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
-    }
-
-    public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds,
-                                                ParameterHandler parameterHandler, ResultHandler resultHandler, BoundSql boundSql) {
-
-        ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
-
-        return (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
-    }
-
-    public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject,
-                                                RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-        return new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
-    }
-
-    public Executor newExecutor(Transaction transaction) {
-        return newExecutor(transaction, defaultExecutorType);
+    public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+        return new PreparedStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
     }
 
     public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
-        executorType = executorType == null ? defaultExecutorType : executorType;
-        executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
-        Executor executor;
-        if (ExecutorType.BATCH == executorType) {
-            executor = new BatchExecutor(this, transaction);
-        } else if (ExecutorType.REUSE == executorType) {
-            executor = new ReuseExecutor(this, transaction);
-        } else {
-            executor = new SimpleExecutor(this, transaction);
-        }
-        if (cacheEnabled) {
-            executor = new CachingExecutor(executor);
-        }
+        Executor executor = new SimpleExecutor(this, transaction);
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
     }
 
     public void addKeyGenerator(String id, KeyGenerator keyGenerator) {
         keyGenerators.put(id, keyGenerator);
-    }
-
-    public Collection<String> getKeyGeneratorNames() {
-        return keyGenerators.keySet();
-    }
-
-    public Collection<KeyGenerator> getKeyGenerators() {
-        return keyGenerators.values();
     }
 
     public KeyGenerator getKeyGenerator(String id) {
@@ -568,34 +501,15 @@ public class Configuration {
         caches.put(cache.getId(), cache);
     }
 
-    public Collection<String> getCacheNames() {
-        return caches.keySet();
-    }
-
-    public Collection<Cache> getCaches() {
-        return caches.values();
-    }
 
     public Cache getCache(String id) {
         return caches.get(id);
-    }
-
-    public boolean hasCache(String id) {
-        return caches.containsKey(id);
     }
 
     public void addResultMap(ResultMap rm) {
         resultMaps.put(rm.getId(), rm);
         checkLocallyForDiscriminatedNestedResultMaps(rm);
         checkGloballyForDiscriminatedNestedResultMaps(rm);
-    }
-
-    public Collection<String> getResultMapNames() {
-        return resultMaps.keySet();
-    }
-
-    public Collection<ResultMap> getResultMaps() {
-        return resultMaps.values();
     }
 
     public ResultMap getResultMap(String id) {
@@ -610,34 +524,13 @@ public class Configuration {
         parameterMaps.put(pm.getId(), pm);
     }
 
-    public Collection<String> getParameterMapNames() {
-        return parameterMaps.keySet();
-    }
-
-    public Collection<ParameterMap> getParameterMaps() {
-        return parameterMaps.values();
-    }
 
     public ParameterMap getParameterMap(String id) {
         return parameterMaps.get(id);
     }
 
-    public boolean hasParameterMap(String id) {
-        return parameterMaps.containsKey(id);
-    }
-
     public void addMappedStatement(MappedStatement ms) {
         mappedStatements.put(ms.getId(), ms);
-    }
-
-    public Collection<String> getMappedStatementNames() {
-        buildAllStatements();
-        return mappedStatements.keySet();
-    }
-
-    public Collection<MappedStatement> getMappedStatements() {
-        buildAllStatements();
-        return mappedStatements.values();
     }
 
     public Collection<XMLStatementBuilder> getIncompleteStatements() {
@@ -664,13 +557,6 @@ public class Configuration {
         incompleteResultMaps.add(resultMapResolver);
     }
 
-    public void addIncompleteMethod(MethodResolver builder) {
-        incompleteMethods.add(builder);
-    }
-
-    public Collection<MethodResolver> getIncompleteMethods() {
-        return incompleteMethods;
-    }
 
     public MappedStatement getMappedStatement(String id) {
         return this.getMappedStatement(id, true);
@@ -679,7 +565,6 @@ public class Configuration {
     public MappedStatement getMappedStatement(String id, boolean validateIncompleteStatements) {
         if (validateIncompleteStatements) {
             //做了一些校验，比如存不存在之类的？
-            buildAllStatements();
         }
         return mappedStatements.get(id);
     }
@@ -692,16 +577,11 @@ public class Configuration {
         interceptorChain.addInterceptor(interceptor);
     }
 
-    public void addMappers(String packageName, Class<?> superType) {
-        mapperRegistry.addMappers(packageName, superType);
-    }
-
     public void addMappers(String packageName) {
         mapperRegistry.addMappers(packageName);
     }
 
     public <T> void addMapper(Class<T> type) {
-        mapperRegistry.addMapper(type);
     }
 
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
@@ -717,57 +597,11 @@ public class Configuration {
     }
 
     public boolean hasStatement(String statementName, boolean validateIncompleteStatements) {
-        if (validateIncompleteStatements) {
-            buildAllStatements();
-        }
         return mappedStatements.containsKey(statementName);
     }
 
     public void addCacheRef(String namespace, String referencedNamespace) {
         cacheRefMap.put(namespace, referencedNamespace);
-    }
-
-    /*
-     * Parses all the unprocessed statement nodes in the cache. It is recommended
-     * to call this method once all the mappers are added as it provides fail-fast
-     * statement validation.
-     */
-    protected void buildAllStatements() {
-        if (!incompleteResultMaps.isEmpty()) {
-            synchronized (incompleteResultMaps) {
-                // This always throws a BuilderException.
-                incompleteResultMaps.iterator().next().resolve();
-            }
-        }
-        if (!incompleteCacheRefs.isEmpty()) {
-            synchronized (incompleteCacheRefs) {
-                // This always throws a BuilderException.
-                incompleteCacheRefs.iterator().next().resolveCacheRef();
-            }
-        }
-        if (!incompleteStatements.isEmpty()) {
-            synchronized (incompleteStatements) {
-                // This always throws a BuilderException.
-                incompleteStatements.iterator().next().parseStatementNode();
-            }
-        }
-        if (!incompleteMethods.isEmpty()) {
-            synchronized (incompleteMethods) {
-                // This always throws a BuilderException.
-                incompleteMethods.iterator().next().resolve();
-            }
-        }
-    }
-
-    /*
-     * Extracts namespace from fully qualified statement id.
-     *
-     * @param statementId
-     * @return namespace or null when id does not contain period.
-     */
-    protected String extractNamespace(String statementId) {
-        int lastPeriod = statementId.lastIndexOf('.');
-        return lastPeriod > 0 ? statementId.substring(0, lastPeriod) : null;
     }
 
     // Slow but a one time cost. A better solution is welcome.
@@ -809,23 +643,8 @@ public class Configuration {
         private static final long serialVersionUID = -4950446264854982944L;
         private final String name;
 
-        public StrictMap(String name, int initialCapacity, float loadFactor) {
-            super(initialCapacity, loadFactor);
-            this.name = name;
-        }
-
-        public StrictMap(String name, int initialCapacity) {
-            super(initialCapacity);
-            this.name = name;
-        }
-
         public StrictMap(String name) {
             super();
-            this.name = name;
-        }
-
-        public StrictMap(String name, Map<String, ? extends V> m) {
-            super(m);
             this.name = name;
         }
 

@@ -60,12 +60,23 @@ public class DefaultParameterHandler implements ParameterHandler {
 
     /**
      * 设置参数阶段
+     * 1、优先级额外参数
+     * 2、参数是否为null
+     * 3、基本类型的参数
+     *  {Boolean，Byte，Short，integer ，float , double , shore , bigInteger,long , Reader string}
+     * 4、集合参数
+     *  {map,collection,bean}
      */
     @SuppressWarnings("unchecked")
     @Override
     public void setParameters(PreparedStatement ps) {
         ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
-        //获取参数集合
+        //获取参数集合,那个是那个都是一一对应的
+        //select * from user where user_id = #userId#
+        /*
+            property = userId
+            mode = In
+         */
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         //如果没有参数例如。select * from user,delete from user, 当然这种情况是及其罕见的
         //这种形式的写法和业务代码也是一致的 if for，和Spring的代码相比，xbatis更加的易读
@@ -81,18 +92,26 @@ public class DefaultParameterHandler implements ParameterHandler {
                     String propertyName = parameterMapping.getProperty();
                     if (boundSql.hasAdditionalParameter(propertyName)) { // issue #448 ask first for additional params
                         value = boundSql.getAdditionalParameter(propertyName);
-                    } else if (parameterObject == null) {
+                    }
+                    //空值
+                    else if (parameterObject == null) {
                         value = null;
-                    } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
+                    }
+                    //转为这个类型
+                    else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
                         value = parameterObject;
                     } else {
+                        //pojo
                         MetaObject metaObject = configuration.newMetaObject(parameterObject);
                         value = metaObject.getValue(propertyName);
                     }
+                    //获取类型转换器
                     TypeHandler typeHandler = parameterMapping.getTypeHandler();
+                    //jdbc 类型
                     JdbcType jdbcType = parameterMapping.getJdbcType();
+                    //
                     if (value == null && jdbcType == null) {
-                        jdbcType = configuration.getJdbcTypeForNull();
+                        jdbcType = JdbcType.OTHER;
                     }
                     try {
                         typeHandler.setParameter(ps, i + 1, value, jdbcType);

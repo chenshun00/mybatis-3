@@ -23,9 +23,7 @@ import java.lang.reflect.UndeclaredThrowableException;
  */
 public class ExceptionUtil {
 
-    private ExceptionUtil() {
-        // Prevent Instantiation
-    }
+    private ExceptionUtil() {}
 
     public static Throwable unwrapThrowable(Throwable wrapped) {
         Throwable unwrapped = wrapped;

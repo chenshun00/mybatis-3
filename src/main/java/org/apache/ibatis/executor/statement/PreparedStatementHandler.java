@@ -72,6 +72,9 @@ public class PreparedStatementHandler extends BaseStatementHandler {
         return resultSetHandler.<E>handleCursorResultSets(ps);
     }
 
+    /**
+     * 就是在这里啊，connection.prepareStatement(sql)，我就说怎么找了一阵
+     */
     @Override
     protected Statement instantiateStatement(Connection connection) throws SQLException {
         //获取sql语句

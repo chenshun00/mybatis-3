@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.builder;
 
@@ -145,7 +145,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
 
     public void addParameterMap(String id, Class<?> parameterClass, List<ParameterMapping> parameterMappings) {
         id = applyCurrentNamespace(id, false);
-        ParameterMap parameterMap = new ParameterMap.Builder(configuration, id, parameterClass, parameterMappings).build();
+        ParameterMap parameterMap = new ParameterMap.Builder(id, parameterClass, parameterMappings).build();
         configuration.addParameterMap(parameterMap);
     }
 
@@ -269,6 +269,9 @@ public class MapperBuilderAssistant extends BaseBuilder {
         id = applyCurrentNamespace(id, false);
         boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
 
+        //resultMap
+        List<ResultMap> resultMaps = getStatementResultMaps(resultMap, resultType, id);
+
         MappedStatement.Builder statementBuilder = new MappedStatement.Builder(configuration, id, sqlSource, sqlCommandType)
                 .resource(resource)
                 .fetchSize(fetchSize)
@@ -281,12 +284,12 @@ public class MapperBuilderAssistant extends BaseBuilder {
                 .lang(lang)
                 .resultOrdered(resultOrdered)
                 .resultSets(resultSets)
-                .resultMaps(getStatementResultMaps(resultMap, resultType, id))
+                .resultMaps(resultMaps)
                 .resultSetType(resultSetType)
                 .flushCacheRequired(valueOrDefault(flushCache, !isSelect))
                 .useCache(valueOrDefault(useCache, isSelect))
                 .cache(currentCache);
-
+        //获取参数集合，首先就是要看看 ParameterMap 有写什么东西，然后再去看到底是啥 还是一个字符串 理解
         ParameterMap statementParameterMap = getStatementParameterMap(parameterMap, parameterType, id);
         if (statementParameterMap != null) {
             statementBuilder.parameterMap(statementParameterMap);
@@ -300,52 +303,29 @@ public class MapperBuilderAssistant extends BaseBuilder {
         return value == null ? defaultValue : value;
     }
 
-    private ParameterMap getStatementParameterMap(
-            String parameterMapName,
-            Class<?> parameterTypeClass,
-            String statementId) {
+    private ParameterMap getStatementParameterMap(String parameterMapName, Class<?> parameterTypeClass, String statementId) {
         parameterMapName = applyCurrentNamespace(parameterMapName, true);
         ParameterMap parameterMap = null;
         if (parameterMapName != null) {
-            try {
-                parameterMap = configuration.getParameterMap(parameterMapName);
-            } catch (IllegalArgumentException e) {
-                throw new IncompleteElementException("Could not find parameter map " + parameterMapName, e);
-            }
+            parameterMap = configuration.getParameterMap(parameterMapName);
         } else if (parameterTypeClass != null) {
             List<ParameterMapping> parameterMappings = new ArrayList<>();
-            parameterMap = new ParameterMap.Builder(
-                    configuration,
-                    statementId + "-Inline",
-                    parameterTypeClass,
-                    parameterMappings).build();
+            //搞一套
+            parameterMap = new ParameterMap.Builder(statementId + "-Inline", parameterTypeClass, parameterMappings).build();
         }
         return parameterMap;
     }
 
-    private List<ResultMap> getStatementResultMaps(
-            String resultMap,
-            Class<?> resultType,
-            String statementId) {
+    private List<ResultMap> getStatementResultMaps(String resultMap, Class<?> resultType, String statementId) {
         resultMap = applyCurrentNamespace(resultMap, true);
-
         List<ResultMap> resultMaps = new ArrayList<>();
         if (resultMap != null) {
             String[] resultMapNames = resultMap.split(",");
             for (String resultMapName : resultMapNames) {
-                try {
-                    resultMaps.add(configuration.getResultMap(resultMapName.trim()));
-                } catch (IllegalArgumentException e) {
-                    throw new IncompleteElementException("Could not find result map " + resultMapName, e);
-                }
+                resultMaps.add(configuration.getResultMap(resultMapName.trim()));
             }
         } else if (resultType != null) {
-            ResultMap inlineResultMap = new ResultMap.Builder(
-                    configuration,
-                    statementId + "-Inline",
-                    resultType,
-                    new ArrayList<ResultMapping>(),
-                    null).build();
+            ResultMap inlineResultMap = new ResultMap.Builder(configuration, statementId + "-Inline", resultType, new ArrayList<>(), null).build();
             resultMaps.add(inlineResultMap);
         }
         return resultMaps;

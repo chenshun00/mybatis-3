@@ -24,10 +24,11 @@ import java.util.Map;
 import org.apache.ibatis.builder.BuilderException;
 
 /**
- * @author Clinton Begin
+ * 表达式解析器
  */
 public class ExpressionEvaluator {
 
+    //map
     public boolean evaluateBoolean(String expression, Object parameterObject) {
         Object value = OgnlCache.getValue(expression, parameterObject);
         if (value instanceof Boolean) {

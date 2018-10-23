@@ -16,6 +16,7 @@
 package org.apache.ibatis.executor;
 
 import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.executor.statement.PreparedStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -42,8 +43,8 @@ public class SimpleExecutor extends BaseExecutor {
     public int doUpdate(MappedStatement ms, Object parameter) throws SQLException {
         Statement stmt = null;
         try {
-            Configuration configuration = ms.getConfiguration();
-            StatementHandler handler = configuration.newStatementHandler(this, ms, parameter, RowBounds.DEFAULT, null, null);
+            BoundSql boundSql = ms.getBoundSql(parameter);
+            StatementHandler handler = new PreparedStatementHandler(this, ms, parameter, RowBounds.DEFAULT, null, boundSql);
             stmt = prepareStatement(handler);
             return handler.update(stmt);
         } finally {
@@ -56,9 +57,12 @@ public class SimpleExecutor extends BaseExecutor {
         Statement stmt = null;
         try {
             //根据情况选择合适的StatementHandler
-            StatementHandler handler = this.configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
+            StatementHandler handler = new PreparedStatementHandler(this, ms, parameter, rowBounds, resultHandler, boundSql);
             //预编译
-            stmt = prepareStatement(handler);
+            //stmt = prepareStatement(handler);
+            stmt = handler.prepare(getConnection(null), transaction.getTimeout());
+            //处理参数
+            handler.parameterize(stmt);
             return handler.query(stmt, resultHandler);
         } finally {
             closeStatement(stmt);
@@ -78,8 +82,8 @@ public class SimpleExecutor extends BaseExecutor {
         return Collections.emptyList();
     }
 
+    //我以为开启了预编译，但是通过转包却发现，毛都没有，因此我断定至少是mysql jar包没有开启预编译
     private Statement prepareStatement(StatementHandler handler) throws SQLException {
-        //预编译，设置超时时间
         Statement stmt = handler.prepare(getConnection(null), transaction.getTimeout());
         //处理参数
         handler.parameterize(stmt);

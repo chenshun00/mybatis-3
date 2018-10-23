@@ -23,13 +23,6 @@ import ognl.OgnlException;
 
 import org.apache.ibatis.builder.BuilderException;
 
-/**
- * Caches OGNL parsed expressions.
- *
- * @author Eduardo Macarron
- *
- * @see <a href='http://code.google.com/p/mybatis/issues/detail?id=342'>Issue 342</a>
- */
 public final class OgnlCache {
 
     private static final OgnlMemberAccess MEMBER_ACCESS = new OgnlMemberAccess();
@@ -37,7 +30,6 @@ public final class OgnlCache {
     private static final Map<String, Object> expressionCache = new ConcurrentHashMap<>();
 
     private OgnlCache() {
-        // Prevent Instantiation of Static Class
     }
 
     public static Object getValue(String expression, Object root) {

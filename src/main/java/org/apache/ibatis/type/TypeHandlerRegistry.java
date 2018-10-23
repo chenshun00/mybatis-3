@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2018 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2018 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.type;
 
@@ -170,6 +170,7 @@ public final class TypeHandlerRegistry {
     /**
      * Set a default {@link TypeHandler} class for {@link Enum}.
      * A default {@link TypeHandler} is {@link org.apache.ibatis.type.EnumTypeHandler}.
+     *
      * @param typeHandler a type handler class for {@link Enum}
      * @since 3.4.5
      */
@@ -181,16 +182,8 @@ public final class TypeHandlerRegistry {
         return hasTypeHandler(javaType, null);
     }
 
-    public boolean hasTypeHandler(TypeReference<?> javaTypeReference) {
-        return hasTypeHandler(javaTypeReference, null);
-    }
-
     public boolean hasTypeHandler(Class<?> javaType, JdbcType jdbcType) {
         return javaType != null && getTypeHandler((Type) javaType, jdbcType) != null;
-    }
-
-    public boolean hasTypeHandler(TypeReference<?> javaTypeReference, JdbcType jdbcType) {
-        return javaTypeReference != null && getTypeHandler(javaTypeReference, jdbcType) != null;
     }
 
     public TypeHandler<?> getMappingTypeHandler(Class<? extends TypeHandler<?>> handlerType) {
@@ -199,10 +192,6 @@ public final class TypeHandlerRegistry {
 
     public <T> TypeHandler<T> getTypeHandler(Class<T> type) {
         return getTypeHandler((Type) type, null);
-    }
-
-    public <T> TypeHandler<T> getTypeHandler(TypeReference<T> javaTypeReference) {
-        return getTypeHandler(javaTypeReference, null);
     }
 
     public TypeHandler<?> getTypeHandler(JdbcType jdbcType) {
@@ -223,18 +212,10 @@ public final class TypeHandlerRegistry {
             return null;
         }
         Map<JdbcType, TypeHandler<?>> jdbcHandlerMap = getJdbcHandlerMap(type);
-        TypeHandler<?> handler = null;
-        if (jdbcHandlerMap != null) {
-            handler = jdbcHandlerMap.get(jdbcType);
-            if (handler == null) {
-                handler = jdbcHandlerMap.get(null);
-            }
-            if (handler == null) {
-                // #591
-                handler = pickSoleHandler(jdbcHandlerMap);
-            }
+        TypeHandler<?> handler = jdbcHandlerMap.get(jdbcType);
+        if (handler == null) {
+            handler = pickSoleHandler(jdbcHandlerMap);
         }
-        // type drives generics here
         return (TypeHandler<T>) handler;
     }
 
@@ -350,25 +331,10 @@ public final class TypeHandlerRegistry {
     }
 
     private <T> void register(Type javaType, TypeHandler<? extends T> typeHandler) {
-        MappedJdbcTypes mappedJdbcTypes = typeHandler.getClass().getAnnotation(MappedJdbcTypes.class);
-        if (mappedJdbcTypes != null) {
-            for (JdbcType handledJdbcType : mappedJdbcTypes.value()) {
-                register(javaType, handledJdbcType, typeHandler);
-            }
-            if (mappedJdbcTypes.includeNullJdbcType()) {
-                register(javaType, null, typeHandler);
-            }
-        } else {
-            register(javaType, null, typeHandler);
-        }
-    }
-
-    public <T> void register(TypeReference<T> javaTypeReference, TypeHandler<? extends T> handler) {
-        register(javaTypeReference.getRawType(), handler);
+        register(javaType, null, typeHandler);
     }
 
     // java type + jdbc type + handler
-
     public <T> void register(Class<T> type, JdbcType jdbcType, TypeHandler<? extends T> handler) {
         register((Type) type, jdbcType, handler);
     }
@@ -406,10 +372,6 @@ public final class TypeHandlerRegistry {
     }
 
     // java type + handler type
-
-    public void register(String javaTypeClassName, String typeHandlerClassName) throws ClassNotFoundException {
-        register(Resources.classForName(javaTypeClassName), Resources.classForName(typeHandlerClassName));
-    }
 
     public void register(Class<?> javaTypeClass, Class<?> typeHandlerClass) {
         register(javaTypeClass, getInstance(javaTypeClass, typeHandlerClass));
@@ -456,14 +418,4 @@ public final class TypeHandlerRegistry {
             }
         }
     }
-
-    // get information
-
-    /**
-     * @since 3.2.2
-     */
-    public Collection<TypeHandler<?>> getTypeHandlers() {
-        return Collections.unmodifiableCollection(ALL_TYPE_HANDLERS_MAP.values());
-    }
-
 }

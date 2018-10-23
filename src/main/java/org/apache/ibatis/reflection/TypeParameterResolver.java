@@ -30,10 +30,6 @@ import java.util.Arrays;
  */
 public class TypeParameterResolver {
 
-    /**
-     * @return The field type as {@link Type}. If it has type parameters in the declaration,<br>
-     *         they will be resolved to the actual runtime {@link Type}s.
-     */
     public static Type resolveFieldType(Field field, Type srcType) {
         Type fieldType = field.getGenericType();
         Class<?> declaringClass = field.getDeclaringClass();

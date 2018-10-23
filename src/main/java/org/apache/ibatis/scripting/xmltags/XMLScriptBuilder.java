@@ -30,7 +30,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * @author Clinton Begin
+ * 从那些角度去判断是静态及节点还是动态节点呢
  */
 public class XMLScriptBuilder extends BaseBuilder {
 
@@ -38,10 +38,6 @@ public class XMLScriptBuilder extends BaseBuilder {
     private boolean isDynamic;
     private final Class<?> parameterType;
     private final Map<String, NodeHandler> nodeHandlerMap = new HashMap<>();
-
-    public XMLScriptBuilder(Configuration configuration, XNode context) {
-        this(configuration, context, null);
-    }
 
     public XMLScriptBuilder(Configuration configuration, XNode context, Class<?> parameterType) {
         super(configuration);
@@ -75,17 +71,22 @@ public class XMLScriptBuilder extends BaseBuilder {
         return sqlSource;
     }
 
-    protected MixedSqlNode parseDynamicTags(XNode node) {
+    /**
+     * 解析动态标签
+     */
+    private MixedSqlNode parseDynamicTags(XNode node) {
         List<SqlNode> contents = new ArrayList<>();
-        //所有字节点
+        //所有字节点 文本节点，静态节点，if节点 trim节点等等
         NodeList children = node.getNode().getChildNodes();
 
         for (int i = 0; i < children.getLength(); i++) {
-            XNode child = node.newXNode(children.item(i));
-            //文本节点
+            Node item = children.item(i);
+            XNode child = node.newXNode(item);
+            //文本节点 和 cdata 节点
             if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE || child.getNode().getNodeType() == Node.TEXT_NODE) {
                 String data = child.getStringBody("");
                 TextSqlNode textSqlNode = new TextSqlNode(data);
+                //动态节点 或者 静态文本节点，至于静态节点的判断还是要根据一些情况去判断
                 if (textSqlNode.isDynamic()) {
                     contents.add(textSqlNode);
                     isDynamic = true;
@@ -93,14 +94,12 @@ public class XMLScriptBuilder extends BaseBuilder {
                     contents.add(new StaticTextSqlNode(data));
                 }
             }
-            //元素节点
+            //元素节点 if trim set 等等元素节点
             else if (child.getNode().getNodeType() == Node.ELEMENT_NODE) { // issue #628
-                String nodeName = child.getNode().getNodeName();
+                //节点名称，返回就那么几个节点
                 //必须注册的几个元素节点
-                NodeHandler handler = nodeHandlerMap.get(nodeName);
-                if (handler == null) {
-                    throw new BuilderException("Unknown element <" + nodeName + "> in SQL statement.");
-                }
+                NodeHandler handler = nodeHandlerMap.get(child.getNode().getNodeName());
+                //像这种肯定是动态节点了
                 handler.handleNode(child, contents);
                 isDynamic = true;
             }
@@ -113,9 +112,6 @@ public class XMLScriptBuilder extends BaseBuilder {
     }
 
     private class BindHandler implements NodeHandler {
-        public BindHandler() {
-            // Prevent Synthetic Access
-        }
 
         @Override
         public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
@@ -127,9 +123,6 @@ public class XMLScriptBuilder extends BaseBuilder {
     }
 
     private class TrimHandler implements NodeHandler {
-        public TrimHandler() {
-            // Prevent Synthetic Access
-        }
 
         @Override
         public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
@@ -144,9 +137,6 @@ public class XMLScriptBuilder extends BaseBuilder {
     }
 
     private class WhereHandler implements NodeHandler {
-        public WhereHandler() {
-            // Prevent Synthetic Access
-        }
 
         @Override
         public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
@@ -157,9 +147,6 @@ public class XMLScriptBuilder extends BaseBuilder {
     }
 
     private class SetHandler implements NodeHandler {
-        public SetHandler() {
-            // Prevent Synthetic Access
-        }
 
         @Override
         public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
@@ -170,9 +157,6 @@ public class XMLScriptBuilder extends BaseBuilder {
     }
 
     private class ForEachHandler implements NodeHandler {
-        public ForEachHandler() {
-            // Prevent Synthetic Access
-        }
 
         @Override
         public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
@@ -189,9 +173,6 @@ public class XMLScriptBuilder extends BaseBuilder {
     }
 
     private class IfHandler implements NodeHandler {
-        public IfHandler() {
-            // Prevent Synthetic Access
-        }
 
         @Override
         public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
@@ -203,10 +184,6 @@ public class XMLScriptBuilder extends BaseBuilder {
     }
 
     private class OtherwiseHandler implements NodeHandler {
-        public OtherwiseHandler() {
-            // Prevent Synthetic Access
-        }
-
         @Override
         public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
             MixedSqlNode mixedSqlNode = parseDynamicTags(nodeToHandle);
@@ -215,10 +192,6 @@ public class XMLScriptBuilder extends BaseBuilder {
     }
 
     private class ChooseHandler implements NodeHandler {
-        public ChooseHandler() {
-            // Prevent Synthetic Access
-        }
-
         @Override
         public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
             List<SqlNode> whenSqlNodes = new ArrayList<>();

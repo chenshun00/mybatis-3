@@ -75,4 +75,41 @@ public class CacheKey implements Cloneable {
         return clonedCacheKey;
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof CacheKey)) {
+            return false;
+        }
+
+        final CacheKey cacheKey = (CacheKey) object;
+
+        if (hashcode != cacheKey.hashcode) {
+            return false;
+        }
+        if (checksum != cacheKey.checksum) {
+            return false;
+        }
+        if (count != cacheKey.count) {
+            return false;
+        }
+
+        for (int i = 0; i < updateList.size(); i++) {
+            Object thisObject = updateList.get(i);
+            Object thatObject = cacheKey.updateList.get(i);
+            if (!ArrayUtil.equals(thisObject, thatObject)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashcode;
+    }
+
+
 }

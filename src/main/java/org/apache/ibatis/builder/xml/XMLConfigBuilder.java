@@ -98,6 +98,7 @@ public class XMLConfigBuilder extends BaseBuilder {
         return configuration;
     }
 
+
     private void parseConfiguration(XNode root) {
         try {
             //issue117,先解析properties文件,和Spring整合之后我还没有看到使用的，我司主要使用xbatis/mysql
@@ -404,17 +405,6 @@ public class XMLConfigBuilder extends BaseBuilder {
                         XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
                         //解析xxx/mapper.xml
                         mapperParser.parse();
-                    } else if (resource == null && url != null && mapperClass == null) {
-                        ErrorContext.instance().resource(url);
-                        InputStream inputStream = Resources.getUrlAsStream(url);
-                        XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
-                        mapperParser.parse();
-                    } else if (resource == null && url == null && mapperClass != null) {
-                        Class<?> mapperInterface = Resources.classForName(mapperClass);
-                        //使用接口的模式，xxxMapper
-                        configuration.addMapper(mapperInterface);
-                    } else {
-                        throw new BuilderException("A mapper element may only specify a url, resource or class, but not more than one.");
                     }
                 }
             }

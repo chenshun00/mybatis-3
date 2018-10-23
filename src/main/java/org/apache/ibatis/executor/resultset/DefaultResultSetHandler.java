@@ -147,10 +147,10 @@ public class DefaultResultSetHandler implements ResultSetHandler {
             final ResultSetWrapper rsw = new ResultSetWrapper(rs, configuration);
             if (this.resultHandler == null) {
                 final DefaultResultHandler resultHandler = new DefaultResultHandler(objectFactory);
-                handleRowValues(rsw, resultMap, resultHandler, new RowBounds(), null);
+                handleRowValues(rsw, resultMap, resultHandler, RowBounds.DEFAULT, null);
                 metaParam.setValue(parameterMapping.getProperty(), resultHandler.getResultList());
             } else {
-                handleRowValues(rsw, resultMap, resultHandler, new RowBounds(), null);
+                handleRowValues(rsw, resultMap, resultHandler, RowBounds.DEFAULT, null);
             }
         } finally {
             // issue #228 (close resultsets)
@@ -178,6 +178,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         while (rsw != null && resultMapCount > resultSetCount) {
             //获取ResultMap 并且 处理结果
             ResultMap resultMap = resultMaps.get(resultSetCount);
+            //轮训处理
             handleResultSet(rsw, resultMap, multipleResults, null);
 
             rsw = getNextResultSet(stmt);
@@ -302,7 +303,9 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     // HANDLE ROWS FOR SIMPLE RESULTMAP
     //
 
-    public void handleRowValues(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
+    public void handleRowValues(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler,
+                                RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
+        //有没有嵌套的ResultMap
         if (resultMap.hasNestedResultMaps()) {
             ensureNoRowBounds();
             checkResultHandler();
@@ -327,12 +330,11 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         }
     }
 
-    private void handleRowValuesForSimpleResultMap(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping)
-            throws SQLException {
+    private void handleRowValuesForSimpleResultMap(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler,
+                                                   RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
         DefaultResultContext<Object> resultContext = new DefaultResultContext<>();
         skipRows(rsw.getResultSet(), rowBounds);
         while (shouldProcessMoreRows(resultContext, rowBounds) && rsw.getResultSet().next()) {
-            //没有处理这里，因为么有使用discriminator
             ResultMap discriminatedResultMap = resolveDiscriminatedResultMap(rsw.getResultSet(), resultMap, null);
             //获取真是对象
             Object rowValue = getRowValue(rsw, discriminatedResultMap);
