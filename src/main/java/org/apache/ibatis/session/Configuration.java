@@ -1,21 +1,20 @@
 /**
- * Copyright 2009-2018 the original author or authors.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *    Copyright 2009-2018 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 package org.apache.ibatis.session;
 
-import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.CacheRefResolver;
 import org.apache.ibatis.builder.ResultMapResolver;
 import org.apache.ibatis.builder.xml.XMLStatementBuilder;
@@ -33,9 +32,6 @@ import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.loader.ProxyFactory;
 import org.apache.ibatis.executor.loader.cglib.CglibProxyFactory;
 import org.apache.ibatis.executor.loader.javassist.JavassistProxyFactory;
-import org.apache.ibatis.executor.parameter.ParameterHandler;
-import org.apache.ibatis.executor.resultset.DefaultResultSetHandler;
-import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.executor.statement.PreparedStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.io.VFS;
@@ -142,7 +138,6 @@ public class Configuration {
      */
     protected Class<?> configurationFactory;
 
-    protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
     //抓到plugins的开头
     protected final InterceptorChain interceptorChain = new InterceptorChain();
     protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
@@ -575,21 +570,6 @@ public class Configuration {
 
     public void addInterceptor(Interceptor interceptor) {
         interceptorChain.addInterceptor(interceptor);
-    }
-
-    public void addMappers(String packageName) {
-        mapperRegistry.addMappers(packageName);
-    }
-
-    public <T> void addMapper(Class<T> type) {
-    }
-
-    public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-        return mapperRegistry.getMapper(type, sqlSession);
-    }
-
-    public boolean hasMapper(Class<?> type) {
-        return mapperRegistry.hasMapper(type);
     }
 
     public boolean hasStatement(String statementName) {

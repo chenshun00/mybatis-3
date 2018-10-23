@@ -28,8 +28,4 @@ public class BindingException extends PersistenceException {
         super(message);
     }
 
-    public BindingException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
 }

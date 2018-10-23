@@ -1,17 +1,17 @@
 /**
- * Copyright 2009-2018 the original author or authors.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *    Copyright 2009-2018 the original author or authors.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 package org.apache.ibatis.builder.xml;
 
@@ -77,8 +77,6 @@ public class XMLMapperBuilder extends BaseBuilder {
             configurationElement(parser.evalNode("/mapper"));
             //添加到loadedResources中，set集合
             configuration.addLoadedResource(resource);
-            //搭建命名空间 namespace 需要唯一
-            bindMapperForNamespace();
         }
 
         parsePendingResultMaps();
@@ -377,25 +375,5 @@ public class XMLMapperBuilder extends BaseBuilder {
         return null;
     }
 
-    private void bindMapperForNamespace() {
-        String namespace = builderAssistant.getCurrentNamespace();
-        if (namespace != null) {
-            Class<?> boundType = null;
-            try {
-                boundType = Resources.classForName(namespace);
-            } catch (ClassNotFoundException e) {
-                //ignore, bound type is not required
-            }
-            if (boundType != null) {
-                if (!configuration.hasMapper(boundType)) {
-                    // Spring may not know the real resource name so we set a flag
-                    // to prevent loading again this resource from the mapper interface
-                    // look at MapperAnnotationBuilder#loadXmlResource
-                    configuration.addLoadedResource("namespace:" + namespace);
-                    configuration.addMapper(boundType);
-                }
-            }
-        }
-    }
 
 }
