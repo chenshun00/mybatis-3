@@ -36,5 +36,8 @@ public interface PerformDataDao{
 
     Integer deletePerformDataByKey(Integer key);
 
+
+    void bat(List<PerformData> pp);
+
     Map<String,Object> getMap();
 }

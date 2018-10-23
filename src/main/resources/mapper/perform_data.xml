@@ -1,34 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-
-       Copyright 2009-2018 the original author or authors.
-
-       Licensed under the Apache License, Version 2.0 (the "License");
-       you may not use this file except in compliance with the License.
-       You may obtain a copy of the License at
-
-          http://www.apache.org/licenses/LICENSE-2.0
-
-       Unless required by applicable law or agreed to in writing, software
-       distributed under the License is distributed on an "AS IS" BASIS,
-       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-       See the License for the specific language governing permissions and
-       limitations under the License.
-
--->
 <!DOCTYPE mapper PUBLIC "-//sqlmap.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PerformData">
 
-    <resultMap id="PerformData" type="PerformData">
+    <resultMap id="performData" type="PerformData">
         <result property="id" column="id"/>
-        <result property="context" column="context"/>
-        <result property="type" column="type"/>
-        <result property="metaId" column="meta_id"/>
-        <result property="addTime" column="add_time"/>
-    </resultMap>
-
-    <resultMap id="PerformData1" type="PerformData">
         <result property="context" column="context"/>
         <result property="type" column="type"/>
         <result property="metaId" column="meta_id"/>
@@ -43,50 +19,39 @@
 
     <sql id="where">
         <trim prefix="WHERE" prefixOverrides="AND | OR">
-            <if test="id != null">AND id = #id#
-            </if>
-            <if test="context != null">AND context = #context#
-            </if>
-            <if test="type != null">AND type = #type#
-            </if>
-            <if test="metaId != null">AND meta_id = #metaId#
-            </if>
-            <if test="addTime != null">AND add_time = #addTime#
-            </if>
+            <if test="id != null">AND id = #{id}</if>
+            <if test="context != null">AND context = #{context}</if>
+            <if test="type != null">AND type = #{type}</if>
+            <if test="metaId != null">AND meta_id = #{metaId}</if>
+            <if test="addTime != null">AND add_time = #{addTime}</if>
         </trim>
     </sql>
 
+    <!-- 使用order by 字段要取消mybatis的预编译功能，会导致注入，需要用户把控输入输出 -->
     <sql id="orderBy">
         <trim prefix="ORDER BY">
-            <if test="OrderFileds != null">
-                <foreach collection="OrderFileds" separator=",">
-                    #orderBy# #desc#
+            <if test="orderFields != null">
+                <foreach item="item" collection="orderFields" separator=",">
+                    ${item.orderBy} ${item.desc}
                 </foreach>
             </if>
         </trim>
     </sql>
 
     <sql id="limit">
-        <trim prefix="LIMIT">
-            <if test="startRow != null">#startRow#,#pageSize#</if>
+        <trim prefix=" LIMIT ">
+            <if test="startRow != null">#{startRow},#{pageSize}</if>
         </trim>
     </sql>
 
-    <!---->
-    <select id="selectPerformDataByKey" resultMap="PerformData" parameterType="integer">
-        <include refid="selector"/>
-        WHERE id = #{id}
-    </select>
-
-
-    <insert id="insertPerformData" parameterType="PerformData">
+    <insert id="insertPerformData" parameterType="performData">
         INSERT INTO perform_data
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
             <if test="context != null">context,</if>
             <if test="type != null">type,</if>
-            <if test="metaId != null">meta_Id,</if>
-            <if test="addTime != null">add_Time,</if>
+            <if test="metaId != null">meta_id,</if>
+            <if test="addTime != null">add_time,</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -98,14 +63,32 @@
         </trim>
     </insert>
 
-    <!-- 默认的主键类型是integer -->
-    <delete id="deletePerformDataByKey" parameterType="integer">
-        delete from perform_data where id = #{key}
-    </delete>
+    <insert id="batchInsertPerformData" parameterType="list">
+        <foreach item="item" collection="list" separator="">
+            INSERT INTO perform_data
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">id,</if>
+                <if test="item.context != null">context,</if>
+                <if test="item.type != null">type,</if>
+                <if test="item.metaId != null">meta_id,</if>
+                <if test="item.addTime != null">add_time,</if>
+            </trim>
+            VALUES
+            (
+            <trim suffixOverrides=",">
+                <if test="item.id != null">#{item.id},</if>
+                <if test="item.context != null">#{item.context},</if>
+                <if test="item.type != null">#{item.type},</if>
+                <if test="item.metaId != null">#{item.metaId},</if>
+                <if test="item.addTime != null">#{item.addTime},</if>
+            </trim>
+            );
+        </foreach>
+    </insert>
 
-    <update id="updatePerformDataByKey" parameterType="PerformData">
-        update perform_data
-        <trim prefix="SET" prefixOverrides=",">
+    <update id="updatePerformDataByKey" parameterType="performData">
+        UPDATE perform_data
+        <trim prefix="SET" prefixOverrides="," suffixOverrides=",">
             <if test="id != null">id = #{id},</if>
             <if test="context != null">context = #{context},</if>
             <if test="type != null">type = #{type},</if>
@@ -113,6 +96,50 @@
             <if test="addTime != null">add_time = #{addTime},</if>
         </trim>
         WHERE
-        id = #{key}
+        id = #{id}
     </update>
+
+    <update id="batchUpdatePerformData" parameterType="list">
+        <foreach collection="list" item="item" index="index" close=";" separator=";">
+            UPDATE perform_data
+            <trim prefix="SET" prefixOverrides="," suffixOverrides=",">
+                <if test="item.id != null">id = #{item.id},</if>
+                <if test="item.context != null">context = #{item.context},</if>
+                <if test="item.type != null">type = #{item.type},</if>
+                <if test="item.metaId != null">meta_id = #{item.metaId},</if>
+                <if test="item.addTime != null">add_time = #{item.addTime},</if>
+            </trim>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
+    <!-- 默认的主键类型是integer -->
+    <delete id="deletePerformDataByKey" parameterType="integer">
+        DELETE FROM perform_data WHERE id = #{key}
+    </delete>
+
+    <delete id="batchDeletePerformData" parameterType="list">
+        DELETE FROM perform_data WHERE id IN
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getPerformDataWithPerformDataQuery" parameterType="performDataQuery" resultMap="performData">
+        <include refid="selector"/>
+        <include refid="where"/>
+        <include refid="orderBy"/>
+    </select>
+
+    <select id="getPerformDataWithPage" parameterType="performDataQuery" resultMap="performData">
+        <include refid="selector"/>
+        <include refid="where"/>
+        <include refid="orderBy"/>
+        <include refid="limit"/>
+    </select>
+
+    <select id="selectPerformDataByKey" resultMap="performData" parameterType="integer">
+        <include refid="selector"/>
+        WHERE id = #{key}
+    </select>
 </mapper>
